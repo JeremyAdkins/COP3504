@@ -3,13 +3,8 @@ import java.math.BigDecimal;
 
 public class SavingsAccount extends Account{
 
-	public SavingsAccount(int accountNumber) {
-		super(accountNumber);
-		
-	}
-
 	@Override
-	public Transaction withdraw(BigDecimal amount){
+	public Transaction withdraw(BigDecimal amount) throws OverdraftException {
 		if(getBalance().compareTo(amount)>=0){
 			return super.withdraw(amount);
 		}
@@ -18,20 +13,17 @@ public class SavingsAccount extends Account{
 	
 	@Override
 	protected BigDecimal getInterestRate() {
-		// TODO PAYMENT SCHEDULE
-		return new BigDecimal(.25);//HAS TO BE TERMINATING DECIMAL EXPANSION? CHECK ROUNDINGMODE PARAMETER
+		return Bank.getInstance().getPaymentSchedule().getSavingsInterest();
 	}
 
 	@Override
 	protected BigDecimal getMonthlyCharge() {
-		// TODO PAYMENT SCHEDULE
-		return new BigDecimal(8);
+		return Bank.getInstance().getPaymentSchedule().getSavingsCharge();
 	}
 
 	@Override
 	protected BigDecimal getThreshold() {
-		// TODO PAYMENT SCHEDULE
-		return new BigDecimal(1000);
+		return Bank.getInstance().getPaymentSchedule().getSavingsThreshold();
 	}
 
 }

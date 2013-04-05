@@ -13,8 +13,8 @@ public abstract class Account {
 	private List<Transaction> history;
 	private Set<Transaction> repeatingPayments;
 	
-	protected Account(int accountNumber){
-		this.accountNumber = accountNumber;
+	protected Account(){
+		this.accountNumber = Bank.getInstance().assignAccountNumber();
 		this.closed = false;
 		this.balance = new BigDecimal(0);
 		this.history = new ArrayList<Transaction>();
@@ -36,7 +36,7 @@ public abstract class Account {
 		history.add(trans);
 		return trans;
 	}
-	public Transaction withdraw(BigDecimal amount){
+	public Transaction withdraw(BigDecimal amount) throws OverdraftException {
 		balance = balance.subtract(amount);
 		Transaction trans = new Transaction(Transaction.Type.WITHDRAWAL,amount);
 		history.add(trans);
@@ -55,27 +55,37 @@ public abstract class Account {
 		return new HashSet<Transaction> (repeatingPayments);
 	}
 	public final void addRepeatingPayment(Transaction payment){
-		repeatingPayments.add(payment);//TODO CHECK FOR INTEREST OR FEE
+		switch (payment.getType()) {
+		case DEPOSIT:
+		case WITHDRAWAL:
+			repeatingPayments.add(payment);
+			break;
+		default:
+			throw new IllegalArgumentException("repeating payments can only be deposits or withdrawals");
+		}
 	}
 	public final void removeRepeatingPayment(Transaction payment){
 		repeatingPayments.remove(payment);
 	}
-	void doPayments(){//TODO Check order
+	void doPayments() throws OverdraftException{//TODO Check order
 		//MONTHLY EXIST FEE
 		if(balance.compareTo(getThreshold())<0){
 			applyFee(getMonthlyCharge());
 		}
 		//INTEREST
-		BigDecimal interest = balance.multiply(getInterestRate().divide(new BigDecimal(12),RoundingMode.UP));//CHECK IF CORRECT
+		BigDecimal interest = balance.multiply(getInterestRate().divide(new BigDecimal(12),4,RoundingMode.HALF_UP));//CHECK IF CORRECT
 		balance = balance.add(interest);
 		Transaction trans = new Transaction(Transaction.Type.INTEREST,interest);
 		history.add(trans);
 		//REPEATING PAYMENTS
 		for(Transaction payment:repeatingPayments){
-			switch(payment.getType()){
-			case DEPOSIT: deposit(payment.getAmount()); break;
-			case WITHDRAWAL: withdraw(payment.getAmount()); break;
-			default: assert false;
+			if(payment.getType()==Transaction.Type.DEPOSIT){
+				deposit(payment.getAmount());
+			}
+		}
+		for(Transaction payment:repeatingPayments){
+			if(payment.getType()==Transaction.Type.WITHDRAWAL){
+				withdraw(payment.getAmount());
 			}
 		}
 	}

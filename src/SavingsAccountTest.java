@@ -3,8 +3,8 @@ import java.math.BigDecimal;
 
 public class SavingsAccountTest {
 
-	public static void main(String[] args) {
-		Account acc = new SavingsAccount(1);
+	public static void main(String[] args) throws OverdraftException {
+		Account acc = new SavingsAccount();
 		System.out.println(acc.getBalance());
 		acc.deposit(new BigDecimal(100.25));
 		System.out.println(acc.getBalance());
