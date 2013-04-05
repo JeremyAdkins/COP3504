@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component inheritJdk="true">
 	<exclude-output/>
-	<contentEntry url="file://$MODULE_DIR$"/>
+	<contentEntry url="file://$MODULE_DIR$">
+		<testFolder url="file://$MODULE_DIR$/test"/>
+	</contentEntry>
+	<lib name="hw1.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/lib/hw1.jar!/"/>
+	</lib>
+	<lib name="xstream-1.4.4.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/lib/xstream-1.4.4.jar!/"/>
+	</lib>
 	<levels>
 		<level name="lib" value="project"/>
 	</levels>

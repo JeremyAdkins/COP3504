@@ -1,23 +1,22 @@
 import java.math.BigDecimal;
-import java.util.Map;
 
 
 public class PaymentSchedule {
-	private BigDecimal savingsInterest;
-	private BigDecimal savingsCharge;
-	private BigDecimal savingsThreshold;
+	private BigDecimal savingsInterest = new BigDecimal(0.02);
+	private BigDecimal savingsCharge = new BigDecimal(5);
+	private BigDecimal savingsThreshold = new BigDecimal(1000);
 //	private Map<CdTerm, BigDecimal> cdInterest;
-	private BigDecimal cdMinimum;
-	private BigDecimal checkingCharge;
-	private BigDecimal checkingThreshold;
-	private BigDecimal overdraftLimit;
-	private BigDecimal overdraftFee;
-	private BigDecimal loanInterest;
-	private BigDecimal loanPenalty;
-	private BigDecimal locInterest;
-	private BigDecimal locFixedPayment;
-	private BigDecimal locPercentPayment;
-	private BigDecimal locPenalty;
+	private BigDecimal cdMinimum = new BigDecimal(500);
+	private BigDecimal checkingCharge = new BigDecimal(8);
+	private BigDecimal checkingThreshold = new BigDecimal(2000);
+	private BigDecimal overdraftLimit = new BigDecimal(50);
+	private BigDecimal overdraftFee = new BigDecimal(40);
+	private BigDecimal loanInterest = new BigDecimal(0.05);
+	private BigDecimal loanPenalty = new BigDecimal(20);
+	private BigDecimal locInterest = new BigDecimal(0.05);
+	private BigDecimal locFixedPayment = new BigDecimal(50);
+	private BigDecimal locPercentPayment = new BigDecimal(0.02);
+	private BigDecimal locPenalty = new BigDecimal(20);
 	
 	public BigDecimal getSavingsInterest() {
 		return savingsInterest;
