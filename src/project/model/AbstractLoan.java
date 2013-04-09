@@ -18,9 +18,7 @@ public abstract class AbstractLoan extends Account {
         BigDecimal newBalance = getBalance().add(amount);
 		if (newBalance.compareTo(BigDecimal.ZERO) > 0){
 			throw new IllegalArgumentException("Overpaying what you owe");
-		} else if (newBalance.compareTo(BigDecimal.ZERO) == 0) {
-            close();
-        }
+		}
 		depositsToDate = depositsToDate.add(amount);
 		return super.deposit(amount);
 	}

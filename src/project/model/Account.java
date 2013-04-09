@@ -33,8 +33,10 @@ public abstract class Account {
 	}
 
 	public final void close() {
+        if (getBalance().compareTo(BigDecimal.ZERO) != 0) {
+            throw new IllegalStateException("cannot close account with nonzero balance");
+        }
 		closed = true;
-		//TODO PAYMENT SCHEDULE/FRAUDENT CLOSES?
 	}
 
 	public final BigDecimal getBalance() {

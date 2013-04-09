@@ -47,14 +47,15 @@ public class CertificateOfDeposit extends Account {
         }
         if (newBalance.compareTo(BigDecimal.ZERO) < 0) {
             throw new OverdraftException();//TODO Do we want to use an OverdraftException, or something tailored for the CoD class?
-        } else if (newBalance.compareTo(BigDecimal.ZERO) == 0) {
-            close();
         }
 		return super.withdraw(amount);
 	}
 
     @Override
     protected void doPayments() throws OverdraftException {
+        if (getBalance().compareTo(BigDecimal.ZERO) == 0) {
+            close();
+        }
         super.doPayments();
         monthsElapsed += 1;
     }

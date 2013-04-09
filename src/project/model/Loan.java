@@ -18,6 +18,14 @@ public class Loan extends AbstractLoan{
 	public Transaction withdraw(BigDecimal amount) throws OverdraftException{
 		throw new UnsupportedOperationException();
 	}
+
+    @Override
+    protected void doPayments() throws OverdraftException {
+        if (getBalance().compareTo(BigDecimal.ZERO) == 0) {
+            close();
+        }
+        super.doPayments();
+    }
 	
 	protected BigDecimal getMinimumPayment(){
 		return minimumPayment;
