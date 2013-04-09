@@ -34,9 +34,14 @@ public class CertificateOfDeposit extends Account {
 	public Transaction withdraw(BigDecimal amount) throws OverdraftException
 	{
 		BigDecimal fee = getInterestRate().divide(new BigDecimal(2),4,RoundingMode.HALF_EVEN).multiply(getBalance());
-		super.applyFee(fee);
-
-        BigDecimal newBalance = getBalance().subtract(amount);
+		BigDecimal newBalance = getBalance().subtract(amount).subtract(fee);
+        if (monthsElapsed < term.getLength()) {
+            // minimum balances apply, check for them
+            BigDecimal minimumBalance = Bank.getInstance().getPaymentSchedule().getCdMinimum();
+            if (newBalance.compareTo(minimumBalance) < 0) {
+                throw new IllegalArgumentException("cannot withdraw to below minimum balance; note that the penalty is " + fee);
+            }
+        }
         if (newBalance.compareTo(BigDecimal.ZERO) < 0) {
             throw new OverdraftException();//TODO Do we want to use an OverdraftException, or something tailored for the CoD class?
         } else if (newBalance.compareTo(BigDecimal.ZERO) == 0) {
