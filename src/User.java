@@ -3,25 +3,40 @@ import hw1.DateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+public final class User {
+	private final String firstName;
 
-public class User {
-	String firstName;
-	String lastName;
-	DateTime birthdate;
-	int ssn;
-	String email;
-	Set<Account> accounts;
-	EmployeeRole role;
+	private final String lastName;
+
+	private final DateTime birthdate;
+
+	private final int ssn;
+
+	private final String email;
+
+	private final Set<Account> accounts;
+
+	private Role role;
 	
-	public enum EmployeeRole{
+	public static enum Role {
 		TELLER, ACCOUNT_MANAGER, ACCOUNTANT, AUDITOR, OPERATIONS_MANAGER;
 	}
 
-	public EmployeeRole getRole() {
+    public User(String firstName, String lastName, DateTime birthdate, int ssn, String email) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthdate = birthdate;
+        this.ssn = ssn;
+        this.email = email;
+        this.accounts = new HashSet<Account>();
+        this.role = null;
+    }
+
+	public Role getRole() {
 		return role;
 	}
 
-	public void setRole(EmployeeRole role) {
+	public void setRole(Role role) {
 		this.role = role;
 	}
 
@@ -49,13 +64,13 @@ public class User {
 		return new HashSet<Account>(accounts);
 	}
 	
-	public void addAccount(Account account){
+	public void addAccount(Account account) {
 		accounts.add(account);
 	}
 	
 	public boolean isActiveCustomer(){
-		for(Account account:accounts){
-			if(!account.isClosed()){
+		for (Account account : accounts) {
+			if (!account.isClosed()) {
 				return true;
 			}
 		}
@@ -63,6 +78,6 @@ public class User {
 	}
 	
 	public void sendEmail(String subject, String body){
-		//WORRY ABOUT THIS LATER
+		// TODO WORRY ABOUT THIS LATER
 	}
 }
