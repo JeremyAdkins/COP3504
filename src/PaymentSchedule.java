@@ -1,11 +1,12 @@
 import java.math.BigDecimal;
+import java.util.Map;
 
-
-public class PaymentSchedule {
+// TODO some of these have constraints to check, like positive numbers
+public final class PaymentSchedule {
 	private BigDecimal savingsInterest = new BigDecimal(0.02);
 	private BigDecimal savingsCharge = new BigDecimal(5);
 	private BigDecimal savingsThreshold = new BigDecimal(1000);
-//	private Map<CdTerm, BigDecimal> cdInterest;
+	private Map<CdTerm, BigDecimal> cdInterest;
 	private BigDecimal cdMinimum = new BigDecimal(500);
 	private BigDecimal checkingCharge = new BigDecimal(8);
 	private BigDecimal checkingThreshold = new BigDecimal(2000);
@@ -36,12 +37,12 @@ public class PaymentSchedule {
 	public void setSavingsThreshold(BigDecimal savingsThreshold) {
 		this.savingsThreshold = savingsThreshold;
 	}
-//	public Map<CdTerm, BigDecimal> getCdInterest(CdTerm term) {
-//		return cdInterest.get(term);
-//	}
-//	public void setCdInterest(CdTerm term, BigDecimal cdInterest) {
-//		this.cdInterest.put(term,cdInterest);
-//	}
+	public BigDecimal getCdInterest(CdTerm term) {
+		return cdInterest.get(term);
+	}
+	public void setCdInterest(CdTerm term, BigDecimal cdInterest) {
+		this.cdInterest.put(term,cdInterest);
+	}
 	public BigDecimal getCdMinimum() {
 		return cdMinimum;
 	}
