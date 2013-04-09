@@ -6,6 +6,18 @@ public class CertificateOfDeposit extends Account {
 
     private int monthsElapsed;
 
+    public CertificateOfDeposit(CdTerm term, BigDecimal amount) {
+        this.term = term;
+        this.monthsElapsed = 0;
+
+        BigDecimal minimumAmount = Bank.getInstance().getPaymentSchedule().getCdMinimum();
+        if (minimumAmount.compareTo(amount) > 0) {
+            throw new IllegalArgumentException();
+        } else {
+            super.applyTransaction(amount, Transaction.Type.DEPOSIT);
+        }
+    }
+
 	public CdTerm getTerm() {
 		return term;
 	}
@@ -13,6 +25,11 @@ public class CertificateOfDeposit extends Account {
 	public int getMonthsElapsed() {
 		return monthsElapsed;
 	}
+
+    @Override
+    public Transaction deposit(BigDecimal amount) {
+        throw new UnsupportedOperationException();
+    }
 
 	public Transaction withdraw(BigDecimal amount) throws OverdraftException
 	{
