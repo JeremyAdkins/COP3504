@@ -51,6 +51,12 @@ public abstract class Account {
 	}
 
 	protected Transaction applyTransaction(BigDecimal amount, Transaction.Type type) {
+        if (closed) {
+            throw new IllegalStateException();
+        } else if (amount.compareTo(BigDecimal.ZERO) == 0) {
+            return null;
+        }
+
 		if (type.isPositive()) {
             balance = balance.add(amount);
         } else {
