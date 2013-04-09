@@ -1,3 +1,6 @@
+package project.model;
+
+
 public enum CdTerm {
     SIX_MONTHS(6), ONE_YEAR(12), TWO_YEARS(24), THREE_YEARS(36), FOUR_YEARS(48), FIVE_YEARS(60);
 

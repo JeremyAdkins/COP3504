@@ -1,3 +1,5 @@
+package project.model;
+
 import java.math.BigDecimal;
 
 

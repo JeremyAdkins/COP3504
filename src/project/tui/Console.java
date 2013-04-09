@@ -1,6 +1,10 @@
+package project.tui;
+
 
 import java.math.BigDecimal;
 import java.util.Scanner;
+
+import project.model.OverdraftException;
 
 
 public class Console {
