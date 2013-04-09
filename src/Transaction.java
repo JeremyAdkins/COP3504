@@ -12,7 +12,17 @@ public final class Transaction {
     private FraudStatus fraudStatus;
 
     public static enum Type {
-        DEPOSIT, INTEREST, WITHDRAWAL, FEE, CREATION;
+        DEPOSIT(true), INTEREST(true), WITHDRAWAL(false), FEE(false);
+
+        private final boolean positive;
+
+        private Type(boolean positive) {
+            this.positive = positive;
+        }
+
+        public boolean isPositive() {
+            return positive;
+        }
     }
 
     public static enum FraudStatus {
