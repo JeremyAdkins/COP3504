@@ -4,11 +4,25 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public final class CertificateOfDeposit extends Account {
-    private final CdTerm term;
+    public static enum Term {
+        SIX_MONTHS(6), ONE_YEAR(12), TWO_YEARS(24), THREE_YEARS(36), FOUR_YEARS(48), FIVE_YEARS(60);
+
+        private final int length;
+
+        private Term(int length) {
+            this.length = length;
+        }
+
+        public int getLength() {
+            return length;
+        }
+    }
+
+    private final Term term;
 
     private int monthsElapsed;
 
-    public CertificateOfDeposit(CdTerm term, BigDecimal amount) {
+    public CertificateOfDeposit(Term term, BigDecimal amount) {
         this.term = term;
         this.monthsElapsed = 0;
 
@@ -20,7 +34,7 @@ public final class CertificateOfDeposit extends Account {
         }
     }
 
-	public CdTerm getTerm() {
+	public Term getTerm() {
 		return term;
 	}
 	

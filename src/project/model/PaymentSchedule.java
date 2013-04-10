@@ -12,7 +12,7 @@ final class PaymentSchedule {
 
 	private BigDecimal savingsThreshold = new BigDecimal(1000);
 
-	private final Map<CdTerm, BigDecimal> cdInterest;
+	private final Map<CertificateOfDeposit.Term, BigDecimal> cdInterest;
 
 	private BigDecimal cdMinimum = new BigDecimal(500);
 
@@ -37,7 +37,7 @@ final class PaymentSchedule {
 	private BigDecimal locPenalty = new BigDecimal(20);
 
     PaymentSchedule() {
-        cdInterest = new HashMap<CdTerm, BigDecimal>();
+        cdInterest = new HashMap<CertificateOfDeposit.Term, BigDecimal>();
     }
 	
 	public BigDecimal getSavingsInterest() {
@@ -64,11 +64,11 @@ final class PaymentSchedule {
 		this.savingsThreshold = savingsThreshold;
 	}
 
-	public BigDecimal getCdInterest(CdTerm term) {
+	public BigDecimal getCdInterest(CertificateOfDeposit.Term term) {
 		return cdInterest.get(term);
 	}
 
-	public void setCdInterest(CdTerm term, BigDecimal cdInterest) {
+	public void setCdInterest(CertificateOfDeposit.Term term, BigDecimal cdInterest) {
 		this.cdInterest.put(term,cdInterest);
 	}
 
