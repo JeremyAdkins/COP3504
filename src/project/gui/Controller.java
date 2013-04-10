@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class Controller {
    
-    public static void main(String[] args) throws OverdraftException {
+    public static void main(String[] args) throws InsufficientFundsException, OverdraftException {
         setLookAndFeel();        
         initializeBank();
         newLoginWindow();
@@ -64,7 +64,7 @@ public class Controller {
         });
     }
     
-    private static void initializeBank() throws OverdraftException{
+    private static void initializeBank() throws InsufficientFundsException, OverdraftException {
         Bank.getInstance().addUser("Bob", new User());
         Account acc = new SavingsAccount();
 		System.out.println(acc.getBalance());

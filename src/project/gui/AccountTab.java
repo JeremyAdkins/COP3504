@@ -5,6 +5,7 @@
 package project.gui;
 
 import project.model.Account;
+import project.model.InsufficientFundsException;
 import project.model.OverdraftException;
 import project.model.Transaction;
 
@@ -257,6 +258,7 @@ public class AccountTab extends javax.swing.JPanel {
         WithdrawDialog.dispose();
         try {
             account.withdraw(new BigDecimal(Double.parseDouble(WithdrawAmountField.getText())));
+        } catch (InsufficientFundsException e) { // TODO added this line to make it compile, but this really makes me worried about exception handling
         } catch (OverdraftException e) {}
     }//GEN-LAST:event_WithdrawDialogButtonActionPerformed
 
