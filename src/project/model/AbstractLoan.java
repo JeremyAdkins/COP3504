@@ -29,7 +29,7 @@ public abstract class AbstractLoan extends Account {
 	}
 	
 	@Override
-	protected final BigDecimal getInterestRate() {
+	public final BigDecimal getInterestRate() {
 		return getBaseInterest().add(interestPremium);
 	}
 	

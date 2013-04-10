@@ -23,7 +23,7 @@ public class AccountHolderFrame extends javax.swing.JFrame {
         List<Account> accounts = new ArrayList<Account>();
         for(AccountTab accTab : accountTabs){
             Account account = accTab.getAccount();
-            AccountHolderTabs.add(account.getAccountType().toString()+"("+account.getAccountNumber()+")", accTab);
+            AccountHolderTabs.add(account.toString(), accTab);
             accounts.add(account);
         }
         buildAccountTable(accounts);
@@ -33,7 +33,7 @@ public class AccountHolderFrame extends javax.swing.JFrame {
         Object[][] accountTable = new Object[accounts.size()][3];
         int i = 0;
         for(Account account : accounts){
-            accountTable[i][0] = account.getAccountType();
+            accountTable[i][0] = account.getType();
             accountTable[i][1] = account.getAccountNumber();
             accountTable[i][2] = account.getBalance();
             i++;

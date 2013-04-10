@@ -14,6 +14,11 @@ public final class LineOfCredit extends AbstractLoan {
         Bank.getInstance().authorizeLoan(creditLimit.negate());
         this.creditLimit = creditLimit;
 	}
+
+    @Override
+    public Type getType() {
+        return Type.LINE_OF_CREDIT;
+    }
 	
 	@Override
 	public void close() {

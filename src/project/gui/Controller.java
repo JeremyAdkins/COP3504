@@ -4,6 +4,7 @@
  */
 package project.gui;
 
+import hw1.DateTime;
 import project.model.*;
 
 import java.awt.*;
@@ -65,7 +66,7 @@ public class Controller {
     }
     
     private static void initializeBank() throws InsufficientFundsException, OverdraftException {
-        Bank.getInstance().addUser("Bob", new User());
+        Bank.getInstance().addUser("Bob", new User("Bob", "Smith", new DateTime(1990, 1, 1, 0, 0, 0), 123456789, "bob@bob.com"));
         Account acc = new SavingsAccount();
 		System.out.println(acc.getBalance());
 		acc.deposit(new BigDecimal(100.25));
@@ -74,7 +75,7 @@ public class Controller {
 		System.out.println(acc.getBalance());
 		//acc.doPayments();
 		System.out.println(acc.getBalance());
-                System.out.println(acc.getAccountType());
+                System.out.println(acc.getType());
         Bank.getInstance().getUser("Bob").addAccount(acc);
     }
     
@@ -85,15 +86,15 @@ public class Controller {
             public void run() {
                 List<AccountTab> accounts = new ArrayList<AccountTab>();
                 for(Account acc : user.getAccounts()){
-                    Account.Type accType = acc.getAccountType();
+                    Account.Type accType = acc.getType();
                     switch(accType){
-                        case SAVINGS_ACCOUNT:
-                        case CHECKING_ACCOUNT:
-                        case CD_ACCOUNT:
+                        case SAVINGS:
+                        case CHECKING:
+                        case CD:
                             accounts.add(newAccountTab(acc));
                             break;
-                        case LOAN_ACCOUNT:
-                        case LOC_ACCOUNT:
+                        case LOAN:
+                        case LINE_OF_CREDIT:
                             //TODO
                             break;
                         default: assert false;
