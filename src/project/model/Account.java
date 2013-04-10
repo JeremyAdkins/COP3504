@@ -45,7 +45,7 @@ public abstract class Account {
      * @throws IllegalStateException if the balance is nonzero
      * @see #isClosed()
      */
-	public final void close() {
+	public void close() {
         if (getBalance().round(Bank.MATH_CONTEXT).compareTo(BigDecimal.ZERO) != 0) {
             throw new IllegalStateException("cannot close account with nonzero balance");
         }

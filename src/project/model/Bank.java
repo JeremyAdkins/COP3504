@@ -95,6 +95,10 @@ public final class Bank {
         }
         loanCap = loanCap.subtract(loanAmount);
     }
+
+    void returnLoan(BigDecimal returnedAmount) {
+        loanCap = loanCap.add(returnedAmount);
+    }
 	
 	public DateTime getEffectiveTime() {
         // TODO did we ever figure out how this was going to work?

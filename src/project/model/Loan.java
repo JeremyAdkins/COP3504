@@ -5,22 +5,20 @@ import java.math.BigDecimal;
 public final class Loan extends AbstractLoan{
 	private final BigDecimal minimumPayment; // required to be paid by the end of the month
 	
-	public Loan(BigDecimal amount, BigDecimal minimumPayment, BigDecimal interestPremium) {
+	public Loan(BigDecimal amount, BigDecimal minimumPayment, BigDecimal interestPremium) throws LoanCapException {
 		// TODO possibly calculate minimumPayment ourselves
 		super(interestPremium);
+        Bank.getInstance().authorizeLoan(amount);
 		applyTransaction(amount, Transaction.Type.WITHDRAWAL);
-		Bank.getInstance().setLoanCap(Bank.getInstance().getLoanCap().subtract(amount));
 		this.minimumPayment = minimumPayment;
 	}
 	
 	@Override
-	public Transaction deposit(BigDecimal amount){
-		if (getBalance().add(amount).compareTo(BigDecimal.ZERO) > 0){
-			throw new IllegalArgumentException("Overpaying what you owe");
-		}
-		depositsToDate = depositsToDate.add(amount);
-		Bank.getInstance().setLoanCap(Bank.getInstance().getLoanCap().add(amount));
-		return super.deposit(amount);
+	public Transaction deposit(BigDecimal amount) {
+        // call super before altering loanCap, in case there's an exception
+        Transaction trans = super.deposit(amount);
+        Bank.getInstance().returnLoan(amount);
+        return trans;
 	}
 	
 	@Override
@@ -55,5 +53,4 @@ public final class Loan extends AbstractLoan{
 	protected BigDecimal getPenalty() {
 		return Bank.getInstance().getPaymentSchedule().getLoanPenalty();
 	}
-	
 }

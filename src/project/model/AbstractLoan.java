@@ -11,8 +11,18 @@ public abstract class AbstractLoan extends Account {
 		this.interestPremium = interestPremium;
 		this.depositsToDate = BigDecimal.ZERO;
 	}
-	
-	@Override
+
+    @Override
+    public Transaction deposit(BigDecimal amount) {
+        BigDecimal newBalance = getBalance().add(amount);
+        if (newBalance.compareTo(BigDecimal.ZERO) > 0) {
+            throw new IllegalArgumentException("Overpaying what you owe");
+        }
+        depositsToDate = depositsToDate.add(amount);
+        return super.deposit(amount);
+    }
+
+    @Override
 	protected void doPayments() throws InsufficientFundsException, OverdraftException {
 		super.doPayments();
 		depositsToDate = BigDecimal.ZERO;

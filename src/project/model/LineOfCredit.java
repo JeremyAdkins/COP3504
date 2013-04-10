@@ -3,17 +3,21 @@ package project.model;
 import java.math.BigDecimal;
 
 public final class LineOfCredit extends AbstractLoan {
+    /**
+     * The maximum magnitude of the balance of this account, stored as a negative number.
+     * TODO: enforce the sign to avoid problems
+     */
 	private BigDecimal creditLimit;
 	
-	public LineOfCredit(BigDecimal creditLimit, BigDecimal interestPremium) {
+	public LineOfCredit(BigDecimal creditLimit, BigDecimal interestPremium) throws LoanCapException {
 		super(interestPremium);
-		this.creditLimit = creditLimit;
-		Bank.getInstance().setLoanCap(Bank.getInstance().getLoanCap().add(creditLimit));
+        Bank.getInstance().authorizeLoan(creditLimit.negate());
+        this.creditLimit = creditLimit;
 	}
 	
 	@Override
-	public void close(){
-		Bank.getInstance().setLoanCap(Bank.getInstance().getLoanCap().subtract(creditLimit));
+	public void close() {
+        Bank.getInstance().returnLoan(creditLimit.negate());
 	}
 	
 	@Override
@@ -25,21 +29,20 @@ public final class LineOfCredit extends AbstractLoan {
 		}
 	}
 	
-	public Transaction deposit(BigDecimal amount){
-		if (getBalance().add(amount).compareTo(BigDecimal.ZERO) > 0){
-			throw new IllegalArgumentException("Overpaying what you owe");
-		}
-		depositsToDate = depositsToDate.add(amount);
-		return super.deposit(amount);
-	}
-	
 	@Override
 	public BigDecimal getCreditLimit() {
 		return creditLimit;
 	}
 
-    public void setCreditLimit(BigDecimal creditLimit) {
-        this.creditLimit = creditLimit;
+    public void setCreditLimit(BigDecimal creditLimit) throws InsufficientFundsException, LoanCapException {
+        if (getBalance().compareTo(creditLimit) < 0) {
+            // TODO maybe this should be a different exception type?
+            throw new InsufficientFundsException("current balance exceeds the new credit limit");
+        } else if (this.creditLimit.compareTo(creditLimit) < 0) {
+            Bank.getInstance().returnLoan(this.creditLimit.subtract(creditLimit).negate());
+        } else {
+            Bank.getInstance().authorizeLoan(creditLimit.subtract(this.creditLimit).negate());
+        }
     }
 	
 	@Override
