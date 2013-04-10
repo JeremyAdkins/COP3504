@@ -8,6 +8,9 @@ public abstract class AbstractLoan extends Account {
 	private BigDecimal depositsToDate;
 	
 	protected AbstractLoan(BigDecimal interestPremium) {
+        if (interestPremium.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("interest premium must be positive");
+        }
 		this.interestPremium = interestPremium;
 		this.depositsToDate = BigDecimal.ZERO;
 	}
