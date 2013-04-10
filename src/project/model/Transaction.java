@@ -1,6 +1,5 @@
 package project.model;
 
-
 import hw1.DateTime;
 
 import java.math.BigDecimal;

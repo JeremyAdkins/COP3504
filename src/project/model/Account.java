@@ -60,7 +60,7 @@ public abstract class Account {
 		return balance;
 	}
 
-	public Transaction deposit(BigDecimal amount) {//CHECK IF ACCOUNT CLOSED
+	public Transaction deposit(BigDecimal amount) {
 		return applyTransaction(amount, Transaction.Type.DEPOSIT);
 	}
 

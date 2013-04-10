@@ -1,11 +1,10 @@
 package project.model;
 
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-public class CertificateOfDeposit extends Account {
-    private CdTerm term;
+public final class CertificateOfDeposit extends Account {
+    private final CdTerm term;
 
     private int monthsElapsed;
 
@@ -34,9 +33,8 @@ public class CertificateOfDeposit extends Account {
         throw new UnsupportedOperationException();
     }
 
-	public Transaction withdraw(BigDecimal amount) throws OverdraftException
-	{
-		BigDecimal fee = getInterestRate().divide(new BigDecimal(2),4,RoundingMode.HALF_EVEN).multiply(getBalance());
+	public Transaction withdraw(BigDecimal amount) throws OverdraftException {
+		BigDecimal fee = getInterestRate().divide(new BigDecimal(2), 4, RoundingMode.HALF_EVEN).multiply(getBalance());
 		BigDecimal newBalance = getBalance().subtract(amount).subtract(fee);
         if (monthsElapsed < term.getLength()) {
             // minimum balances apply, check for them
@@ -46,7 +44,8 @@ public class CertificateOfDeposit extends Account {
             }
         }
         if (newBalance.compareTo(BigDecimal.ZERO) < 0) {
-            throw new OverdraftException();//TODO Do we want to use an OverdraftException, or something tailored for the CoD class?
+            // TODO Do we want to use an OverdraftException, or something tailored for the CoD class?
+            throw new OverdraftException();
         }
 		return super.withdraw(amount);
 	}
@@ -60,8 +59,7 @@ public class CertificateOfDeposit extends Account {
         monthsElapsed += 1;
     }
 	
-	public BigDecimal getInterestRate()
-	{	
+	public BigDecimal getInterestRate() {
 		if (monthsElapsed < term.getLength()) {
             return Bank.getInstance().getPaymentSchedule().getCdInterest(term);
         } else {
@@ -69,13 +67,11 @@ public class CertificateOfDeposit extends Account {
         }
 	}
 	
-	public BigDecimal getMonthlyCharge()
-	{
+	public BigDecimal getMonthlyCharge() {
 		return BigDecimal.ZERO; 
 	}
 	
-	public BigDecimal getThreshold()
-	{
+	public BigDecimal getThreshold() {
 		return BigDecimal.ZERO; 
 	}
 }

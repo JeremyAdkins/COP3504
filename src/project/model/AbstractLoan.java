@@ -1,12 +1,11 @@
 package project.model;
 
-
 import java.math.BigDecimal;
 
-
 public abstract class AbstractLoan extends Account {
-	BigDecimal interestPremium;
-	BigDecimal depositsToDate;
+	private BigDecimal interestPremium;
+
+	private BigDecimal depositsToDate;
 	
 	protected AbstractLoan(BigDecimal interestPremium) {
 		this.interestPremium = interestPremium;
@@ -14,9 +13,9 @@ public abstract class AbstractLoan extends Account {
 	}
 	
 	@Override
-	public Transaction deposit(BigDecimal amount){
+	public final Transaction deposit(BigDecimal amount) {
         BigDecimal newBalance = getBalance().add(amount);
-		if (newBalance.compareTo(BigDecimal.ZERO) > 0){
+		if (newBalance.compareTo(BigDecimal.ZERO) > 0) {
 			throw new IllegalArgumentException("Overpaying what you owe");
 		}
 		depositsToDate = depositsToDate.add(amount);
@@ -30,20 +29,20 @@ public abstract class AbstractLoan extends Account {
 	}
 	
 	@Override
-	protected BigDecimal getInterestRate() {
+	protected final BigDecimal getInterestRate() {
 		return getBaseInterest().add(interestPremium);
 	}
 	
-	public BigDecimal getInterestPremium(){
+	public final BigDecimal getInterestPremium() {
 		return this.interestPremium;
 	}
 	
-	public void setInterestPremium(BigDecimal interestPremium){
+	public final void setInterestPremium(BigDecimal interestPremium) {
 		this.interestPremium = interestPremium;
 	}
 	
 	@Override
-	protected BigDecimal getMonthlyCharge(){
+	protected final BigDecimal getMonthlyCharge() {
 		BigDecimal minimumPayment = getMinimumPayment();
 		if (minimumPayment.compareTo(depositsToDate.negate()) < 0) {
 			return getPenalty();
@@ -53,13 +52,15 @@ public abstract class AbstractLoan extends Account {
 	}
 
 	@Override
-	protected BigDecimal getThreshold() {
+	protected final BigDecimal getThreshold() {
 		return BigDecimal.ZERO;
 	}
 	
 	protected abstract BigDecimal getBaseInterest();
+
 	protected abstract BigDecimal getCreditLimit();
+
 	protected abstract BigDecimal getMinimumPayment();
+
 	protected abstract BigDecimal getPenalty();
-	
 }

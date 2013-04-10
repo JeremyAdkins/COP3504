@@ -1,6 +1,5 @@
 package project.model;
 
-
 import hw1.DateTime;
 
 import java.util.HashSet;
@@ -71,7 +70,7 @@ public final class User {
 		accounts.add(account);
 	}
 	
-	public boolean isActiveCustomer(){
+	public boolean isActiveCustomer() {
 		for (Account account : accounts) {
 			if (!account.isClosed()) {
 				return true;

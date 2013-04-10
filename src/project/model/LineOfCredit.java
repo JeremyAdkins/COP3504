@@ -1,11 +1,9 @@
 package project.model;
 
-
 import java.math.BigDecimal;
 
-
-public class LineOfCredit extends AbstractLoan{
-	BigDecimal creditLimit;
+public final class LineOfCredit extends AbstractLoan {
+	private BigDecimal creditLimit;
 	
 	public LineOfCredit(BigDecimal creditLimit, BigDecimal interestPremium) {
 		super(interestPremium);
@@ -13,22 +11,22 @@ public class LineOfCredit extends AbstractLoan{
 	}
 	
 	@Override
-	public Transaction withdraw(BigDecimal amount) throws OverdraftException{//ONE TIME WITHDRAW FOR LOAN
+	public Transaction withdraw(BigDecimal amount) throws OverdraftException {
 		if (getBalance().subtract(amount).compareTo(getCreditLimit()) >= 0) {
 			return super.withdraw(amount);
 		} else {
 			throw new OverdraftException();
 		}
 	}
-	
-	public void setCreditLimit(BigDecimal creditLimit){
-		this.creditLimit = creditLimit;
-	}
-	
+
 	@Override
 	public BigDecimal getCreditLimit(){
 		return creditLimit;
 	}
+
+    public void setCreditLimit(BigDecimal creditLimit){
+        this.creditLimit = creditLimit;
+    }
 	
 	@Override
 	protected BigDecimal getBaseInterest() {

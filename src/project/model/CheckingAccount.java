@@ -1,11 +1,9 @@
 package project.model;
 
-
 import java.math.BigDecimal;
 
-public class CheckingAccount extends Account {
-	
-	@Override
+public final class CheckingAccount extends Account {
+    @Override
 	public Transaction withdraw(BigDecimal amount) throws OverdraftException {
 		BigDecimal overdraftLimit = Bank.getInstance().getPaymentSchedule()
 				.getOverdraftLimit();

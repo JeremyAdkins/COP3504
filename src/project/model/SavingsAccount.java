@@ -1,17 +1,16 @@
 package project.model;
 
-
 import java.math.BigDecimal;
 
-
-public class SavingsAccount extends Account{
-
+public final class SavingsAccount extends Account{
 	@Override
 	public Transaction withdraw(BigDecimal amount) throws OverdraftException {
-		if(getBalance().compareTo(amount)>=0){
+		if (getBalance().compareTo(amount)>=0) {
 			return super.withdraw(amount);
-		}
-		else{return null;}//TODO FLAG EXCEPTION
+		} else {
+            // TODO should be an exception
+            return null;
+        }
 	}
 	
 	@Override
@@ -28,5 +27,4 @@ public class SavingsAccount extends Account{
 	protected BigDecimal getThreshold() {
 		return Bank.getInstance().getPaymentSchedule().getSavingsThreshold();
 	}
-
 }
