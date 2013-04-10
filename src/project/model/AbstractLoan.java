@@ -7,26 +7,26 @@ public abstract class AbstractLoan extends Account {
 
 	private BigDecimal depositsToDate;
 	
-	protected AbstractLoan(BigDecimal interestPremium) {
+	protected AbstractLoan(BigDecimal interestPremium) throws InvalidInputException {
         if (interestPremium.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("interest premium must be positive");
+            throw new InvalidInputException(interestPremium, "interestPremium must be non-negative");
         }
 		this.interestPremium = interestPremium;
 		this.depositsToDate = BigDecimal.ZERO;
 	}
 
     @Override
-    public Transaction deposit(BigDecimal amount) {
+    public Transaction deposit(BigDecimal amount) throws InvalidInputException {
         BigDecimal newBalance = getBalance().add(amount);
         if (newBalance.compareTo(BigDecimal.ZERO) > 0) {
-            throw new IllegalArgumentException("Overpaying what you owe");
+            throw new InvalidInputException(amount, String.format("cannot repay more than the current balance of %.2f", getBalance()));
         }
         depositsToDate = depositsToDate.add(amount);
         return super.deposit(amount);
     }
 
     @Override
-	protected void doPayments() throws InsufficientFundsException, OverdraftException {
+	protected void doPayments() throws InvalidInputException, InsufficientFundsException, OverdraftException {
 		super.doPayments();
 		depositsToDate = BigDecimal.ZERO;
 	}

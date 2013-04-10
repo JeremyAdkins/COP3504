@@ -81,15 +81,15 @@ public abstract class Account {
 		return balance;
 	}
 
-	public Transaction deposit(BigDecimal amount) {
+	public Transaction deposit(BigDecimal amount) throws InvalidInputException {
 		return applyTransaction(amount, Transaction.Type.DEPOSIT);
 	}
 
-	public Transaction withdraw(BigDecimal amount) throws InsufficientFundsException, OverdraftException {
+	public Transaction withdraw(BigDecimal amount) throws InvalidInputException, InsufficientFundsException, OverdraftException {
 		return applyTransaction(amount, Transaction.Type.WITHDRAWAL);
 	}
 
-	public final Transaction applyFee(BigDecimal amount) {
+	public final Transaction applyFee(BigDecimal amount) throws InvalidInputException {
 		return applyTransaction(amount, Transaction.Type.FEE);
 	}
 
@@ -102,18 +102,18 @@ public abstract class Account {
      * @param type the type of the transaction
      * @return a {@code Transaction} object, already added to history, reflecting the change requested; or {@code null},
      *         if {@code amount} was zero
-     * @throws IllegalArgumentException if {@code amount} is negative
+     * @throws InvalidInputException if {@code amount} is negative
      * @throws IllegalStateException if the account is {@link #isClosed() closed}
      */
-	protected final Transaction applyTransaction(BigDecimal amount, Transaction.Type type) {
+	protected final Transaction applyTransaction(BigDecimal amount, Transaction.Type type) throws InvalidInputException {
         if (closed) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("cannot apply a transaction to a closed account");
         } else if (amount.round(Bank.MATH_CONTEXT).compareTo(BigDecimal.ZERO) == 0) {
             // if the amount is zero, we don't want to add anything to the transaction history
             return null;
         } else if (amount.compareTo(BigDecimal.ZERO) < 0) {
             // amounts should never be negative, it's worth having the check
-            throw new IllegalArgumentException("in applyTransaction, amount cannot be negative");
+            throw new InvalidInputException(amount, "the amount for a transaction must be positive");
         }
 
 		if (type.isPositive()) {
@@ -146,7 +146,7 @@ public abstract class Account {
 		repeatingPayments.remove(payment);
 	}
 
-	protected void doPayments() throws InsufficientFundsException, OverdraftException {
+	protected void doPayments() throws InvalidInputException, InsufficientFundsException, OverdraftException {
         // don't apply any payments to an account that's closed
         if (closed) {
             return;
