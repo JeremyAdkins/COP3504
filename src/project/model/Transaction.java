@@ -34,6 +34,7 @@ public final class Transaction {
 
     private final BigDecimal amount;
 
+    // TODO consider representing time here, and throughout the program, as an int for months elapsed
     private final DateTime timestamp;
 
     private FraudStatus fraudStatus;
