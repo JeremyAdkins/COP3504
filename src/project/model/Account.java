@@ -1,10 +1,7 @@
 package project.model;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public abstract class Account {
 	private final int accountNumber; // TODO where is this used?
@@ -49,7 +46,7 @@ public abstract class Account {
      * @see #isClosed()
      */
 	public final void close() {
-        if (getBalance().compareTo(BigDecimal.ZERO) != 0) {
+        if (getBalance().round(Bank.MATH_CONTEXT).compareTo(BigDecimal.ZERO) != 0) {
             throw new IllegalStateException("cannot close account with nonzero balance");
         }
 		closed = true;
@@ -71,11 +68,27 @@ public abstract class Account {
 		return applyTransaction(amount, Transaction.Type.FEE);
 	}
 
+    /**
+     * Constructs, applies, and returns a new {@link Transaction} of amount {@code amount} and type {@code type}. The
+     * provided amount must be non-negative; whether it is added or subtracted to the account balance is determined by
+     * the transaction type, specifically the {@link Transaction.Type#isPositive()} method.
+     *
+     * @param amount the monetary amount associated with the transaction
+     * @param type the type of the transaction
+     * @return a {@code Transaction} object, already added to history, reflecting the change requested; or {@code null},
+     *         if {@code amount} was zero
+     * @throws IllegalArgumentException if {@code amount} is negative
+     * @throws IllegalStateException if the account is {@link #isClosed() closed}
+     */
 	protected final Transaction applyTransaction(BigDecimal amount, Transaction.Type type) {
         if (closed) {
             throw new IllegalStateException();
-        } else if (amount.compareTo(BigDecimal.ZERO) == 0) {
+        } else if (amount.round(Bank.MATH_CONTEXT).compareTo(BigDecimal.ZERO) == 0) {
+            // if the amount is zero, we don't want to add anything to the transaction history
             return null;
+        } else if (amount.compareTo(BigDecimal.ZERO) < 0) {
+            // amounts should never be negative, it's worth having the check
+            throw new IllegalArgumentException("in applyTransaction, amount cannot be negative");
         }
 
 		if (type.isPositive()) {
@@ -89,11 +102,11 @@ public abstract class Account {
 	}
 
 	public final List<Transaction> getHistory() {
-		return new ArrayList<Transaction>(history);
+		return Collections.unmodifiableList(history);
 	}
 
 	public final Set<Transaction> getRepeatingPayments() {
-		return new HashSet<Transaction>(repeatingPayments);
+		return Collections.unmodifiableSet(repeatingPayments);
 	}
 
 	public final void addRepeatingPayment(Transaction payment) {

@@ -2,6 +2,7 @@ package project.model;
 
 import hw1.DateTime;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -63,7 +64,7 @@ public final class User {
 	}
 
 	public Set<Account> getAccounts() {
-		return new HashSet<Account>(accounts);
+		return Collections.unmodifiableSet(accounts);
 	}
 	
 	public void addAccount(Account account) {
