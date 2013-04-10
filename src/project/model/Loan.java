@@ -11,7 +11,18 @@ public class Loan extends AbstractLoan{
 		// TODO possibly calculate minimumPayment ourselves
 		super(interestPremium);
 		applyTransaction(amount, Transaction.Type.WITHDRAWAL);
+		Bank.getInstance().setLoanCap(Bank.getInstance().getLoanCap().subtract(amount));
 		this.minimumPayment = minimumPayment;
+	}
+	
+	@Override
+	public Transaction deposit(BigDecimal amount){
+		if (getBalance().add(amount).compareTo(BigDecimal.ZERO) > 0){
+			throw new IllegalArgumentException("Overpaying what you owe");
+		}
+		depositsToDate = depositsToDate.add(amount);
+		Bank.getInstance().setLoanCap(Bank.getInstance().getLoanCap().add(amount));
+		return super.deposit(amount);
 	}
 	
 	@Override
@@ -37,4 +48,5 @@ public class Loan extends AbstractLoan{
 	protected BigDecimal getPenalty() {
 		return Bank.getInstance().getPaymentSchedule().getLoanPenalty();
 	}
+	
 }

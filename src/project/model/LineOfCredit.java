@@ -10,6 +10,7 @@ public class LineOfCredit extends AbstractLoan{
 	public LineOfCredit(BigDecimal creditLimit, BigDecimal interestPremium) {
 		super(interestPremium);
 		this.creditLimit = creditLimit;
+		Bank.getInstance().setLoanCap(Bank.getInstance().getLoanCap().subtract(creditLimit));
 	}
 	
 	@Override
@@ -19,6 +20,14 @@ public class LineOfCredit extends AbstractLoan{
 		} else {
 			throw new OverdraftException();
 		}
+	}
+	
+	public Transaction deposit(BigDecimal amount){
+		if (getBalance().add(amount).compareTo(BigDecimal.ZERO) > 0){
+			throw new IllegalArgumentException("Overpaying what you owe");
+		}
+		depositsToDate = depositsToDate.add(amount);
+		return super.deposit(amount);
 	}
 	
 	public void setCreditLimit(BigDecimal creditLimit){

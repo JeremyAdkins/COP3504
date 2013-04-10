@@ -33,7 +33,12 @@ public abstract class Account {
 	}
 
 	public final void close() {
-		closed = true;
+		if(balance.equals(BigDecimal.ZERO)){
+			closed = true;
+		}
+		else{
+			throw new IllegalArgumentException("balance needs to be 0 to close");
+		}
 		//TODO PAYMENT SCHEDULE/FRAUDENT CLOSES?
 	}
 
