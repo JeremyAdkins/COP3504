@@ -10,6 +10,11 @@ public class LineOfCredit extends AbstractLoan{
 	public LineOfCredit(BigDecimal creditLimit, BigDecimal interestPremium) {
 		super(interestPremium);
 		this.creditLimit = creditLimit;
+		Bank.getInstance().setLoanCap(Bank.getInstance().getLoanCap().add(creditLimit));
+	}
+	
+	@Override
+	public void close(){
 		Bank.getInstance().setLoanCap(Bank.getInstance().getLoanCap().subtract(creditLimit));
 	}
 	
