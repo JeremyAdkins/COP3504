@@ -97,14 +97,11 @@ public abstract class Account {
 	}
 
 	public final void addRepeatingPayment(Transaction payment) {
-		switch (payment.getType()) {
-			case DEPOSIT:
-			case WITHDRAWAL:
-				repeatingPayments.add(payment);
-				break;
-			default:
-				throw new IllegalArgumentException("repeating payments can only be deposits or withdrawals");
-		}
+        if (payment.getType().canRepeat()) {
+            repeatingPayments.add(payment);
+        } else {
+            throw new IllegalArgumentException("repeating payments can only be deposits or withdrawals");
+        }
 	}
 
 	public final void removeRepeatingPayment(Transaction payment) {

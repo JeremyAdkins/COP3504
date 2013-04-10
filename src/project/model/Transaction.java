@@ -6,16 +6,23 @@ import java.math.BigDecimal;
 
 public final class Transaction {
     public static enum Type {
-        DEPOSIT(true), INTEREST(true), WITHDRAWAL(false), FEE(false);
+        DEPOSIT(true, true), INTEREST(true, false), WITHDRAWAL(false, true), FEE(false, false);
 
-        private final boolean positive;
+        private final boolean isPositive;
 
-        private Type(boolean positive) {
-            this.positive = positive;
+        private final boolean canRepeat;
+
+        private Type(boolean isPositive, boolean canRepeat) {
+            this.isPositive = isPositive;
+            this.canRepeat = canRepeat;
         }
 
         public boolean isPositive() {
-            return positive;
+            return isPositive;
+        }
+
+        public boolean canRepeat() {
+            return canRepeat;
         }
     }
 
