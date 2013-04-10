@@ -4,6 +4,11 @@ import java.math.BigDecimal;
 
 public final class CheckingAccount extends Account {
     @Override
+    public Type getType() {
+        return Type.CHECKING;
+    }
+
+    @Override
 	public Transaction withdraw(BigDecimal amount) throws InsufficientFundsException, OverdraftException {
 		BigDecimal overdraftLimit = Bank.getInstance().getPaymentSchedule()
 				.getOverdraftLimit();
@@ -16,7 +21,7 @@ public final class CheckingAccount extends Account {
 	}
 
 	@Override
-	protected BigDecimal getInterestRate() {
+	public BigDecimal getInterestRate() {
 		return BigDecimal.ZERO;
 	}
 

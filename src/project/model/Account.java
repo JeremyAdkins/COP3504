@@ -4,7 +4,26 @@ import java.math.BigDecimal;
 import java.util.*;
 
 public abstract class Account {
-	private final int accountNumber; // TODO where is this used?
+    /*
+     * Account types have logical meaning, because they are used for the accountant's summary statistics. There's no way
+     * to accomplish what this enum does through polymorphism alone.
+     */
+    public static enum Type {
+        SAVINGS("Savings"), CHECKING("Checking"), CD("CD"), LOAN("Loan"), LINE_OF_CREDIT("Line of credit");
+
+        private final String displayName;
+
+        private Type(String displayName) {
+            this.displayName = displayName;
+        }
+
+        @Override
+        public String toString() {
+            return displayName;
+        }
+    }
+
+	private final int accountNumber;
 
 	private boolean closed;
 
@@ -21,6 +40,12 @@ public abstract class Account {
 		this.history = new ArrayList<Transaction>();
 		this.repeatingPayments = new HashSet<Transaction>();
 	}
+
+    public abstract Type getType();
+
+    public final int getAccountNumber() {
+        return accountNumber;
+    }
 
     /**
      * Returns {@code true} if this account is closed, {@code false} otherwise. A closed account always has a balance of
@@ -149,9 +174,14 @@ public abstract class Account {
 		}
 	}
 
-	protected abstract BigDecimal getInterestRate();
+	public abstract BigDecimal getInterestRate();
 
 	protected abstract BigDecimal getMonthlyCharge();
 
 	protected abstract BigDecimal getThreshold();
+
+    @Override
+    public String toString() {
+        return String.format("%s (x%04d)", getType(), accountNumber % 10000);
+    }
 }

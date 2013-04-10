@@ -2,7 +2,12 @@ package project.model;
 
 import java.math.BigDecimal;
 
-public final class SavingsAccount extends Account{
+public final class SavingsAccount extends Account {
+    @Override
+    public Type getType() {
+        return Type.SAVINGS;
+    }
+
 	@Override
 	public Transaction withdraw(BigDecimal amount) throws InsufficientFundsException, OverdraftException {
 		if (getBalance().compareTo(amount) >= 0) {
@@ -13,7 +18,7 @@ public final class SavingsAccount extends Account{
 	}
 	
 	@Override
-	protected BigDecimal getInterestRate() {
+	public BigDecimal getInterestRate() {
 		return Bank.getInstance().getPaymentSchedule().getSavingsInterest();
 	}
 

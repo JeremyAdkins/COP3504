@@ -12,6 +12,11 @@ public final class Loan extends AbstractLoan{
 		applyTransaction(amount, Transaction.Type.WITHDRAWAL);
 		this.minimumPayment = minimumPayment;
 	}
+
+    @Override
+    public Type getType() {
+        return Type.LOAN;
+    }
 	
 	@Override
 	public Transaction deposit(BigDecimal amount) {

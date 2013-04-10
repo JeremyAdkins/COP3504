@@ -33,6 +33,11 @@ public final class CertificateOfDeposit extends Account {
         }
     }
 
+    @Override
+    public Type getType() {
+        return Type.CD;
+    }
+
 	public Term getTerm() {
 		return term;
 	}

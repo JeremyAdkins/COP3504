@@ -1,7 +1,5 @@
 package project.model;
 
-import hw1.DateTime;
-
 import java.math.BigDecimal;
 
 public final class Transaction {
@@ -34,15 +32,14 @@ public final class Transaction {
 
     private final BigDecimal amount;
 
-    // TODO consider representing time here, and throughout the program, as an int for months elapsed
-    private final DateTime timestamp;
+    private final int timestamp;
 
     private FraudStatus fraudStatus;
 
     public Transaction(Type type, BigDecimal amount) {
         this.type = type;
         this.amount = amount;
-        this.timestamp = new DateTime();
+        this.timestamp = Bank.getInstance().getCurrentMonth();
         this.fraudStatus = FraudStatus.NOT_FLAGGED;
     }
 
@@ -54,7 +51,7 @@ public final class Transaction {
         return amount;
     }
 
-    public DateTime getTimestamp() {
+    public int getTimestamp() {
         return timestamp;
     }
 
