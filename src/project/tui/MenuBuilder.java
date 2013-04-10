@@ -1,3 +1,5 @@
+package project.tui;
+
 public class MenuBuilder {
 
     //variables for the options side of the menu

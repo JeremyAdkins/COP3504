@@ -1,3 +1,5 @@
+package project.tui;
+
 
 public class TestMenuBuilder {
 
