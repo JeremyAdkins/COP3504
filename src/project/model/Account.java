@@ -112,7 +112,12 @@ public abstract class Account {
 		repeatingPayments.remove(payment);
 	}
 
-	protected void doPayments() throws OverdraftException {//TODO Check order
+	protected void doPayments() throws OverdraftException {
+        // don't apply any payments to an account that's closed
+        if (closed) {
+            return;
+        }
+
 		// monthly existence fee, or minimum payment penalty, as appropriate
 		if (balance.compareTo(getThreshold()) < 0) {
 			applyFee(getMonthlyCharge());
