@@ -2,17 +2,26 @@ package project.model;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.math.BigDecimal;
 
 public final class CheckingAccountTest {
     private CheckingAccount account;
+    private static User user1;
+    
+    @BeforeClass
+    public static void setUpClass() {
+    	user1 = new User("user1FirstName", "user1LastName", null, 123456789, "user1Email");
+        Bank.getInstance().addUser("user1", user1);
+    }
 
     @Before
     public void setUp() {
         account = new CheckingAccount();
         TestUtil.assertEquals(BigDecimal.ZERO, account.getBalance());
+        user1.addAccount(account);
     }
 
     @After
@@ -30,6 +39,8 @@ public final class CheckingAccountTest {
         account.deposit(new BigDecimal("2234.56"));
         TestUtil.assertEquals(2234.56, account.getBalance());
         account.withdraw(new BigDecimal("123.45"));
+        TestUtil.assertEquals(2111.11, account.getBalance());
+        Bank.getInstance().advanceCurrentMonth();
         TestUtil.assertEquals(2111.11, account.getBalance());
     }
 
@@ -72,23 +83,28 @@ public final class CheckingAccountTest {
         TestUtil.assertEquals(2500.00, account.getBalance());
         account.withdraw(new BigDecimal("600.00"));
         TestUtil.assertEquals(1900.00, account.getBalance());
-        //signal passage of one month
-        //TestUtil.assertEquals(1892.00, account.getBalance());
-        //signal passage of one month
-        //TestUtil.assertEquals(1884.00, account.getBalance());
+        Bank.getInstance().advanceCurrentMonth();
+        TestUtil.assertEquals(1892.00, account.getBalance());
+        Bank.getInstance().advanceCurrentMonth();
+        TestUtil.assertEquals(1884.00, account.getBalance());
     }
 
     /**  100.00 deposit
-     *   125.00 withdrawal
-     *    balance should be (25.00)
-     *    No exceptions should be thrown since balance is above overdraft limit of (50.00)
+     *   140.00 withdrawal
+     *    balance should be (40.00)
+     *    signal passage of one month of time, balance should be 48.00 after $8 monthly checking charge for balance under $2000
+     *    signal passage of one month of time, balance should be 56.00 after $8 monthly checking charge for balance under $2000
      */
     @Test
     public void testBlah() throws InsufficientFundsException, OverdraftException {
         account.deposit(new BigDecimal("100.00"));
         TestUtil.assertEquals(100.00, account.getBalance());
-        account.withdraw(new BigDecimal("125.00"));
-        TestUtil.assertEquals(-25.00, account.getBalance());
+        account.withdraw(new BigDecimal("140.00"));
+        TestUtil.assertEquals(-40.00, account.getBalance());
+        Bank.getInstance().advanceCurrentMonth();
+        TestUtil.assertEquals(-48.00, account.getBalance());
+        Bank.getInstance().advanceCurrentMonth();
+        TestUtil.assertEquals(-56.00, account.getBalance());
     }
 
 }
