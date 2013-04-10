@@ -2,18 +2,18 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package cop3504.project;
+package project.gui;
 
 /**
  *
  * @author Rich
  */
-public class AccountantFrame extends javax.swing.JFrame {
+public class AuditorFrame extends javax.swing.JFrame {
 
     /**
-     * Creates new form AccountantFrame
+     * Creates new form AuditorFrame
      */
-    public AccountantFrame() {
+    public AuditorFrame() {
         initComponents();
     }
 

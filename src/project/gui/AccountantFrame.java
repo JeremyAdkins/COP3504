@@ -2,19 +2,18 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package cop3504.project;
-
+package project.gui;
 
 /**
  *
  * @author Rich
  */
-public class AccountManagerFrame extends javax.swing.JFrame {
+public class AccountantFrame extends javax.swing.JFrame {
 
     /**
-     * Creates new form AccountManagerFrame
+     * Creates new form AccountantFrame
      */
-    public AccountManagerFrame() {
+    public AccountantFrame() {
         initComponents();
     }
 
@@ -29,22 +28,11 @@ public class AccountManagerFrame extends javax.swing.JFrame {
 
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
-        logoutMenuItem = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jMenu1.setText("File");
-
-        logoutMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.CTRL_MASK));
-        logoutMenuItem.setText("Logout");
-        logoutMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                logoutMenuItemActionPerformed(evt);
-            }
-        });
-        jMenu1.add(logoutMenuItem);
-
         jMenuBar1.add(jMenu1);
 
         jMenu2.setText("Edit");
@@ -66,15 +54,9 @@ public class AccountManagerFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void logoutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutMenuItemActionPerformed
-       this.dispose();
-       Controller.newLoginWindow();
-    }//GEN-LAST:event_logoutMenuItemActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem logoutMenuItem;
     // End of variables declaration//GEN-END:variables
 }

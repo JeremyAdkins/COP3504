@@ -1,4 +1,4 @@
-package cop3504.project;
+package project.model;
 
 import hw1.DateTime;
 import hw1.Time;

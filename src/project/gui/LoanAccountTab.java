@@ -2,18 +2,18 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package cop3504.project;
+package project.gui;
 
 /**
  *
  * @author rich
  */
-public class CheckingAccountTab extends javax.swing.JPanel {
+public class LoanAccountTab extends javax.swing.JPanel {
 
     /**
      * Creates new form CheckingAccountTab
      */
-    public CheckingAccountTab() {
+    public LoanAccountTab() {
         initComponents();
     }
 

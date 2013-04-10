@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package cop3504.project;
+package project.gui;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;

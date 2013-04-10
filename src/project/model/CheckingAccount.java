@@ -1,4 +1,4 @@
-package cop3504.project;
+package project.model;
 
 import java.math.BigDecimal;
 

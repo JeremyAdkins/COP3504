@@ -2,10 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package cop3504.project;
+package project.gui;
 
-import static cop3504.project.Account.Type.SAVINGS_ACCOUNT;
-import java.awt.Window;
+import project.gui.AccountHolderFrame;
+import project.gui.AccountTab;
+import project.model.*;
+
+import java.awt.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +19,7 @@ import java.util.List;
  */
 public class Controller {
    
-    public static void main(String[] args) throws OverdraftException{
+    public static void main(String[] args) throws OverdraftException {
         setLookAndFeel();        
         initializeBank();
         newLoginWindow();
@@ -37,7 +40,7 @@ public class Controller {
                 }
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(LoginWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(cop3504.project.LoginWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
     }
     
@@ -45,7 +48,7 @@ public class Controller {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                LoginWindow login = new LoginWindow(new javax.swing.JFrame(), true);
+                cop3504.project.LoginWindow login = new cop3504.project.LoginWindow(new javax.swing.JFrame(), true);
                 login.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
