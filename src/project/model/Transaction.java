@@ -1,36 +1,43 @@
 package project.model;
 
-
 import hw1.DateTime;
 
 import java.math.BigDecimal;
 
 public final class Transaction {
-    private final Type type;
-
-    private final BigDecimal amount;
-
-    private final DateTime timestamp;
-
-    private FraudStatus fraudStatus;
-
     public static enum Type {
-        DEPOSIT(true), INTEREST(true), WITHDRAWAL(false), FEE(false);
+        DEPOSIT(true, true), INTEREST(true, false), WITHDRAWAL(false, true), FEE(false, false);
 
-        private final boolean positive;
+        private final boolean isPositive;
 
-        private Type(boolean positive) {
-            this.positive = positive;
+        private final boolean canRepeat;
+
+        private Type(boolean isPositive, boolean canRepeat) {
+            this.isPositive = isPositive;
+            this.canRepeat = canRepeat;
         }
 
         public boolean isPositive() {
-            return positive;
+            return isPositive;
+        }
+
+        public boolean canRepeat() {
+            return canRepeat;
         }
     }
 
     public static enum FraudStatus {
         NOT_FLAGGED, FLAGGED, REVERSED;
     }
+
+    private final Type type;
+
+    private final BigDecimal amount;
+
+    // TODO consider representing time here, and throughout the program, as an int for months elapsed
+    private final DateTime timestamp;
+
+    private FraudStatus fraudStatus;
 
     public Transaction(Type type, BigDecimal amount) {
         this.type = type;

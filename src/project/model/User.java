@@ -1,12 +1,16 @@
 package project.model;
 
-
 import hw1.DateTime;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 public final class User {
+    public static enum Role {
+        TELLER, ACCOUNT_MANAGER, ACCOUNTANT, AUDITOR, OPERATIONS_MANAGER;
+    }
+
 	private final String firstName;
 
 	private final String lastName;
@@ -20,10 +24,6 @@ public final class User {
 	private final Set<Account> accounts;
 
 	private Role role;
-	
-	public static enum Role {
-		TELLER, ACCOUNT_MANAGER, ACCOUNTANT, AUDITOR, OPERATIONS_MANAGER;
-	}
 
     public User(String firstName, String lastName, DateTime birthdate, int ssn, String email) {
         this.firstName = firstName;
@@ -64,14 +64,14 @@ public final class User {
 	}
 
 	public Set<Account> getAccounts() {
-		return new HashSet<Account>(accounts);
+		return Collections.unmodifiableSet(accounts);
 	}
 	
 	public void addAccount(Account account) {
 		accounts.add(account);
 	}
 	
-	public boolean isActiveCustomer(){
+	public boolean isActiveCustomer() {
 		for (Account account : accounts) {
 			if (!account.isClosed()) {
 				return true;

@@ -1,11 +1,9 @@
 package project.model;
 
-
 import java.math.BigDecimal;
 
-
-public class Loan extends AbstractLoan{
-	BigDecimal minimumPayment;//Total money needed to be payed by end of month
+public final class Loan extends AbstractLoan{
+	private final BigDecimal minimumPayment; // required to be paid by the end of the month
 	
 	public Loan(BigDecimal amount, BigDecimal minimumPayment, BigDecimal interestPremium) {
 		// TODO possibly calculate minimumPayment ourselves
@@ -26,21 +24,17 @@ public class Loan extends AbstractLoan{
 	}
 	
 	@Override
-	public Transaction withdraw(BigDecimal amount) throws OverdraftException{
+	public Transaction withdraw(BigDecimal amount) {
 		throw new UnsupportedOperationException();
 	}
 
     @Override
-    protected void doPayments() throws OverdraftException {
+    protected void doPayments() throws InsufficientFundsException, OverdraftException {
         if (getBalance().compareTo(BigDecimal.ZERO) == 0) {
             close();
         }
         super.doPayments();
     }
-	
-	protected BigDecimal getMinimumPayment(){
-		return minimumPayment;
-	}
 	
 	@Override
 	protected BigDecimal getBaseInterest() {
@@ -51,6 +45,11 @@ public class Loan extends AbstractLoan{
 	protected BigDecimal getCreditLimit() {//Used for calculating loanCap
 		return getBalance();
 	}
+
+    @Override
+    protected BigDecimal getMinimumPayment() {
+        return minimumPayment;
+    }
 	
 	@Override
 	protected BigDecimal getPenalty() {

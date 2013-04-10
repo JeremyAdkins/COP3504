@@ -1,15 +1,27 @@
 package project.model;
 
-
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 
-public class CertificateOfDeposit extends Account {
-    private CdTerm term;
+public final class CertificateOfDeposit extends Account {
+    public static enum Term {
+        SIX_MONTHS(6), ONE_YEAR(12), TWO_YEARS(24), THREE_YEARS(36), FOUR_YEARS(48), FIVE_YEARS(60);
+
+        private final int length;
+
+        private Term(int length) {
+            this.length = length;
+        }
+
+        public int getLength() {
+            return length;
+        }
+    }
+
+    private final Term term;
 
     private int monthsElapsed;
 
-    public CertificateOfDeposit(CdTerm term, BigDecimal amount) {
+    public CertificateOfDeposit(Term term, BigDecimal amount) {
         this.term = term;
         this.monthsElapsed = 0;
 
@@ -21,7 +33,7 @@ public class CertificateOfDeposit extends Account {
         }
     }
 
-	public CdTerm getTerm() {
+	public Term getTerm() {
 		return term;
 	}
 	
@@ -34,9 +46,9 @@ public class CertificateOfDeposit extends Account {
         throw new UnsupportedOperationException();
     }
 
-	public Transaction withdraw(BigDecimal amount) throws OverdraftException
-	{
-		BigDecimal fee = getInterestRate().divide(new BigDecimal(2),4,RoundingMode.HALF_EVEN).multiply(getBalance());
+    @Override
+	public Transaction withdraw(BigDecimal amount) throws InsufficientFundsException, OverdraftException {
+		BigDecimal fee = getInterestRate().divide(new BigDecimal(2), Bank.MATH_CONTEXT).multiply(getBalance());
 		BigDecimal newBalance = getBalance().subtract(amount).subtract(fee);
         if (monthsElapsed < term.getLength()) {
             // minimum balances apply, check for them
@@ -46,36 +58,36 @@ public class CertificateOfDeposit extends Account {
             }
         }
         if (newBalance.compareTo(BigDecimal.ZERO) < 0) {
-            throw new OverdraftException();//TODO Do we want to use an OverdraftException, or something tailored for the CoD class?
+            throw new InsufficientFundsException();
         }
 		return super.withdraw(amount);
 	}
 
     @Override
-    protected void doPayments() throws OverdraftException {
+    protected void doPayments() throws InsufficientFundsException, OverdraftException {
         if (getBalance().compareTo(BigDecimal.ZERO) == 0) {
             close();
         }
         super.doPayments();
         monthsElapsed += 1;
     }
-	
-	public BigDecimal getInterestRate()
-	{	
+
+    @Override
+	public BigDecimal getInterestRate() {
 		if (monthsElapsed < term.getLength()) {
             return Bank.getInstance().getPaymentSchedule().getCdInterest(term);
         } else {
             return BigDecimal.ZERO;
         }
 	}
-	
-	public BigDecimal getMonthlyCharge()
-	{
+
+    @Override
+	public BigDecimal getMonthlyCharge() {
 		return BigDecimal.ZERO; 
 	}
-	
-	public BigDecimal getThreshold()
-	{
+
+    @Override
+	public BigDecimal getThreshold() {
 		return BigDecimal.ZERO; 
 	}
 }
