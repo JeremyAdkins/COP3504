@@ -1,3 +1,5 @@
+package project.model;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -5,7 +7,7 @@ import org.junit.Test;
 import java.math.BigDecimal;
 
 public final class SavingsAccountTest {
-    private Account account;
+    private SavingsAccount account;
 
     @Before
     public void setUp() {
