@@ -23,11 +23,11 @@ public abstract class Account {
 		this.repeatingPayments = new HashSet<Transaction>();
 	}
         
-        enum Type {
+        public enum Type {
 		SAVINGS_ACCOUNT, CD_ACCOUNT, CHECKING_ACCOUNT, LOC_ACCOUNT, LOAN_ACCOUNT;
 	}
 	
-	Type getAccountType(){
+	public Type getAccountType(){
 		for(Type x : Type.values()){
 			if(x.toString().replace("_", "").compareToIgnoreCase(this.getClass().getSimpleName().replace(" ", ""))==0) return x;
 		}
@@ -105,7 +105,7 @@ public abstract class Account {
 			}
 		}
 	}
-	protected abstract BigDecimal getInterestRate();
+	public abstract BigDecimal getInterestRate();
 	protected abstract BigDecimal getMonthlyCharge();
 	protected abstract BigDecimal getThreshold();
 }

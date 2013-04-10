@@ -4,8 +4,6 @@
  */
 package project.gui;
 
-import project.gui.AccountHolderFrame;
-import project.gui.AccountTab;
 import project.model.*;
 
 import java.awt.*;
@@ -39,8 +37,14 @@ public class Controller {
                     break;
                 }
             }
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(cop3504.project.LoginWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(project.gui.LoginWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(project.gui.LoginWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(project.gui.LoginWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(project.gui.LoginWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
     }
     
@@ -48,7 +52,7 @@ public class Controller {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                cop3504.project.LoginWindow login = new cop3504.project.LoginWindow(new javax.swing.JFrame(), true);
+                project.gui.LoginWindow login = new project.gui.LoginWindow(new javax.swing.JFrame(), true);
                 login.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -79,7 +83,7 @@ public class Controller {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                List<AccountTab> accounts = new ArrayList<>();
+                List<AccountTab> accounts = new ArrayList<AccountTab>();
                 for(Account acc : user.getAccounts()){
                     Account.Type accType = acc.getAccountType();
                     switch(accType){

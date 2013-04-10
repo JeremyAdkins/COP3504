@@ -4,6 +4,10 @@
  */
 package project.gui;
 
+import project.model.Account;
+import project.model.OverdraftException;
+import project.model.Transaction;
+
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.math.BigDecimal;

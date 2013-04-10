@@ -4,6 +4,8 @@
  */
 package project.gui;
 
+import project.model.Account;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +20,7 @@ public class AccountHolderFrame extends javax.swing.JFrame {
      */
     public AccountHolderFrame(List<AccountTab> accountTabs) {        
         initComponents();
-        List<Account> accounts = new ArrayList<>();
+        List<Account> accounts = new ArrayList<Account>();
         for(AccountTab accTab : accountTabs){
             Account account = accTab.getAccount();
             AccountHolderTabs.add(account.getAccountType().toString()+"("+account.getAccountNumber()+")", accTab);

@@ -17,7 +17,7 @@ public class CheckingAccount extends Account {
 	}
 
 	@Override
-	protected BigDecimal getInterestRate() {
+	public BigDecimal getInterestRate() {
 		return BigDecimal.ZERO;
 	}
 

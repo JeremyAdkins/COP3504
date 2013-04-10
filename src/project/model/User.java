@@ -16,7 +16,7 @@ public class User {
 	EmployeeRole role;
         
         public User(){
-            accounts = new HashSet<>();            
+            accounts = new HashSet<Account>();
         }
 	
 	public enum EmployeeRole{
@@ -52,7 +52,7 @@ public class User {
 	}
 
 	public Set<Account> getAccounts() {
-		return new HashSet<>(accounts);
+		return new HashSet<Account>(accounts);
 	}
 	
 	public void addAccount(Account account){
