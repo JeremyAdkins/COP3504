@@ -1,3 +1,5 @@
+package cop3504.project;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -20,6 +22,17 @@ public abstract class Account {
 		this.history = new ArrayList<Transaction>();
 		this.repeatingPayments = new HashSet<Transaction>();
 	}
+        
+        enum Type {
+		SAVINGS_ACCOUNT, CD_ACCOUNT, CHECKING_ACCOUNT, LOC_ACCOUNT, LOAN_ACCOUNT;
+	}
+	
+	Type getAccountType(){
+		for(Type x : Type.values()){
+			if(x.toString().replace("_", "").compareToIgnoreCase(this.getClass().getSimpleName().replace(" ", ""))==0) return x;
+		}
+		return null;
+	}
 	public final boolean isClosed(){
 		return closed;
 	}
@@ -27,6 +40,9 @@ public abstract class Account {
 		closed = true;
 		//TODO PAYMENT SCHEDULE/FRAUDENT CLOSES?
 	}
+        public final int getAccountNumber(){
+            return accountNumber;
+        }
 	public final BigDecimal getBalance(){
 		return balance;
 	}

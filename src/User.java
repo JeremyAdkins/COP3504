@@ -1,3 +1,5 @@
+package cop3504.project;
+
 import hw1.DateTime;
 
 import java.util.HashSet;
@@ -12,6 +14,10 @@ public class User {
 	String email;
 	Set<Account> accounts;
 	EmployeeRole role;
+        
+        public User(){
+            accounts = new HashSet<>();            
+        }
 	
 	public enum EmployeeRole{
 		TELLER, ACCOUNT_MANAGER, ACCOUNTANT, AUDITOR, OPERATIONS_MANAGER;
@@ -46,7 +52,7 @@ public class User {
 	}
 
 	public Set<Account> getAccounts() {
-		return new HashSet<Account>(accounts);
+		return new HashSet<>(accounts);
 	}
 	
 	public void addAccount(Account account){

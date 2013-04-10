@@ -1,3 +1,5 @@
+package cop3504.project;
+
 import java.math.BigDecimal;
 
 
@@ -12,6 +14,7 @@ public class SavingsAccountTest {
 		System.out.println(acc.getBalance());
 		acc.doPayments();
 		System.out.println(acc.getBalance());
+                System.out.println(acc.getAccountType());
 	}
 
 }
