@@ -20,11 +20,11 @@ public final class LineOfCredit extends AbstractLoan {
 	}
 
 	@Override
-	public BigDecimal getCreditLimit(){
+	public BigDecimal getCreditLimit() {
 		return creditLimit;
 	}
 
-    public void setCreditLimit(BigDecimal creditLimit){
+    public void setCreditLimit(BigDecimal creditLimit) {
         this.creditLimit = creditLimit;
     }
 	
@@ -34,18 +34,16 @@ public final class LineOfCredit extends AbstractLoan {
 	}
 
 	@Override
-	protected BigDecimal getMinimumPayment(){
+	protected BigDecimal getMinimumPayment() {
 		BigDecimal percentPayment = Bank.getInstance().getPaymentSchedule().getLocPercentPayment();
 		BigDecimal fixedPayment = Bank.getInstance().getPaymentSchedule().getLocFixedPayment().negate();
 		BigDecimal percentPaymentValue = percentPayment.multiply(getBalance());
 		
-		if(fixedPayment.compareTo(getBalance())<0){
+		if (fixedPayment.compareTo(getBalance()) < 0) {
 			return getBalance();
-		}
-		else if(percentPaymentValue.compareTo(fixedPayment)<0){
+		} else if (percentPaymentValue.compareTo(fixedPayment) < 0) {
 			return percentPaymentValue;
-		}
-		else{
+		} else {
 			return fixedPayment;
 		}
 	}

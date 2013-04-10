@@ -5,14 +5,6 @@ import hw1.DateTime;
 import java.math.BigDecimal;
 
 public final class Transaction {
-    private final Type type;
-
-    private final BigDecimal amount;
-
-    private final DateTime timestamp;
-
-    private FraudStatus fraudStatus;
-
     public static enum Type {
         DEPOSIT(true), INTEREST(true), WITHDRAWAL(false), FEE(false);
 
@@ -30,6 +22,14 @@ public final class Transaction {
     public static enum FraudStatus {
         NOT_FLAGGED, FLAGGED, REVERSED;
     }
+
+    private final Type type;
+
+    private final BigDecimal amount;
+
+    private final DateTime timestamp;
+
+    private FraudStatus fraudStatus;
 
     public Transaction(Type type, BigDecimal amount) {
         this.type = type;

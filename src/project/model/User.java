@@ -6,6 +6,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 public final class User {
+    public static enum Role {
+        TELLER, ACCOUNT_MANAGER, ACCOUNTANT, AUDITOR, OPERATIONS_MANAGER;
+    }
+
 	private final String firstName;
 
 	private final String lastName;
@@ -19,10 +23,6 @@ public final class User {
 	private final Set<Account> accounts;
 
 	private Role role;
-	
-	public static enum Role {
-		TELLER, ACCOUNT_MANAGER, ACCOUNTANT, AUDITOR, OPERATIONS_MANAGER;
-	}
 
     public User(String firstName, String lastName, DateTime birthdate, int ssn, String email) {
         this.firstName = firstName;
