@@ -34,10 +34,10 @@ public final class LineOfCredit extends AbstractLoan {
 		return creditLimit;
 	}
 
-    public void setCreditLimit(BigDecimal creditLimit) throws InsufficientFundsException, LoanCapException {
+    public void setCreditLimit(BigDecimal creditLimit) throws LoanCapException {
         if (getBalance().compareTo(creditLimit) < 0) {
             // TODO maybe this should be a different exception type?
-            throw new InsufficientFundsException("current balance exceeds the new credit limit");
+            throw new IllegalArgumentException("current balance exceeds the new credit limit");
         } else if (this.creditLimit.compareTo(creditLimit) < 0) {
             Bank.getInstance().returnLoan(this.creditLimit.subtract(creditLimit).negate());
         } else {
