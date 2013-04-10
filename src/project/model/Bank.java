@@ -71,7 +71,7 @@ public final class Bank {
 		if (users.containsKey(username)) {
 			throw new IllegalArgumentException("Username already taken");
 		}
-		users.put(username,user);
+		users.put(username, user);
 	}
 
 	PaymentSchedule getPaymentSchedule() {
@@ -83,11 +83,18 @@ public final class Bank {
 	}
 
 	public void setLoanCap(BigDecimal loanCap) {
-		if (loanCap.compareTo(BigDecimal.ZERO)<0) {
+		if (loanCap.compareTo(BigDecimal.ZERO) < 0) {
 			throw new IllegalArgumentException("LoanCap must be non-negative");
 		}
 		this.loanCap = loanCap;
 	}
+
+    void authorizeLoan(BigDecimal loanAmount) throws LoanCapException {
+        if (loanCap.compareTo(loanAmount) > 0) {
+            throw new LoanCapException();
+        }
+        loanCap = loanCap.subtract(loanAmount);
+    }
 	
 	public DateTime getEffectiveTime() {
         // TODO did we ever figure out how this was going to work?
