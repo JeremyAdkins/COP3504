@@ -1,7 +1,6 @@
 package project.model;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 public final class CertificateOfDeposit extends Account {
     public static enum Term {
@@ -47,8 +46,9 @@ public final class CertificateOfDeposit extends Account {
         throw new UnsupportedOperationException();
     }
 
+    @Override
 	public Transaction withdraw(BigDecimal amount) throws OverdraftException {
-		BigDecimal fee = getInterestRate().divide(new BigDecimal(2), 4, RoundingMode.HALF_EVEN).multiply(getBalance());
+		BigDecimal fee = getInterestRate().divide(new BigDecimal(2), Bank.MATH_CONTEXT).multiply(getBalance());
 		BigDecimal newBalance = getBalance().subtract(amount).subtract(fee);
         if (monthsElapsed < term.getLength()) {
             // minimum balances apply, check for them
@@ -72,7 +72,8 @@ public final class CertificateOfDeposit extends Account {
         super.doPayments();
         monthsElapsed += 1;
     }
-	
+
+    @Override
 	public BigDecimal getInterestRate() {
 		if (monthsElapsed < term.getLength()) {
             return Bank.getInstance().getPaymentSchedule().getCdInterest(term);
@@ -80,11 +81,13 @@ public final class CertificateOfDeposit extends Account {
             return BigDecimal.ZERO;
         }
 	}
-	
+
+    @Override
 	public BigDecimal getMonthlyCharge() {
 		return BigDecimal.ZERO; 
 	}
-	
+
+    @Override
 	public BigDecimal getThreshold() {
 		return BigDecimal.ZERO; 
 	}

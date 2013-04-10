@@ -1,7 +1,6 @@
 package project.model;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -124,7 +123,7 @@ public abstract class Account {
 		}
 
 		// interest
-		BigDecimal interest = balance.multiply(getInterestRate().divide(new BigDecimal(12), 4, RoundingMode.HALF_UP));
+		BigDecimal interest = balance.multiply(getInterestRate().divide(new BigDecimal(12), Bank.MATH_CONTEXT));
 		applyTransaction(interest, Transaction.Type.INTEREST);
 
 		// repeating payments

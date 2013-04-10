@@ -9,10 +9,14 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 
 public final class Bank {
+    public static final MathContext MATH_CONTEXT = new MathContext(4, RoundingMode.HALF_EVEN);
+
 	private static final File FILE = new File("bank.xml");
 	private static Bank instance;
 	static {
