@@ -21,7 +21,7 @@ public final class SavingsAccountTest {
     }
 
     @Test
-    public void testWithdrawSufficient() throws OverdraftException {
+    public void testWithdrawSufficient() throws InsufficientFundsException, OverdraftException {
         account.deposit(new BigDecimal("1234.56"));
         TestUtil.assertEquals(1234.56, account.getBalance());
         account.withdraw(new BigDecimal("123.45"));
@@ -29,7 +29,7 @@ public final class SavingsAccountTest {
     }
 
     @Test(expected = InsufficientFundsException.class)
-    public void testWithdrawInsufficient() throws OverdraftException {
+    public void testWithdrawInsufficient() throws InsufficientFundsException, OverdraftException {
         account.deposit(new BigDecimal("1234.56"));
         TestUtil.assertEquals(1234.56, account.getBalance());
         account.withdraw(new BigDecimal("1234.57"));

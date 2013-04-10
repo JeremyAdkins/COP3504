@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public final class CheckingAccount extends Account {
     @Override
-	public Transaction withdraw(BigDecimal amount) throws OverdraftException {
+	public Transaction withdraw(BigDecimal amount) throws InsufficientFundsException, OverdraftException {
 		BigDecimal overdraftLimit = Bank.getInstance().getPaymentSchedule()
 				.getOverdraftLimit();
 		if (amount.compareTo(this.getBalance().add(overdraftLimit)) < 0) {

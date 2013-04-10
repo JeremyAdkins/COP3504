@@ -63,7 +63,7 @@ public abstract class Account {
 		return applyTransaction(amount, Transaction.Type.DEPOSIT);
 	}
 
-	public Transaction withdraw(BigDecimal amount) throws OverdraftException {
+	public Transaction withdraw(BigDecimal amount) throws InsufficientFundsException, OverdraftException {
 		return applyTransaction(amount, Transaction.Type.WITHDRAWAL);
 	}
 
@@ -111,7 +111,7 @@ public abstract class Account {
 		repeatingPayments.remove(payment);
 	}
 
-	protected void doPayments() throws OverdraftException {
+	protected void doPayments() throws InsufficientFundsException, OverdraftException {
         // don't apply any payments to an account that's closed
         if (closed) {
             return;

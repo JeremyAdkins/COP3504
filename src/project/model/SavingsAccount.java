@@ -4,12 +4,11 @@ import java.math.BigDecimal;
 
 public final class SavingsAccount extends Account{
 	@Override
-	public Transaction withdraw(BigDecimal amount) throws OverdraftException {
-		if (getBalance().compareTo(amount)>=0) {
+	public Transaction withdraw(BigDecimal amount) throws InsufficientFundsException, OverdraftException {
+		if (getBalance().compareTo(amount) >= 0) {
 			return super.withdraw(amount);
 		} else {
-            // TODO should be an exception
-            return null;
+            throw new InsufficientFundsException();
         }
 	}
 	

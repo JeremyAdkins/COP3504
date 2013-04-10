@@ -23,7 +23,7 @@ public abstract class AbstractLoan extends Account {
 	}
 	
 	@Override
-	protected void doPayments() throws OverdraftException {
+	protected void doPayments() throws InsufficientFundsException, OverdraftException {
 		super.doPayments();
 		depositsToDate = BigDecimal.ZERO;
 	}

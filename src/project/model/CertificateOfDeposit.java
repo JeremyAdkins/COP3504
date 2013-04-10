@@ -47,7 +47,7 @@ public final class CertificateOfDeposit extends Account {
     }
 
     @Override
-	public Transaction withdraw(BigDecimal amount) throws OverdraftException {
+	public Transaction withdraw(BigDecimal amount) throws InsufficientFundsException, OverdraftException {
 		BigDecimal fee = getInterestRate().divide(new BigDecimal(2), Bank.MATH_CONTEXT).multiply(getBalance());
 		BigDecimal newBalance = getBalance().subtract(amount).subtract(fee);
         if (monthsElapsed < term.getLength()) {
@@ -58,14 +58,13 @@ public final class CertificateOfDeposit extends Account {
             }
         }
         if (newBalance.compareTo(BigDecimal.ZERO) < 0) {
-            // TODO Do we want to use an OverdraftException, or something tailored for the CoD class?
-            throw new OverdraftException();
+            throw new InsufficientFundsException();
         }
 		return super.withdraw(amount);
 	}
 
     @Override
-    protected void doPayments() throws OverdraftException {
+    protected void doPayments() throws InsufficientFundsException, OverdraftException {
         if (getBalance().compareTo(BigDecimal.ZERO) == 0) {
             close();
         }

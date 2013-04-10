@@ -11,7 +11,7 @@ public final class LineOfCredit extends AbstractLoan {
 	}
 	
 	@Override
-	public Transaction withdraw(BigDecimal amount) throws OverdraftException {
+	public Transaction withdraw(BigDecimal amount) throws InsufficientFundsException, OverdraftException {
 		if (getBalance().subtract(amount).compareTo(getCreditLimit()) >= 0) {
 			return super.withdraw(amount);
 		} else {

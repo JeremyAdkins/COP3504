@@ -13,12 +13,12 @@ public final class Loan extends AbstractLoan{
 	}
 	
 	@Override
-	public Transaction withdraw(BigDecimal amount) throws OverdraftException {
+	public Transaction withdraw(BigDecimal amount) {
 		throw new UnsupportedOperationException();
 	}
 
     @Override
-    protected void doPayments() throws OverdraftException {
+    protected void doPayments() throws InsufficientFundsException, OverdraftException {
         if (getBalance().compareTo(BigDecimal.ZERO) == 0) {
             close();
         }
