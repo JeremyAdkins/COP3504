@@ -10,10 +10,10 @@ public final class LineOfCredit extends AbstractLoan {
      */
 	private BigDecimal creditLimit;
 	
-	public LineOfCredit(BigDecimal creditLimit, BigDecimal interestPremium) throws LoanCapException {
+	public LineOfCredit(BigDecimal creditLimit, BigDecimal interestPremium) throws InvalidInputException, LoanCapException {
 		super(interestPremium);
         if (creditLimit.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("credit limit must be positive");
+            throw new InvalidInputException(creditLimit, "credit limit must be positive");
         }
         Bank.getInstance().authorizeLoan(creditLimit);
         this.creditLimit = creditLimit;
@@ -30,11 +30,11 @@ public final class LineOfCredit extends AbstractLoan {
 	}
 	
 	@Override
-	public Transaction withdraw(BigDecimal amount) throws InsufficientFundsException, OverdraftException {
+	public Transaction withdraw(BigDecimal amount) throws InvalidInputException, InsufficientFundsException {
 		if (getBalance().subtract(amount).negate().compareTo(getCreditLimit()) <= 0) {
 			return super.withdraw(amount);
 		} else {
-			throw new OverdraftException();
+			throw new InsufficientFundsException(getCreditLimit().subtract(getBalance().negate()), amount);
 		}
 	}
 	
@@ -43,9 +43,9 @@ public final class LineOfCredit extends AbstractLoan {
 		return creditLimit;
 	}
 
-    public void setCreditLimit(BigDecimal creditLimit) throws LoanCapException {
+    public void setCreditLimit(BigDecimal creditLimit) throws InvalidInputException, LoanCapException {
         if (getBalance().negate().compareTo(creditLimit) > 0) {
-            throw new IllegalArgumentException("current balance exceeds the new credit limit");
+            throw new InvalidInputException(creditLimit, String.format("the current balance of $%.2f exceeds the new credit limit", getBalance().negate()));
         } else if (this.creditLimit.compareTo(creditLimit) < 0) {
             // we are increasing the credit limit, so check for loan authorization
             Bank.getInstance().authorizeLoan(creditLimit.subtract(this.creditLimit));

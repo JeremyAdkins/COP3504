@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public final class Transaction {
     public static enum Type {
-        DEPOSIT(true, true), INTEREST(true, false), WITHDRAWAL(false, true), FEE(false, false);
+        DEPOSIT(true, true), INTEREST(true, false), LOAN_INTEREST(false, false), WITHDRAWAL(false, true), FEE(false, false);
 
         private final boolean isPositive;
 

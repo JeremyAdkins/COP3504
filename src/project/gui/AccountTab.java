@@ -4,10 +4,7 @@
  */
 package project.gui;
 
-import project.model.Account;
-import project.model.InsufficientFundsException;
-import project.model.OverdraftException;
-import project.model.Transaction;
+import project.model.*;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -29,8 +26,8 @@ public class AccountTab extends javax.swing.JPanel {
         this.account = account;
         initComponents();
         AccountNumber.setText("Acc. #: " + String.valueOf(account.getAccountNumber()));
-        Balance.setText("Balance: $"+String.valueOf(account.getBalance().setScale(2, RoundingMode.FLOOR)));
-        InterestRate.setText("Interest: "+String.valueOf(account.getInterestRate().multiply(BigDecimal.valueOf(100)).setScale(4, RoundingMode.FLOOR))+"%");
+        Balance.setText("Balance: $"+String.valueOf(account.getBalance().setScale(2, RoundingMode.HALF_UP)));
+        InterestRate.setText("Interest: "+String.valueOf(account.getInterestRate().multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP))+"%");
         Object[][] history = new Object[account.getHistory().size()][3];
         int i = 0;
         for(Transaction t : account.getHistory()){
@@ -258,8 +255,8 @@ public class AccountTab extends javax.swing.JPanel {
         WithdrawDialog.dispose();
         try {
             account.withdraw(new BigDecimal(Double.parseDouble(WithdrawAmountField.getText())));
-        } catch (InsufficientFundsException e) { // TODO added this line to make it compile, but this really makes me worried about exception handling
-        } catch (OverdraftException e) {}
+        } catch (InvalidInputException e) {
+        } catch (InsufficientFundsException e) {} // TODO added this line to make it compile, but this really makes me worried about exception handling
     }//GEN-LAST:event_WithdrawDialogButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

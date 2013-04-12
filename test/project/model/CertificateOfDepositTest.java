@@ -1,11 +1,9 @@
 package project.model;
-import project.model.CertificateOfDeposit; 
-
-import java.math.BigDecimal;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.math.BigDecimal;
 
 //Test ideas 
 /* Test withdraw(not matured, penalty) and deposit
@@ -21,7 +19,7 @@ public class CertificateOfDepositTest {
 	 private BigDecimal basicBalance = new BigDecimal(600); 
 	 
 	    @Before
-	    public void setUp() {
+	    public void setUp() throws InvalidInputException {
 	        //account = new CertificateOfDeposit(CertificateOfDeposit.Term.ZERO, new BigDecimal(basicBalance);
 	        account = new CertificateOfDeposit(CertificateOfDeposit.Term.ONE_YEAR, basicBalance);
 	        TestUtil.assertEquals(basicBalance, account.getBalance());
@@ -33,7 +31,7 @@ public class CertificateOfDepositTest {
 	    }
 
 	    @Test
-	    public void testWithdrawNotMature() throws InsufficientFundsException, OverdraftException {
+	    public void testWithdrawNotMature() throws InvalidInputException, InsufficientFundsException {
 	    	account = new CertificateOfDeposit(CertificateOfDeposit.Term.ONE_YEAR, new BigDecimal(1234.56));
 	        TestUtil.assertEquals(1234.56, account.getBalance());
 	        BigDecimal preBalance = account.getBalance(); 
@@ -44,29 +42,29 @@ public class CertificateOfDepositTest {
 	        TestUtil.assertEquals(expected, result);
 	    }
 
-	    @Test (expected = IllegalArgumentException.class)
-	    public void testWithdrawToMin() throws InsufficientFundsException, OverdraftException {
+	    @Test (expected = InsufficientFundsException.class)
+	    public void testWithdrawToMin() throws InvalidInputException, InsufficientFundsException {
 	        TestUtil.assertEquals(basicBalance, account.getBalance());
 	        account.withdraw(new BigDecimal(100));
 	        TestUtil.assertEquals(basicBalance, account.getBalance());
 	    }
 	    
 	    @Test
-	    public void testWithDrawMature() throws InsufficientFundsException, OverdraftException {
+	    public void testWithDrawMature() throws InvalidInputException, InsufficientFundsException {
 	    	account = new CertificateOfDeposit(CertificateOfDeposit.Term.ZERO, basicBalance);
 	        account.withdraw(new BigDecimal(123.456));
 	        TestUtil.assertEquals(476.544, account.getBalance());
 	    }
 	    
 	    @Test
-	    public void testInterestMature() throws InsufficientFundsException, OverdraftException {
+	    public void testInterestMature() throws InvalidInputException, InsufficientFundsException {
 	    	account = new CertificateOfDeposit(CertificateOfDeposit.Term.ZERO, basicBalance);
 	    	account.doPayments();
 	    	TestUtil.assertEquals(basicBalance, account.getBalance());
 	    }
 	    
 	    @Test
-	    public void testInterestNotMature() throws InsufficientFundsException, OverdraftException {
+	    public void testInterestNotMature() throws InvalidInputException, InsufficientFundsException {
 	    	account = new CertificateOfDeposit(CertificateOfDeposit.Term.ZERO, basicBalance);
 	    	account.doPayments();
 	    	BigDecimal finalBalance = basicBalance.add(basicBalance.multiply(account.getInterestRate()).divide(new BigDecimal(12)));
