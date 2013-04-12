@@ -6,15 +6,23 @@ import java.util.*;
 public abstract class Account {
     /*
      * Account types have logical meaning, because they are used for the accountant's summary statistics. There's no way
-     * to accomplish what this enum does through polymorphism alone.
+     * to accomplish what this enum does through polymorphism alone. We also have to account for the possibility of
+     * negative interest, but only on some account types.
      */
     public static enum Type {
-        SAVINGS("Savings"), CHECKING("Checking"), CD("CD"), LOAN("Loan"), LINE_OF_CREDIT("Line of credit");
+        SAVINGS("Savings", false), CHECKING("Checking", false), CD("CD", false), LOAN("Loan", true), LINE_OF_CREDIT("Line of credit", true);
 
         private final String displayName;
 
-        private Type(String displayName) {
+        private final boolean isLoan;
+
+        private Type(String displayName, boolean isLoan) {
             this.displayName = displayName;
+            this.isLoan = isLoan;
+        }
+
+        public boolean isLoan() {
+            return isLoan;
         }
 
         @Override
@@ -158,8 +166,17 @@ public abstract class Account {
 		}
 
 		// interest
-		BigDecimal interest = balance.multiply(getInterestRate().divide(new BigDecimal(12), Bank.MATH_CONTEXT));
-		applyTransaction(interest, Transaction.Type.INTEREST);
+        BigDecimal interest = balance.multiply(getInterestRate().divide(new BigDecimal(12), Bank.MATH_CONTEXT));
+        if (getType().isLoan()) {
+            if (getBalance().compareTo(BigDecimal.ZERO) > 0) {
+                throw new IllegalStateException("loan balance should never be positive");
+            }
+            // negate the interest because all transaction amounts must be positive
+            applyTransaction(interest.negate(), Transaction.Type.LOAN_INTEREST);
+        } else if (getBalance().compareTo(BigDecimal.ZERO) >= 0) {
+            // only apply interest on non-loans if the balance (and therefore, the interest) is positive
+		    applyTransaction(interest, Transaction.Type.INTEREST);
+        }
 
 		// repeating payments
 		for (Transaction payment : repeatingPayments) {
