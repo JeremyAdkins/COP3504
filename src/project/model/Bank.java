@@ -89,7 +89,7 @@ public final class Bank {
 
     void authorizeLoan(BigDecimal loanAmount) throws LoanCapException {
         if (loanCap.compareTo(loanAmount) < 0) {
-            throw new LoanCapException(loanAmount, loanCap);
+            throw new LoanCapException(loanCap, loanAmount);
         }
         loanCap = loanCap.subtract(loanAmount);
     }
