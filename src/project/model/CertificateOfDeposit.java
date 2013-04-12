@@ -21,13 +21,13 @@ public final class CertificateOfDeposit extends Account {
 
     private int monthsElapsed;
 
-    public CertificateOfDeposit(Term term, BigDecimal amount) {
+    public CertificateOfDeposit(Term term, BigDecimal amount) throws InvalidInputException {
         this.term = term;
         this.monthsElapsed = 0;
 
         BigDecimal minimumAmount = Bank.getInstance().getPaymentSchedule().getCdMinimum();
         if (minimumAmount.compareTo(amount) > 0) {
-            throw new IllegalArgumentException();
+            throw new InvalidInputException(amount, String.format("CD amount must be at least the minimum, currently $%.2f", minimumAmount));
         } else {
             super.applyTransaction(amount, Transaction.Type.DEPOSIT);
         }
@@ -52,24 +52,24 @@ public final class CertificateOfDeposit extends Account {
     }
 
     @Override
-	public Transaction withdraw(BigDecimal amount) throws InsufficientFundsException, OverdraftException {
+	public Transaction withdraw(BigDecimal amount) throws InvalidInputException, InsufficientFundsException, OverdraftException {
 		BigDecimal fee = getInterestRate().divide(new BigDecimal(2), Bank.MATH_CONTEXT).multiply(getBalance());
 		BigDecimal newBalance = getBalance().subtract(amount).subtract(fee);
         if (monthsElapsed < term.getLength()) {
             // minimum balances apply, check for them
             BigDecimal minimumBalance = Bank.getInstance().getPaymentSchedule().getCdMinimum();
             if (newBalance.compareTo(minimumBalance) < 0) {
-                throw new IllegalArgumentException("cannot withdraw to below minimum balance; note that the penalty is " + fee);
+                throw new InsufficientFundsException(getBalance().subtract(minimumBalance), amount.add(fee));
             }
         }
         if (newBalance.compareTo(BigDecimal.ZERO) < 0) {
-            throw new InsufficientFundsException();
+            throw new InsufficientFundsException(getBalance(), amount);
         }
 		return super.withdraw(amount);
 	}
 
     @Override
-    protected void doPayments() throws InsufficientFundsException, OverdraftException {
+    protected void doPayments() throws InvalidInputException, InsufficientFundsException, OverdraftException {
         if (getBalance().compareTo(BigDecimal.ZERO) == 0) {
             close();
         }

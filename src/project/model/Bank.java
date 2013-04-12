@@ -58,16 +58,16 @@ public final class Bank {
 		currentMonth = 0;
 	}
 	
-	public User getUser(String username) {
+	public User getUser(String username) throws LoginException {
 		if (!users.containsKey(username)) {
-			throw new IllegalArgumentException("Username doesn't exist");
+            throw new LoginException(LoginException.Type.USER_NOT_FOUND, username);
 		}
 		return users.get(username);
 	}
 
-	public void addUser(String username, User user) {
+	public void addUser(String username, User user) throws LoginException {
 		if (users.containsKey(username)) {
-			throw new IllegalArgumentException("Username already taken");
+            throw new LoginException(LoginException.Type.DUPLICATE_USERNAME, username);
 		}
 		users.put(username, user);
 	}
@@ -80,15 +80,15 @@ public final class Bank {
 		return loanCap;
 	}
 
-	public void setLoanCap(BigDecimal loanCap) {
+	public void setLoanCap(BigDecimal loanCap) throws InvalidInputException {
 		if (loanCap.compareTo(BigDecimal.ZERO) < 0) {
-			throw new IllegalArgumentException("LoanCap must be non-negative");
+            throw new InvalidInputException(loanCap, "loan cap must be non-negative");
 		}
 		this.loanCap = loanCap;
 	}
 
     void authorizeLoan(BigDecimal loanAmount) throws LoanCapException {
-        if (loanCap.compareTo(loanAmount) > 0) {
+        if (loanCap.compareTo(loanAmount) < 0) {
             throw new LoanCapException();
         }
         loanCap = loanCap.subtract(loanAmount);

@@ -9,7 +9,7 @@ public final class CheckingAccount extends Account {
     }
 
     @Override
-	public Transaction withdraw(BigDecimal amount) throws InsufficientFundsException, OverdraftException {
+	public Transaction withdraw(BigDecimal amount) throws InvalidInputException, InsufficientFundsException, OverdraftException {
 		BigDecimal overdraftLimit = Bank.getInstance().getPaymentSchedule()
 				.getOverdraftLimit();
 		if (amount.compareTo(this.getBalance().add(overdraftLimit)) < 0) {

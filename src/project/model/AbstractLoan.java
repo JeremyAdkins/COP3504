@@ -19,7 +19,7 @@ public abstract class AbstractLoan extends Account {
     public Transaction deposit(BigDecimal amount) throws InvalidInputException {
         BigDecimal newBalance = getBalance().add(amount);
         if (newBalance.compareTo(BigDecimal.ZERO) > 0) {
-            throw new InvalidInputException(amount, String.format("cannot repay more than the current balance of %.2f", getBalance()));
+            throw new InvalidInputException(amount, String.format("cannot repay more than the current balance of $%.2f", getBalance()));
         }
         depositsToDate = depositsToDate.add(amount);
         return super.deposit(amount);
