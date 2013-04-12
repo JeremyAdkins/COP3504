@@ -29,7 +29,7 @@ public class LineOfCreditTest {
 	BigDecimal premiumInt = new BigDecimal(.05); 
 	LineOfCredit account; 
 	 @Before
-	    public void setUp() throws LoanCapException{
+	    public void setUp() throws InvalidInputException, LoanCapException {
 	        account = new LineOfCredit(creditLim, premiumInt);
 	        TestUtil.assertEquals(BigDecimal.ZERO, account.getBalance());
 	        TestUtil.assertEquals(creditLim, account.getCreditLimit());
@@ -43,42 +43,42 @@ public class LineOfCreditTest {
 	    
 	  //>1
 	    @Test
-	    public void pastBankLimit() throws LoanCapException, InsufficientFundsException, OverdraftException{
+	    public void pastBankLimit() throws InvalidInputException, InsufficientFundsException, LoanCapException {
 	    	account = new LineOfCredit(new BigDecimal(2000), premiumInt); 
 	    }
 	    
 	  //>2
 	    @Test
-	    public void negPremiumInt() throws LoanCapException, InsufficientFundsException, OverdraftException{
+	    public void negPremiumInt() throws InvalidInputException, InsufficientFundsException, LoanCapException {
 	    	account = new LineOfCredit(creditLim, new BigDecimal(-.5)); 
 	    	TestUtil.assertEquals(0.5, account.getInterestPremium()); 
 	    }
 	    
 	  //>3
 	    @Test
-	    public void basicWithdraw() throws InsufficientFundsException, OverdraftException{
+	    public void basicWithdraw() throws InvalidInputException, InsufficientFundsException {
 	    	account.withdraw(new BigDecimal(123.45));
 	    	TestUtil.assertEquals(creditLim.multiply(new BigDecimal(-1)).subtract(new BigDecimal(123.45)), account.getBalance()); 
 	    }
 	    
 	  //>4
 	    @Test
-	    public void basicDeposit() throws InsufficientFundsException, OverdraftException{
+	    public void basicDeposit() throws InvalidInputException, InsufficientFundsException {
 	    	account.withdraw(new BigDecimal(123.45)); 
 	    	account.deposit(new BigDecimal(123.45));
 	    	TestUtil.assertEquals(BigDecimal.ZERO, account.getBalance()); 
 	    }
 	    
 	  //>5
-	    @Test (expected = OverdraftException.class)
-	    public void excessWithdraw() throws InsufficientFundsException, OverdraftException{
+	    @Test (expected = InsufficientFundsException.class)
+	    public void excessWithdraw() throws InvalidInputException, InsufficientFundsException {
 	    	account.withdraw(new BigDecimal(1234.56)); 
 	    }
 	    
 	  //>6
 	    //Tests both withdraw() AND deposit() for negative input values
 	    @Test
-	    public void negWithdrawDeposit() throws LoanCapException, OverdraftException, InsufficientFundsException{
+	    public void negWithdrawDeposit() throws InvalidInputException, InsufficientFundsException, LoanCapException {
 	    	BigDecimal expectedDP = account.getBalance().subtract(account.getCreditLimit().divide(new BigDecimal(4)));
 	    	BigDecimal expectedWD = account.getBalance().add(account.getCreditLimit().divide(new BigDecimal(2)));
 	    	
@@ -92,28 +92,28 @@ public class LineOfCreditTest {
 	    }
 	    
 	  //>7
-	    @Test (expected = IllegalArgumentException.class)
-	    public void excessDeposit() throws InsufficientFundsException, OverdraftException{
+	    @Test (expected = InvalidInputException.class)
+	    public void excessDeposit() throws InvalidInputException, InsufficientFundsException {
 	    	account.deposit(new BigDecimal(1234.56)); 
 	    }
 	    
 	  //>8
 	    @Test
-	    public void basicCreditSet() throws LoanCapException, InsufficientFundsException, OverdraftException{
+	    public void basicCreditSet() throws InvalidInputException, LoanCapException {
 	    	account.setCreditLimit(new BigDecimal(1000)); 
 	    	TestUtil.assertEquals(1000, account.getCreditLimit()); 
 	    }
 	    
 	  //>9
-	    @Test (expected = IllegalArgumentException.class)
-	    public void lowerCreditSet() throws LoanCapException, InsufficientFundsException, OverdraftException{
+	    @Test (expected = InvalidInputException.class)
+	    public void lowerCreditSet() throws InvalidInputException, InsufficientFundsException, LoanCapException {
 	    	account.withdraw(new BigDecimal(500)); 
 	    	account.setCreditLimit(new BigDecimal(400)); 
 	    }
 	    
 	  //>10
 	    @Test
-	    public void negativeCreditSet() throws LoanCapException, InsufficientFundsException, OverdraftException{
+	    public void negativeCreditSet() throws InvalidInputException, LoanCapException {
 	    	account.setCreditLimit(new BigDecimal(-500)); 
 	    }
 	    
@@ -143,7 +143,7 @@ public class LineOfCreditTest {
 	    
 	  //>14
 	    @Test
-	    public void minDepositPaidTest() {
+	    public void minDepositPaidTest() throws InvalidInputException {
 	    	account.deposit(account.getMinimumPayment().multiply(new BigDecimal(-2))); 
 	    	TestUtil.assertEquals(BigDecimal.ZERO, account.getMonthlyCharge()); 
 	    }

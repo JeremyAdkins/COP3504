@@ -5,6 +5,8 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 
+import static org.junit.Assert.*;
+
 //Test ideas 
 /* Test withdraw(not matured, penalty) and deposit
  * Test a withdraw when matured 
@@ -72,15 +74,14 @@ public class CertificateOfDepositTest {
 	    }
 	    
 	    @Test
-	    public void testAdvanceMonths() throws InsufficientFundsException, OverdraftException {
+	    public void testAdvanceMonths() throws InvalidInputException, InsufficientFundsException {
 	    	account = new CertificateOfDeposit(CertificateOfDeposit.Term.SIX_MONTHS, basicBalance);
 	    	int x; 
 	    	for(x=0; x<7; x++){
 	    	account.doPayments();
 	    	}
 	    	TestUtil.assertEquals(BigDecimal.ZERO, account.getInterestRate());
-	    	System.out.println("Months on account: "+account.getMonthsElapsed());
-	    	System.out.println("Months that should be on account: "+x); 
+	    	assertEquals(x, account.monthsElapsed);
 	    }
 	}
 
