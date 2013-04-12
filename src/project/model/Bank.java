@@ -1,7 +1,5 @@
 package project.model;
 
-import com.thoughtworks.xstream.XStream;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -11,6 +9,9 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
+import java.lang.String;
+
+import com.thoughtworks.xstream.XStream;
 
 public final class Bank {
     public static final MathContext MATH_CONTEXT = new MathContext(4, RoundingMode.HALF_EVEN);
@@ -121,5 +122,69 @@ public final class Bank {
 	
 	public int assignAccountNumber() {
 		return ++lastAccountNumber;
+	}
+	
+	public Map<String, String> getBankStats(){//avg balance, number of employees, number of users, number of customers, total number of accounts, sumtotal of assests/sumtotal liabilities
+		BigDecimal averageBalance = BigDecimal.ZERO;
+		BigDecimal sumAssets = BigDecimal.ZERO;
+		BigDecimal sumLiabilities = BigDecimal.ZERO;
+		int totalAccounts = 0;
+		int totalUsers = 0;
+		int totalCustomers = 0;
+		int totalEmployees = 0;
+		int totalAccountManagers = 0;
+		int totalTellers = 0;
+		int totalAccountants = 0;
+		int totalAuditors = 0;
+		int totalOperationsManagers = 0;
+		int temp = 0;
+
+		for(User user:users.values()){
+			totalUsers ++;
+			if(user.getRole() == null){
+				totalCustomers ++;
+			} else {
+				if(user.getRole() == User.Role.ACCOUNT_MANAGER){
+					totalAccountManagers ++;
+				}
+				if(user.getRole() == User.Role.ACCOUNTANT){
+					totalAccountants ++;
+				}
+				if(user.getRole() == User.Role.TELLER){
+					totalTellers ++;
+				}
+				if(user.getRole() == User.Role.AUDITOR){
+					totalAuditors ++;
+				}
+				if(user.getRole() == User.Role.OPERATIONS_MANAGER){
+					totalOperationsManagers ++;
+				}
+				totalEmployees ++;
+			}
+			for(Account account:user.getAccounts()){
+				totalAccounts ++;
+				if(account.getType() == Account.Type.CHECKING || account.getType() == Account.Type.SAVINGS || account.getType() == Account.Type.CD){
+					sumAssets = sumAssets.add(account.getBalance());		
+					temp ++;
+				} else {
+					sumLiabilities = sumLiabilities.add(account.getBalance());
+				}
+			}
+		}
+		averageBalance = sumAssets.divide(new BigDecimal(temp));
+		Map<String, String> bankStats = new HashMap<String, String>();
+		bankStats.put("Average Balance across all Accounts", averageBalance.toString());
+		bankStats.put("Sumtotal of Assets", sumAssets.toString());
+		bankStats.put("Sumtotal of Liabilities", sumLiabilities.toString());
+		bankStats.put("Total number of Accounts", String.valueOf(totalAccounts));
+		bankStats.put("Total number of Users", String.valueOf(totalUsers));
+		bankStats.put("Total number of Customers", String.valueOf(totalCustomers));
+		bankStats.put("Total number of Employees", String.valueOf(totalEmployees));
+		bankStats.put("Total number of Operations Managers", String.valueOf(totalOperationsManagers));
+		bankStats.put("Total number of Auditors", String.valueOf(totalAuditors));
+		bankStats.put("Total number of Tellers", String.valueOf(totalTellers));
+		bankStats.put("Total number of Account Managers", String.valueOf(totalAccountManagers));
+		bankStats.put("Total number of Accountants", String.valueOf(totalAccountants));
+		return bankStats;
 	}
 }
