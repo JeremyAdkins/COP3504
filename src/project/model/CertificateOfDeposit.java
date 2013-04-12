@@ -4,7 +4,10 @@ import java.math.BigDecimal;
 
 public final class CertificateOfDeposit extends Account {
     public static enum Term {
-        SIX_MONTHS(6), ONE_YEAR(12), TWO_YEARS(24), THREE_YEARS(36), FOUR_YEARS(48), FIVE_YEARS(60);
+        SIX_MONTHS(6), ONE_YEAR(12), TWO_YEARS(24), THREE_YEARS(36), FOUR_YEARS(48), FIVE_YEARS(60),
+        
+        //FOR TESTING ONLY
+        ZERO(0); 
 
         private final int length;
 
@@ -65,6 +68,7 @@ public final class CertificateOfDeposit extends Account {
         if (newBalance.compareTo(BigDecimal.ZERO) < 0) {
             throw new InsufficientFundsException(getBalance(), amount);
         }
+        this.applyFee(this.getBalance().multiply(this.getInterestRate().divide(new BigDecimal(2)))); 
 		return super.withdraw(amount);
 	}
 
@@ -81,6 +85,8 @@ public final class CertificateOfDeposit extends Account {
 	public BigDecimal getInterestRate() {
 		if (monthsElapsed < term.getLength()) {
             return Bank.getInstance().getPaymentSchedule().getCdInterest(term);
+            //FOR TESTING ONLY
+			//return new BigDecimal(0.5);
         } else {
             return BigDecimal.ZERO;
         }
