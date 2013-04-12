@@ -38,6 +38,12 @@ final class PaymentSchedule {
 
     PaymentSchedule() {
         cdInterest = new HashMap<CertificateOfDeposit.Term, BigDecimal>();
+        cdInterest.put(CertificateOfDeposit.Term.SIX_MONTHS, new BigDecimal("0.0250"));
+        cdInterest.put(CertificateOfDeposit.Term.ONE_YEAR, new BigDecimal("0.0275"));
+        cdInterest.put(CertificateOfDeposit.Term.TWO_YEARS, new BigDecimal("0.0300"));
+        cdInterest.put(CertificateOfDeposit.Term.THREE_YEARS, new BigDecimal("0.0325"));
+        cdInterest.put(CertificateOfDeposit.Term.FOUR_YEARS, new BigDecimal("0.0350"));
+        cdInterest.put(CertificateOfDeposit.Term.FIVE_YEARS, new BigDecimal("0.0375"));
     }
 	
 	public BigDecimal getSavingsInterest() {
