@@ -18,11 +18,10 @@ import static org.junit.Assert.*;
 
 public class CertificateOfDepositTest {
 	 private CertificateOfDeposit account; 
-	 private BigDecimal basicBalance = new BigDecimal(600); 
+	 private BigDecimal basicBalance = new BigDecimal("600.00"); 
 	 
 	    @Before
 	    public void setUp() throws InvalidInputException {
-	        //account = new CertificateOfDeposit(CertificateOfDeposit.Term.ZERO, new BigDecimal(basicBalance);
 	        account = new CertificateOfDeposit(CertificateOfDeposit.Term.ONE_YEAR, basicBalance);
 	        TestUtil.assertEquals(basicBalance, account.getBalance());
 	    }
@@ -34,40 +33,32 @@ public class CertificateOfDepositTest {
 
 	    @Test
 	    public void testWithdrawNotMature() throws InvalidInputException, InsufficientFundsException {
-	    	account = new CertificateOfDeposit(CertificateOfDeposit.Term.ONE_YEAR, new BigDecimal(1234.56));
-	        TestUtil.assertEquals(1234.56, account.getBalance());
-	        BigDecimal preBalance = account.getBalance(); 
-	        account.withdraw(new BigDecimal(123.45));
-	        BigDecimal result = account.getBalance(); 
-	        BigDecimal expected = new BigDecimal(1111.11);
-	        expected = expected.subtract(preBalance.multiply(account.getInterestRate()).divide(new BigDecimal("2"))); 
-	        TestUtil.assertEquals(expected, result);
+	    	account.withdraw(new BigDecimal("55.55"));
+	        TestUtil.assertEquals(536.20, account.getBalance());
 	    }
 
 	    @Test (expected = InsufficientFundsException.class)
 	    public void testWithdrawToMin() throws InvalidInputException, InsufficientFundsException {
-	        TestUtil.assertEquals(basicBalance, account.getBalance());
 	        account.withdraw(new BigDecimal(100));
-	        TestUtil.assertEquals(basicBalance, account.getBalance());
 	    }
 	    
 	    @Test
 	    public void testWithDrawMature() throws InvalidInputException, InsufficientFundsException {
-	    	account = new CertificateOfDeposit(CertificateOfDeposit.Term.ZERO, basicBalance);
-	        account.withdraw(new BigDecimal(123.456));
+	    	account.monthsElapsed = 12;
+	    	account.withdraw(new BigDecimal(123.456));
 	        TestUtil.assertEquals(476.544, account.getBalance());
 	    }
 	    
 	    @Test
 	    public void testInterestMature() throws InvalidInputException, InsufficientFundsException {
-	    	account = new CertificateOfDeposit(CertificateOfDeposit.Term.ZERO, basicBalance);
+	    	account.monthsElapsed = 12;
 	    	account.doPayments();
 	    	TestUtil.assertEquals(basicBalance, account.getBalance());
 	    }
 	    
 	    @Test
 	    public void testInterestNotMature() throws InvalidInputException, InsufficientFundsException {
-	    	account = new CertificateOfDeposit(CertificateOfDeposit.Term.ZERO, basicBalance);
+	    	account.monthsElapsed = 12;
 	    	account.doPayments();
 	    	BigDecimal finalBalance = basicBalance.add(basicBalance.multiply(account.getInterestRate()).divide(new BigDecimal(12)));
 	    	TestUtil.assertEquals(finalBalance, account.getBalance());
@@ -75,10 +66,9 @@ public class CertificateOfDepositTest {
 	    
 	    @Test
 	    public void testAdvanceMonths() throws InvalidInputException, InsufficientFundsException {
-	    	account = new CertificateOfDeposit(CertificateOfDeposit.Term.SIX_MONTHS, basicBalance);
 	    	int x; 
-	    	for(x=0; x<7; x++){
-	    	account.doPayments();
+	    	for(x=0; x<12; x++){
+	    		account.doPayments();
 	    	}
 	    	TestUtil.assertEquals(BigDecimal.ZERO, account.getInterestRate());
 	    	assertEquals(x, account.monthsElapsed);
