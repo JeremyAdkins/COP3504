@@ -44,10 +44,10 @@ public final class CertificateOfDeposit extends Account {
 	public Term getTerm() {
 		return term;
 	}
-	
-	public int getMonthsElapsed() {
-		return monthsElapsed;
-	}
+
+    public boolean isMature() {
+        return (monthsElapsed < term.getLength());
+    }
 
     @Override
     public Transaction deposit(BigDecimal amount) {
@@ -58,7 +58,7 @@ public final class CertificateOfDeposit extends Account {
 	public Transaction withdraw(BigDecimal amount) throws InvalidInputException, InsufficientFundsException {
 		BigDecimal fee = getInterestRate().divide(new BigDecimal(2), Bank.MATH_CONTEXT).multiply(getBalance());
 		BigDecimal newBalance = getBalance().subtract(amount).subtract(fee);
-        if (monthsElapsed < term.getLength()) {
+        if (!isMature()) {
             // minimum balances apply, check for them
             BigDecimal minimumBalance = Bank.getInstance().getPaymentSchedule().getCdMinimum();
             if (newBalance.compareTo(minimumBalance) < 0) {
@@ -84,10 +84,10 @@ public final class CertificateOfDeposit extends Account {
 
     @Override
 	public BigDecimal getInterestRate() {
-		if (monthsElapsed < term.getLength()) {
-            return Bank.getInstance().getPaymentSchedule().getCdInterest(term);
-        } else {
+        if (isMature()) {
             return BigDecimal.ZERO;
+        } else {
+            return Bank.getInstance().getPaymentSchedule().getCdInterest(term);
         }
 	}
 
