@@ -122,4 +122,8 @@ public final class Bank {
 	public int assignAccountNumber() {
 		return ++lastAccountNumber;
 	}
+
+    public Map<String, String> getStatistics() {
+        return new StatisticsTabulator().produceStatistics();
+    }
 }

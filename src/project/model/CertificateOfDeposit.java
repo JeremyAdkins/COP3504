@@ -18,6 +18,11 @@ public final class CertificateOfDeposit extends Account {
         public int getLength() {
             return length;
         }
+
+        @Override
+        public String toString() {
+            return name().toLowerCase().replace('_', ' ');
+        }
     }
 
     private final Term term;

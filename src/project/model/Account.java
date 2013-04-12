@@ -10,7 +10,7 @@ public abstract class Account {
      * negative interest, but only on some account types.
      */
     public static enum Type {
-        SAVINGS("Savings", false), CHECKING("Checking", false), CD("CD", false), LOAN("Loan", true), LINE_OF_CREDIT("Line of credit", true);
+        SAVINGS("savings", false), CHECKING("checking", false), CD("CD", false), LOAN("loan", true), LINE_OF_CREDIT("line of credit", true);
 
         private final String displayName;
 
