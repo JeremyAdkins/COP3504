@@ -1,8 +1,6 @@
 package project.model;
 
 import com.thoughtworks.xstream.XStream;
-import hw1.DateTime;
-import hw1.Time;
 
 import java.io.File;
 import java.io.FileReader;
@@ -50,14 +48,14 @@ public final class Bank {
 
 	private BigDecimal loanCap;
 
-	private Time timeOffset;
+	private int currentMonth;
 
 	private int lastAccountNumber;
 	
 	private Bank() {
 		users = new HashMap<String, User>();
 		schedule = new PaymentSchedule();
-		timeOffset = new Time(0, 0, 0, 0);
+		currentMonth = 0;
 	}
 	
 	public User getUser(String username) {
@@ -99,20 +97,27 @@ public final class Bank {
     void returnLoan(BigDecimal returnedAmount) {
         loanCap = loanCap.add(returnedAmount);
     }
-	
-	public DateTime getEffectiveTime() {
-        // TODO did we ever figure out how this was going to work?
-		return new DateTime().add(timeOffset);
-	}
-	
-	public Time getTimeOffset(){
-	    // Check next month's amount of days and add that?
-		return timeOffset;
-	}
 
-	public void setTimeOffset(Time timeOffset) {
-		this.timeOffset = timeOffset;
-	}
+    public int getCurrentMonth() {
+        return currentMonth;
+    }
+	
+	public void advanceCurrentMonth() {
+        // before we advance the month, go through all accounts and call doPayments()
+        // do this now so that the Transaction objects reflect the current month
+        for (User user : users.values()) {
+            for (Account account : user.getAccounts()) {
+                try {
+                    account.doPayments();
+                } catch (Exception x) {
+                    // TODO maybe this should be handled differently
+                    // for now I'm going to make it print to the console
+                    x.printStackTrace();
+                }
+            }
+        }
+        currentMonth += 1;
+    }
 	
 	public int assignAccountNumber() {
 		return ++lastAccountNumber;
