@@ -26,7 +26,7 @@ public abstract class AbstractLoan extends Account {
     }
 
     @Override
-	protected void doPayments() throws InvalidInputException, InsufficientFundsException, OverdraftException {
+	protected void doPayments() throws InvalidInputException, InsufficientFundsException {
 		super.doPayments();
 		depositsToDate = BigDecimal.ZERO;
 	}

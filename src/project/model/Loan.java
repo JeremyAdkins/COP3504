@@ -32,7 +32,7 @@ public final class Loan extends AbstractLoan{
 	}
 
     @Override
-    protected void doPayments() throws InvalidInputException, InsufficientFundsException, OverdraftException {
+    protected void doPayments() throws InvalidInputException, InsufficientFundsException {
         if (getBalance().compareTo(BigDecimal.ZERO) == 0) {
             close();
         }

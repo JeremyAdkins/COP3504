@@ -30,11 +30,11 @@ public final class LineOfCredit extends AbstractLoan {
 	}
 	
 	@Override
-	public Transaction withdraw(BigDecimal amount) throws InvalidInputException, InsufficientFundsException, OverdraftException {
+	public Transaction withdraw(BigDecimal amount) throws InvalidInputException, InsufficientFundsException {
 		if (getBalance().subtract(amount).negate().compareTo(getCreditLimit()) <= 0) {
 			return super.withdraw(amount);
 		} else {
-			throw new OverdraftException();
+			throw new InsufficientFundsException(getCreditLimit().subtract(getBalance().negate()), amount);
 		}
 	}
 	

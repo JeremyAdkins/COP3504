@@ -21,7 +21,7 @@ public final class SavingsAccountTest {
     }
 
     @Test
-    public void testWithdrawSufficient() throws InsufficientFundsException, OverdraftException {
+    public void testWithdrawSufficient() throws InsufficientFundsException {
         account.deposit(new BigDecimal("1234.56"));
         TestUtil.assertEquals(1234.56, account.getBalance());
         account.withdraw(new BigDecimal("123.45"));
@@ -29,14 +29,14 @@ public final class SavingsAccountTest {
     }
 
     @Test(expected = InsufficientFundsException.class)
-    public void testWithdrawInsufficient() throws InsufficientFundsException, OverdraftException {
+    public void testWithdrawInsufficient() throws InsufficientFundsException {
         account.deposit(new BigDecimal("1234.56"));
         TestUtil.assertEquals(1234.56, account.getBalance());
         account.withdraw(new BigDecimal("1234.57"));
     }
     
     @Test
-    public void testDoPayment() throws InsufficientFundsException, OverdraftException {
+    public void testDoPayment() throws InsufficientFundsException {
     	Transaction testRepeat1 = new Transaction(Transaction.Type.DEPOSIT, new BigDecimal(100.00));
     	account.addRepeatingPayment(testRepeat1);
     	Transaction testRepeat2 = new Transaction(Transaction.Type.WITHDRAWAL, new BigDecimal(50.55));

@@ -9,7 +9,7 @@ public final class SavingsAccount extends Account {
     }
 
 	@Override
-	public Transaction withdraw(BigDecimal amount) throws InsufficientFundsException, OverdraftException {
+	public Transaction withdraw(BigDecimal amount) throws InsufficientFundsException {
 		if (getBalance().compareTo(amount) >= 0) {
 			return super.withdraw(amount);
 		} else {

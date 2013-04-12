@@ -85,7 +85,7 @@ public abstract class Account {
 		return applyTransaction(amount, Transaction.Type.DEPOSIT);
 	}
 
-	public Transaction withdraw(BigDecimal amount) throws InvalidInputException, InsufficientFundsException, OverdraftException {
+	public Transaction withdraw(BigDecimal amount) throws InvalidInputException, InsufficientFundsException {
 		return applyTransaction(amount, Transaction.Type.WITHDRAWAL);
 	}
 
@@ -146,7 +146,7 @@ public abstract class Account {
 		repeatingPayments.remove(payment);
 	}
 
-	protected void doPayments() throws InvalidInputException, InsufficientFundsException, OverdraftException {
+	protected void doPayments() throws InvalidInputException, InsufficientFundsException {
         // don't apply any payments to an account that's closed
         if (closed) {
             return;
