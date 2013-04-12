@@ -1,16 +1,16 @@
 package project.model;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 final class StatisticsTabulator {
     /**
      * An {@code AccountCategory} is a type of account that has its own statistics. For this purpose, each account type
      * forms its own category, as well as CDs of each term.
      */
-    private static final class AccountCategory {
+    private static final class AccountCategory implements Comparable<AccountCategory> {
         private final Account.Type baseType;
 
         private final CertificateOfDeposit.Term term;
@@ -35,6 +35,16 @@ final class StatisticsTabulator {
 
         boolean isAsset() {
             return baseType.isLoan();
+        }
+
+        @Override
+        public int compareTo(AccountCategory other) {
+            int baseCompare = baseType.compareTo(other.baseType);
+            if (baseCompare == 0) {
+                return term.compareTo(other.term);
+            } else {
+                return baseCompare;
+            }
         }
 
         @Override
@@ -82,12 +92,12 @@ final class StatisticsTabulator {
     private int userCount;
 
     StatisticsTabulator() {
-        accountCount = new HashMap<AccountCategory, Integer>();
-        openCount = new HashMap<AccountCategory, Integer>();
-        matureCount = new HashMap<CertificateOfDeposit.Term, Integer>();
-        totalBalance = new HashMap<AccountCategory, BigDecimal>();
+        accountCount = new TreeMap<AccountCategory, Integer>();
+        openCount = new TreeMap<AccountCategory, Integer>();
+        matureCount = new TreeMap<CertificateOfDeposit.Term, Integer>();
+        totalBalance = new TreeMap<AccountCategory, BigDecimal>();
         totalLocCreditLimit = BigDecimal.ZERO;
-        employeeCount = new HashMap<User.Role, Integer>();
+        employeeCount = new TreeMap<User.Role, Integer>();
         userCount = 0;
     }
 
@@ -97,27 +107,50 @@ final class StatisticsTabulator {
             CertificateOfDeposit cdAccount = (CertificateOfDeposit) account;
             CertificateOfDeposit.Term term = cdAccount.getTerm();
             category = new AccountCategory(Account.Type.CD, term);
-            if (cdAccount.isMature() && !cdAccount.isClosed()) {
-                matureCount.put(term, matureCount.get(term) + 1);
-            }
         } else {
             category = new AccountCategory(account.getType());
         }
+        initializeCategory(category);
 
         accountCount.put(category, accountCount.get(category) + 1);
         if (!account.isClosed()) {
             openCount.put(category, openCount.get(category) + 1);
         }
         totalBalance.put(category, totalBalance.get(category).add(account.getBalance()));
-        if (account.getType() == Account.Type.LINE_OF_CREDIT) {
+
+        if (category.baseType == Account.Type.CD) {
+            CertificateOfDeposit cdAccount = (CertificateOfDeposit) account;
+            if (cdAccount.isMature() && !cdAccount.isClosed()) {
+                matureCount.put(category.term, matureCount.get(category.term) + 1);
+            }
+        } else if (account.getType() == Account.Type.LINE_OF_CREDIT) {
             LineOfCredit locAccount = (LineOfCredit) account;
             totalLocCreditLimit.add(locAccount.getCreditLimit());
         }
     }
 
+    private void initializeCategory(AccountCategory category) {
+        if (!accountCount.containsKey(category)) {
+            accountCount.put(category, 0);
+        }
+        if (!openCount.containsKey(category)) {
+            openCount.put(category, 0);
+        }
+        if (category.term != null && !matureCount.containsKey(category.term)) {
+            matureCount.put(category.term, 0);
+        }
+        if (!totalBalance.containsKey(category)) {
+            totalBalance.put(category, BigDecimal.ZERO);
+        }
+    }
+
     void tabulateUser(User user) {
         if (user.getRole() != null) {
-            employeeCount.put(user.getRole(), employeeCount.get(user.getRole()) + 1);
+            User.Role role = user.getRole();
+            if (!employeeCount.containsKey(role)) {
+                employeeCount.put(role, 0);
+            }
+            employeeCount.put(role, employeeCount.get(role) + 1);
         }
         userCount += 1;
     }
