@@ -216,6 +216,6 @@ final class StatisticsTabulator {
     }
 
     private void put(Map<String, String> stats, String name, BigDecimal value) {
-        stats.put(name, String.format("$%.2f", value)); // TODO: what is the rounding mode here?
+        stats.put(name, String.format("$%.2f", value));
     }
 }

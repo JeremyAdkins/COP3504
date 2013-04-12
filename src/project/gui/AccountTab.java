@@ -26,8 +26,8 @@ public class AccountTab extends javax.swing.JPanel {
         this.account = account;
         initComponents();
         AccountNumber.setText("Acc. #: " + String.valueOf(account.getAccountNumber()));
-        Balance.setText("Balance: $"+String.valueOf(account.getBalance().setScale(2, RoundingMode.HALF_EVEN)));
-        InterestRate.setText("Interest: "+String.valueOf(account.getInterestRate().multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_EVEN))+"%");
+        Balance.setText("Balance: $"+String.valueOf(account.getBalance().setScale(2, RoundingMode.HALF_UP)));
+        InterestRate.setText("Interest: "+String.valueOf(account.getInterestRate().multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP))+"%");
         Object[][] history = new Object[account.getHistory().size()][3];
         int i = 0;
         for(Transaction t : account.getHistory()){

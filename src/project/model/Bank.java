@@ -15,7 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public final class Bank {
-    public static final MathContext MATH_CONTEXT = new MathContext(4, RoundingMode.HALF_EVEN);
+    public static final MathContext MATH_CONTEXT = new MathContext(4, RoundingMode.HALF_UP);
 
 	private static final File FILE = new File("bank.xml");
 	private static Bank instance;
