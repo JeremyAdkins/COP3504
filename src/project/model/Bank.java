@@ -48,6 +48,10 @@ public final class Bank {
 
 	private final PaymentSchedule schedule;
 
+    /**
+     * The amount of new loans we are authorized to give out, adjusted whenever a loan is given out or returned. May be
+     * non-negative or {@code null}, the latter representing an unlimited cap.
+     */
 	private BigDecimal loanCap;
 
 	private int currentMonth;
@@ -83,17 +87,19 @@ public final class Bank {
 	}
 
 	public void setLoanCap(BigDecimal loanCap) throws InvalidInputException {
-		if (loanCap.compareTo(BigDecimal.ZERO) < 0) {
+		if (loanCap != null && loanCap.compareTo(BigDecimal.ZERO) < 0) {
             throw new InvalidInputException(loanCap, "loan cap must be non-negative");
 		}
 		this.loanCap = loanCap;
 	}
 
     void authorizeLoan(BigDecimal loanAmount) throws LoanCapException {
-        if (loanCap.compareTo(loanAmount) < 0) {
-            throw new LoanCapException(loanCap, loanAmount);
+        if (loanCap != null) {
+            if (loanCap.compareTo(loanAmount) < 0) {
+                throw new LoanCapException(loanCap, loanAmount);
+            }
+            loanCap = loanCap.subtract(loanAmount);
         }
-        loanCap = loanCap.subtract(loanAmount);
     }
 
     void returnLoan(BigDecimal returnedAmount) {
