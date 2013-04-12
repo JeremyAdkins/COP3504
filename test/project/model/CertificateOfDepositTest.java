@@ -42,7 +42,7 @@ public class CertificateOfDepositTest {
 	        TestUtil.assertEquals(expected, result);
 	    }
 
-	    @Test (expected = IllegalArgumentException.class)
+	    @Test (expected = InsufficientFundsException.class)
 	    public void testWithdrawToMin() throws InvalidInputException, InsufficientFundsException {
 	        TestUtil.assertEquals(basicBalance, account.getBalance());
 	        account.withdraw(new BigDecimal(100));
