@@ -124,6 +124,13 @@ public final class Bank {
 	}
 
     public Map<String, String> getStatistics() {
-        return new StatisticsTabulator().produceStatistics();
+        StatisticsTabulator tabulator = new StatisticsTabulator();
+        for (User user : users.values()) {
+            tabulator.tabulateUser(user);
+            for (Account account : user.getAccounts()) {
+                tabulator.tabulateAccount(account);
+            }
+        }
+        return tabulator.produceStatistics();
     }
 }
