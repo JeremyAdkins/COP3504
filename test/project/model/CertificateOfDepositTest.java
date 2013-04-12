@@ -72,5 +72,17 @@ public class CertificateOfDepositTest {
 	    	BigDecimal finalBalance = basicBalance.add(basicBalance.multiply(account.getInterestRate()).divide(new BigDecimal(12)));
 	    	TestUtil.assertEquals(finalBalance, account.getBalance());
 	    }
+	    
+	    @Test
+	    public void testAdvanceMonths() throws InsufficientFundsException, OverdraftException {
+	    	account = new CertificateOfDeposit(CertificateOfDeposit.Term.SIX_MONTHS, basicBalance);
+	    	int x; 
+	    	for(x=0; x<7; x++){
+	    	account.doPayments();
+	    	}
+	    	TestUtil.assertEquals(BigDecimal.ZERO, account.getInterestRate());
+	    	System.out.println("Months on account: "+account.getMonthsElapsed());
+	    	System.out.println("Months that should be on account: "+x); 
+	    }
 	}
 
