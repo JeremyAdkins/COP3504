@@ -11,6 +11,8 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class Bank {
     public static final MathContext MATH_CONTEXT = new MathContext(4, RoundingMode.HALF_EVEN);
@@ -101,8 +103,16 @@ public final class Bank {
     public int getCurrentMonth() {
         return currentMonth;
     }
-	
-	public void advanceCurrentMonth() {
+
+    /**
+     * Invokes {@link Account#doPayments()} on all accounts, then advances the simulation month ({@link #getCurrentMonth()})
+     * by one. If any exceptions are thrown when {@code doPayments()} is invoked on an account, the exception is logged
+     * at level {@code FINER}, then counted; the total exception count is returned from the method.
+     *
+     * @return the total number of exceptions thrown in doPayments() invocations
+     */
+	public int advanceCurrentMonth() {
+        int failures = 0;
         // before we advance the month, go through all accounts and call doPayments()
         // do this now so that the Transaction objects reflect the current month
         for (User user : users.values()) {
@@ -110,13 +120,14 @@ public final class Bank {
                 try {
                     account.doPayments();
                 } catch (Exception x) {
-                    // TODO maybe this should be handled differently
-                    // for now I'm going to make it print to the console
-                    x.printStackTrace();
+                    Logger.getLogger(getClass().getCanonicalName())
+                            .log(Level.FINER, "exception while handling doPayments() on " + account, x);
+                    failures += 1;
                 }
             }
         }
         currentMonth += 1;
+        return failures;
     }
 	
 	public int assignAccountNumber() {
