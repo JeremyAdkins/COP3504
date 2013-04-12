@@ -5,6 +5,7 @@
 package project.gui;
 
 import project.model.Bank;
+import project.model.LoginException;
 import project.model.User;
 
 /**
@@ -100,11 +101,13 @@ public class LoginWindow extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void LoginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LoginButtonActionPerformed
-        if(UserComboBox.getModel().getSelectedItem().equals("Account Holder")){
-            User newUser = Bank.getInstance().getUser(username.getText());
-            this.dispose();
-            Controller.newAccountHolderFrame(newUser);
-        }
+        try {
+            if(UserComboBox.getModel().getSelectedItem().equals("Account Holder")){
+                User newUser = Bank.getInstance().getUser(username.getText());
+                this.dispose();
+                Controller.newAccountHolderFrame(newUser);
+            }
+        } catch (LoginException e) {} // TODO definitely has to be handled properly
         
     }//GEN-LAST:event_LoginButtonActionPerformed
 

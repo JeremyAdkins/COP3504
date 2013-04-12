@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class Controller {
    
-    public static void main(String[] args) throws InsufficientFundsException {
+    public static void main(String[] args) throws LoginException, InvalidInputException, InsufficientFundsException {
         setLookAndFeel();        
         initializeBank();
         newLoginWindow();
@@ -65,7 +65,7 @@ public class Controller {
         });
     }
     
-    private static void initializeBank() throws InsufficientFundsException {
+    private static void initializeBank() throws LoginException, InvalidInputException, InsufficientFundsException {
         Bank.getInstance().addUser("Bob", new User("Bob", "Smith", new DateTime(1990, 1, 1, 0, 0, 0), 123456789, "bob@bob.com"));
         Account acc = new SavingsAccount();
 		System.out.println(acc.getBalance());

@@ -12,7 +12,7 @@ public final class CheckingAccountTest {
     private static User user1;
     
     @BeforeClass
-    public static void setUpClass() {
+    public static void setUpClass() throws LoginException {
     	user1 = new User("user1FirstName", "user1LastName", null, 123456789, "user1Email");
         Bank.getInstance().addUser("user1", user1);
     }
@@ -35,7 +35,7 @@ public final class CheckingAccountTest {
      *    signal passage of one month, balance should remain at 2111.11 since balance is above $2000, avoiding monthly checking charge
      */
     @Test 
-    public void testWithdrawSufficient() throws InsufficientFundsException {
+    public void testWithdrawSufficient() throws InvalidInputException, InsufficientFundsException {
         account.deposit(new BigDecimal("2234.56"));
         TestUtil.assertEquals(2234.56, account.getBalance());
         account.withdraw(new BigDecimal("123.45"));
@@ -50,7 +50,7 @@ public final class CheckingAccountTest {
      *    No exceptions should be thrown since balance is above overdraft limit of (50.00)
      */
     @Test
-    public void testWithdrawToBelowZeroButAboveODLimit() throws InsufficientFundsException {
+    public void testWithdrawToBelowZeroButAboveODLimit() throws InvalidInputException, InsufficientFundsException {
         account.deposit(new BigDecimal("1234.56"));
         TestUtil.assertEquals(1234.56, account.getBalance());
         account.withdraw(new BigDecimal("1234.57"));
@@ -64,7 +64,7 @@ public final class CheckingAccountTest {
      *    InsufficientFundsException should be thrown
      */    
     @Test(expected = InsufficientFundsException.class)
-    public void testWithdrawInsufficient() throws InsufficientFundsException {
+    public void testWithdrawInsufficient() throws InvalidInputException, InsufficientFundsException {
         account.deposit(new BigDecimal("1234.56"));
         TestUtil.assertEquals(1234.56, account.getBalance());
         account.withdraw(new BigDecimal("1334.56"));
@@ -78,7 +78,7 @@ public final class CheckingAccountTest {
      *    signal passage of one month of time, balance should be 1884.00 after $8 monthly checking charge for balance under $2000
      */
     @Test
-    public void testCheckingServiceCharge() throws InsufficientFundsException {
+    public void testCheckingServiceCharge() throws InvalidInputException, InsufficientFundsException {
         account.deposit(new BigDecimal("2500.00"));
         TestUtil.assertEquals(2500.00, account.getBalance());
         account.withdraw(new BigDecimal("600.00"));
@@ -96,7 +96,7 @@ public final class CheckingAccountTest {
      *    signal passage of one month of time, balance should be 56.00 after $8 monthly checking charge for balance under $2000
      */
     @Test
-    public void testBlah() throws InsufficientFundsException {
+    public void testBlah() throws InvalidInputException, InsufficientFundsException {
         account.deposit(new BigDecimal("100.00"));
         TestUtil.assertEquals(100.00, account.getBalance());
         account.withdraw(new BigDecimal("140.00"));
