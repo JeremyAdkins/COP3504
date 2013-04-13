@@ -79,8 +79,4 @@ public final class User {
 		}
 		return false;
 	}
-	
-	public void sendEmail(String subject, String body){
-		// TODO WORRY ABOUT THIS LATER
-	}
 }

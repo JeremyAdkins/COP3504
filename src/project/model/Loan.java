@@ -6,7 +6,6 @@ public final class Loan extends AbstractLoan{
 	private final BigDecimal minimumPayment; // required to be paid by the end of the month
 	
 	public Loan(BigDecimal amount, BigDecimal minimumPayment, BigDecimal interestPremium) throws LoanCapException {
-		// TODO possibly calculate minimumPayment ourselves
 		super(interestPremium);
         Bank.getInstance().authorizeLoan(amount);
 		applyTransaction(amount, Transaction.Type.WITHDRAWAL);

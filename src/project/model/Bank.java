@@ -112,7 +112,6 @@ public final class Bank {
                     account.doPayments();
                 } catch (Exception x) {
                     // TODO maybe this should be handled differently
-                    // for now I'm going to make it print to the console
                     x.printStackTrace();
                 }
             }
@@ -126,8 +125,11 @@ public final class Bank {
 	
 	public Map<String, String> getBankStats(){//avg balance, number of employees, number of users, number of customers, total number of accounts, sumtotal of assests/sumtotal liabilities
 		BigDecimal averageBalance = BigDecimal.ZERO;
+		BigDecimal averageLiabilities = BigDecimal.ZERO;
 		BigDecimal sumAssets = BigDecimal.ZERO;
 		BigDecimal sumLiabilities = BigDecimal.ZERO;
+		BigDecimal standardDeviationAssets = BigDecimal.ZERO;
+		BigDecimal standardDeviationLiabilities = BigDecimal.ZERO;
 		int totalAccounts = 0;
 		int totalUsers = 0;
 		int totalCustomers = 0;
@@ -137,7 +139,8 @@ public final class Bank {
 		int totalAccountants = 0;
 		int totalAuditors = 0;
 		int totalOperationsManagers = 0;
-		int temp = 0;
+		int tempNumberAssets = 0;
+		int tempNumberLiabilities = 0;
 
 		for(User user:users.values()){
 			totalUsers ++;
@@ -165,15 +168,36 @@ public final class Bank {
 				totalAccounts ++;
 				if(account.getType() == Account.Type.CHECKING || account.getType() == Account.Type.SAVINGS || account.getType() == Account.Type.CD){
 					sumAssets = sumAssets.add(account.getBalance());		
-					temp ++;
+					tempNumberAssets ++;
 				} else {
 					sumLiabilities = sumLiabilities.add(account.getBalance());
+					tempNumberLiabilities ++;
 				}
 			}
 		}
-		averageBalance = sumAssets.divide(new BigDecimal(temp));
+		averageBalance = sumAssets.divide(new BigDecimal(tempNumberAssets));
+		averageLiabilities = sumLiabilities.divide(new BigDecimal(tempNumberLiabilities));
+		
+		for(User user:users.values()){
+			for(Account account:user.getAccounts()){
+				if(account.getType() == Account.Type.CHECKING || account.getType() == Account.Type.SAVINGS || account.getType() == Account.Type.CD){
+					standardDeviationAssets = standardDeviationAssets.add(account.getBalance().subtract(averageBalance)).multiply(standardDeviationAssets.add(account.getBalance().subtract(averageBalance)));
+				}
+				else{
+					standardDeviationLiabilities = standardDeviationAssets.add(account.getBalance().subtract(averageLiabilities)).multiply(standardDeviationAssets.add(account.getBalance().subtract(averageLiabilities)));
+				}
+			}
+		}
+		standardDeviationAssets = standardDeviationAssets.divide(new BigDecimal(tempNumberAssets));
+		standardDeviationLiabilities = standardDeviationLiabilities.divide(new BigDecimal(tempNumberLiabilities));
+		standardDeviationAssets = BigDecimal.valueOf(Math.sqrt(standardDeviationAssets.doubleValue()));
+		standardDeviationLiabilities = BigDecimal.valueOf(Math.sqrt(standardDeviationLiabilities.doubleValue()));
+		
 		Map<String, String> bankStats = new HashMap<String, String>();
-		bankStats.put("Average Balance across all Accounts", averageBalance.toString());
+		bankStats.put("Average Assets across all Accounts", averageBalance.toString());
+		bankStats.put("Average Liabilities across all Accounts", averageLiabilities.toString());
+		bankStats.put("Standard Deviation of Assets", standardDeviationAssets.toString());
+		bankStats.put("Standard Deviation of Liabilities", standardDeviationLiabilities.toString());
 		bankStats.put("Sumtotal of Assets", sumAssets.toString());
 		bankStats.put("Sumtotal of Liabilities", sumLiabilities.toString());
 		bankStats.put("Total number of Accounts", String.valueOf(totalAccounts));

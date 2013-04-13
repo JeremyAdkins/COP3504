@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
-// TODO some of these have constraints to check, like positive numbers
 final class PaymentSchedule {
 	private BigDecimal savingsInterest = new BigDecimal("0.02");
 	private BigDecimal savingsCharge = new BigDecimal("5");
