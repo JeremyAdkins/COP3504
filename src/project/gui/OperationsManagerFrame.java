@@ -5,7 +5,7 @@
 package project.gui;
 
 import project.Controller;
-import project.gui.AbstractUserWindow;
+import project.model.LoginException;
 
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -598,6 +598,7 @@ public class OperationsManagerFrame extends AbstractUserWindow implements Docume
         controller.shiftTime1Month();
     }//GEN-LAST:event_timeShiftButtonActionPerformed
 
+    // TODO code duplication with AccountManagerFrame.java:287
     private void OKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OKButtonActionPerformed
         String firstName = firstNameField.getText();
         String lastName = lastNameField.getText();
@@ -605,9 +606,19 @@ public class OperationsManagerFrame extends AbstractUserWindow implements Docume
         String email = emailField.getText();
         Calendar dateOfBirth = Calendar.getInstance();
         dateOfBirth.setTime((Date) DOBField.getValue());
-        String SSN = SSNField.getText();
+        int ssn;
+        if (SSNField.getText().matches("[0-9]{3}-[0-9]{2}-[0-9]{4}")) {
+            ssn = Integer.parseInt(SSNField.getText().replace("-", ""));
+        } else {
+            // TODO malformed SSN
+            throw new AssertionError();
+        }
         String role = EmployeeComboBox.getSelectedItem().toString();
-        controller.createNewEmployee(firstName, lastName, dateOfBirth, SSN, email, username, role);
+        try {
+            controller.createNewEmployee(firstName, lastName, dateOfBirth, ssn, email, username, role);
+        } catch (LoginException e) {
+            // TODO exception handling
+        }
         UserView.dispose();
     }//GEN-LAST:event_OKButtonActionPerformed
 

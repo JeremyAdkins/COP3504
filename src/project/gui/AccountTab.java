@@ -7,7 +7,7 @@ package project.gui;
 import project.Controller;
 import project.model.Account;
 import project.model.InsufficientFundsException;
-import project.model.OverdraftException;
+import project.model.InvalidInputException;
 import project.model.Transaction;
 
 import javax.swing.*;
@@ -326,10 +326,10 @@ public final class AccountTab extends javax.swing.JPanel {
             WithdrawDialog.dispose();
             try {
                 controller.withdraw(account, amount);
-            } catch (InsufficientFundsException ex) {
+            } catch (InvalidInputException ex) {
                 Logger.getLogger(AccountTab.class.getName()).log(Level.SEVERE, null, ex);
-                JOptionPane.showMessageDialog(parentFrame, "You have withdrawn more than your balance!", "Warning", JOptionPane.WARNING_MESSAGE);
-            } catch (OverdraftException ex) {
+                JOptionPane.showMessageDialog(parentFrame, ex.getMessage(), "Warning", JOptionPane.WARNING_MESSAGE);
+            } catch (InsufficientFundsException ex) {
                 Logger.getLogger(AccountTab.class.getName()).log(Level.SEVERE, null, ex);
                 JOptionPane.showMessageDialog(parentFrame, "You have withdrawn more than your balance!", "Warning", JOptionPane.WARNING_MESSAGE);
             }
@@ -356,7 +356,12 @@ public final class AccountTab extends javax.swing.JPanel {
         int selection = JOptionPane.showConfirmDialog(this, "Are you sure you want to deposit " + amount + "?");
         if (selection==JOptionPane.YES_OPTION) {
             DepositDialog.dispose();
-            controller.deposit(account, amount);
+            try {
+                controller.deposit(account, amount);
+            } catch (InvalidInputException ex) {
+                Logger.getLogger(AccountTab.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(parentFrame, ex.getMessage(), "Warning", JOptionPane.WARNING_MESSAGE);
+            }
         }
     }//GEN-LAST:event_DepositDialogButtonActionPerformed
 

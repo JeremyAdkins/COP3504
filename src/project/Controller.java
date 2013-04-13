@@ -41,7 +41,7 @@ public final class Controller {
         return currentUser;
     }
 
-    public static void main(String[] args) throws OverdraftException {
+    public static void main(String[] args) throws LoginException {
         setLookAndFeel();
         new Controller();
     }
@@ -66,14 +66,14 @@ public final class Controller {
         }
     }
 
-    private void initializeBank() {
-        Bank.getInstance().addUser("admin", new User("Billy", "Bob", Bank.getInstance().getTime(), "555-55-5555", "Bob@mail.com"));
+    private void initializeBank() throws LoginException {
+        Bank.getInstance().addUser("admin", new User("Billy", "Bob", Calendar.getInstance(), 555555555, "Bob@mail.com"));
         Bank.getInstance().getUser("admin").setRole(User.Role.OPERATIONS_MANAGER);
         newAbstractUserWindow(Bank.getInstance().getUser("admin"));
     }
 
     //Opens up the first window and gives control to itself
-    public Controller() {
+    public Controller() throws LoginException {
         initializeBank();
     }
 
@@ -147,7 +147,7 @@ public final class Controller {
 
     
     //Interact with model
-    public void withdraw(Account account, String amount) throws InsufficientFundsException, OverdraftException {
+    public void withdraw(Account account, String amount) throws InvalidInputException, InsufficientFundsException {
         account.withdraw(new BigDecimal(amount));
         for (AccountTab accTab : tabs) {
             accTab.updateBalanceLabel();
@@ -158,7 +158,7 @@ public final class Controller {
         }
     }
 
-    public void deposit(Account account, String amount){
+    public void deposit(Account account, String amount) throws InvalidInputException {
         account.deposit(new BigDecimal(amount));
         for (AccountTab accTab : tabs) {
             accTab.updateBalanceLabel();
@@ -181,7 +181,7 @@ public final class Controller {
      * @param email
      * @return 
      */
-    public void createNewUser(String firstName, String lastName, Calendar birthdate, String ssn, String email, String username){
+    public void createNewUser(String firstName, String lastName, Calendar birthdate, int ssn, String email, String username) throws LoginException {
         Bank.getInstance().addUser(username, new User(firstName, lastName, birthdate, ssn, email));
     }
     /**
@@ -193,28 +193,28 @@ public final class Controller {
      * @param email
      * @param username 
      */
-    public void createNewEmployee(String firstName, String lastName, Calendar birthdate, String ssn, String email, String username, String role){
+    public void createNewEmployee(String firstName, String lastName, Calendar birthdate, int ssn, String email, String username, String role) throws LoginException {
         Bank.getInstance().addUser(username, new User(firstName, lastName, birthdate, ssn, email));
         Bank.getInstance().getUser(username).setRole(User.Role.valueOf(role));
     }
-    public void addAccountToUser(String account, String username){
+    public void addAccountToUser(String account, String username) throws LoginException {
         Bank.getInstance().getUser(username).addAccount(newAccount(account));
     }
     
     public Account newAccount(String type){
-        switch(type){
-            case "Savings":
-                return new SavingsAccount();
-            case "Checking":
-                return new CheckingAccount();
-//            case "Certificate of Deposit":
-//                return new CertificateOfDeposit();
-//            case "Line of Credit": 
-//                return new LineOfCredit();
-//            case "Loan":
-//                return new Loan();
+        // TODO I'm sure there's a way to make this use strong types
+        if (type.equals("Savings")) {
+            return new SavingsAccount();
+        } else if (type.equals("Checking")) {
+            return new CheckingAccount();
+//        } else if (type.equals("Certificate of Deposit")) {
+//            return new CertificateOfDeposit();
+//        } else if (type.equals("Line of Credit")) {
+//            return new LineOfCredit();
+//        } else if (type.equals("Loan")) {
+//            return new Loan();
         }
-        return null;
+        throw new IllegalStateException();
     }
     
     public Bank getInstance() {
@@ -242,10 +242,9 @@ public final class Controller {
      * @return 
      */
     public Object[][] updateAccountManagerTableView(){
-        Map<String, User> users = instance.getUsers();
+        Collection<User> users = instance.getUsers();
         int accountHolders = 0;
-        for(Map.Entry<String, User> entry : users.entrySet()){
-            User user = entry.getValue();
+        for (User user : users) {
             if(!user.isActiveCustomer()){
                 continue;
             }
@@ -253,8 +252,7 @@ public final class Controller {
         }
         Object[][] AccountManagerTable = new Object[accountHolders][3];
         int i = 0;
-        for(Map.Entry<String, User> entry : users.entrySet()){
-            User user = entry.getValue();
+        for (User user : users) {
             if(!user.isActiveCustomer()){
                 continue;
             }
@@ -272,11 +270,10 @@ public final class Controller {
      * @return 
      */
     public Object[][] updateAccountantTableView(){
-        Map<String, User> users = instance.getUsers();
+        Collection<User> users = instance.getUsers();
         Object[][] AccountantTable = new Object[users.size()][2];
         int i = 0;
-        for(Map.Entry<String, User> entry : users.entrySet()){
-            User user = entry.getValue();
+        for (User user : users) {
             for(Account account : user.getAccounts()){
                 AccountantTable[i][0] = account.getType();
                 AccountantTable[i][1] = account.getBalance();

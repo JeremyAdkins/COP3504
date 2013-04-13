@@ -7,8 +7,9 @@ import java.util.Set;
 
 public final class User {
     public static enum Role {
-        TELLER("Teller"), ACCOUNT_MANAGER("Account Manager"), ACCOUNTANT("Accountant"), AUDITOR("Auditor"), OPERATIONS_MANAGER("Operations Manager");
-        
+        TELLER("teller"), ACCOUNT_MANAGER("account manager"), ACCOUNTANT("accountant"), AUDITOR("auditor"),
+        OPERATIONS_MANAGER("operations manager");
+
         private final String displayName;
 
         private Role(String displayName) {
@@ -27,22 +28,15 @@ public final class User {
 
 	private final Calendar birthdate;
 
-	private final String ssn; // ###-##-####
+	private final int ssn;
 
 	private final String email;
 
 	private final Set<Account> accounts;
 
 	private Role role;
-/**
- * 
- * @param firstName
- * @param lastName
- * @param birthdate
- * @param ssn
- * @param email 
- */
-    public User(String firstName, String lastName, Calendar birthdate, String ssn, String email) {
+
+    public User(String firstName, String lastName, Calendar birthdate, int ssn, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthdate = birthdate;
@@ -72,7 +66,7 @@ public final class User {
 		return birthdate;
 	}
 
-	public String getSsn() {
+	public int getSsn() {
 		return ssn;
 	}
 
@@ -95,9 +89,5 @@ public final class User {
 			}
 		}
 		return false;
-	}
-	
-	public void sendEmail(String subject, String body){
-		// TODO WORRY ABOUT THIS LATER
 	}
 }

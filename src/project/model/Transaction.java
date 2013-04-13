@@ -1,11 +1,10 @@
 package project.model;
 
 import java.math.BigDecimal;
-import java.util.Calendar;
 
 public final class Transaction {
     public static enum Type {
-        DEPOSIT(true, true), INTEREST(true, false), WITHDRAWAL(false, true), FEE(false, false);
+        DEPOSIT(true, true), INTEREST(true, false), LOAN_INTEREST(false, false), WITHDRAWAL(false, true), FEE(false, false);
 
         private final boolean isPositive;
 
@@ -33,14 +32,14 @@ public final class Transaction {
 
     private final BigDecimal amount;
 
-    private final Calendar timestamp;
+    private final int timestamp;
 
     private FraudStatus fraudStatus;
 
     public Transaction(Type type, BigDecimal amount) {
         this.type = type;
         this.amount = amount;
-        this.timestamp = Bank.getInstance().getTime();
+        this.timestamp = Bank.getInstance().getCurrentMonth();
         this.fraudStatus = FraudStatus.NOT_FLAGGED;
     }
 
@@ -52,7 +51,7 @@ public final class Transaction {
         return amount;
     }
 
-    public Calendar getTimestamp() {
+    public int getTimestamp() {
         return timestamp;
     }
 

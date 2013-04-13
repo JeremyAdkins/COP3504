@@ -5,13 +5,13 @@
 package project.gui;
 
 import project.Controller;
-import project.model.User;
 import project.model.Bank;
-import java.awt.Frame;
+import project.model.LoginException;
+import project.model.User;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyEvent;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -146,7 +146,7 @@ public final class LoginWindow extends javax.swing.JDialog{
         //Make sure the User exsists
         try{
             newUser = Bank.getInstance().getUser(username.getText());
-        }catch(IllegalArgumentException e){
+        } catch (LoginException ex) {
             JOptionPane.showMessageDialog(this, "Wrong Username!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
