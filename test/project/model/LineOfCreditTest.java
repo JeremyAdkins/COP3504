@@ -1,13 +1,13 @@
 package project.model;
 
-import static org.junit.Assert.assertTrue;
-
-import java.math.BigDecimal;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.math.BigDecimal;
+
+import static org.junit.Assert.assertTrue;
 
 //Test ideas
 /*
@@ -144,9 +144,15 @@ public class LineOfCreditTest {
 	    
 	  //>13
 	    @Test
-	    public void monthlyChargeTest() {
-	    	TestUtil.assertEquals(account.getPenalty(), account.getMonthlyCharge()); 
+	    public void testZeroMonthlyCharge() {
+	    	TestUtil.assertEquals(BigDecimal.ZERO, account.getMonthlyCharge());
 	    }
+
+     @Test
+     public void testPositiveMonthlyCharge() throws InvalidInputException, InsufficientFundsException {
+         account.withdraw(new BigDecimal("600.00"));
+         TestUtil.assertEquals(account.getPenalty(), account.getMonthlyCharge());
+     }
 	    
 	  //>14
 	    @Test

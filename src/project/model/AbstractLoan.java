@@ -47,6 +47,7 @@ public abstract class AbstractLoan extends Account {
 	@Override
 	protected final BigDecimal getMonthlyCharge() {
 		BigDecimal minimumPayment = getMinimumPayment();
+        // we want to test that minimumPayment is more negative than depositsToDate.negate()
 		if (minimumPayment.compareTo(depositsToDate.negate()) < 0) {
 			return getPenalty();
 		} else {

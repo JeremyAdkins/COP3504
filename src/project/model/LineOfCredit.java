@@ -52,7 +52,7 @@ public final class LineOfCredit extends AbstractLoan {
             Bank.getInstance().authorizeLoan(creditLimit.subtract(this.creditLimit));
         } else {
            // we are decreasing the credit limit, so return some loan authorization
-            Bank.getInstance().returnLoan(this.creditLimit.subtract(this.creditLimit));
+            Bank.getInstance().returnLoan(this.creditLimit.subtract(creditLimit));
         }
         this.creditLimit = creditLimit;
     }
