@@ -6,15 +6,23 @@ import java.util.*;
 public abstract class Account {
     /*
      * Account types have logical meaning, because they are used for the accountant's summary statistics. There's no way
-     * to accomplish what this enum does through polymorphism alone.
+     * to accomplish what this enum does through polymorphism alone. We also have to account for the possibility of
+     * negative interest, but only on some account types.
      */
     public static enum Type {
-        SAVINGS("Savings"), CHECKING("Checking"), CD("CD"), LOAN("Loan"), LINE_OF_CREDIT("Line of credit");
+        SAVINGS("savings", false), CHECKING("checking", false), CD("CD", false), LOAN("loan", true), LINE_OF_CREDIT("line of credit", true);
 
         private final String displayName;
 
-        private Type(String displayName) {
+        private final boolean isLoan;
+
+        private Type(String displayName, boolean isLoan) {
             this.displayName = displayName;
+            this.isLoan = isLoan;
+        }
+
+        public boolean isLoan() {
+            return isLoan;
         }
 
         @Override
@@ -81,15 +89,15 @@ public abstract class Account {
 		return balance;
 	}
 
-	public Transaction deposit(BigDecimal amount) {
+	public Transaction deposit(BigDecimal amount) throws InvalidInputException {
 		return applyTransaction(amount, Transaction.Type.DEPOSIT);
 	}
 
-	public Transaction withdraw(BigDecimal amount) throws InsufficientFundsException, OverdraftException {
+	public Transaction withdraw(BigDecimal amount) throws InvalidInputException, InsufficientFundsException {
 		return applyTransaction(amount, Transaction.Type.WITHDRAWAL);
 	}
 
-	public final Transaction applyFee(BigDecimal amount) {
+	public final Transaction applyFee(BigDecimal amount) throws InvalidInputException {
 		return applyTransaction(amount, Transaction.Type.FEE);
 	}
 
@@ -102,18 +110,18 @@ public abstract class Account {
      * @param type the type of the transaction
      * @return a {@code Transaction} object, already added to history, reflecting the change requested; or {@code null},
      *         if {@code amount} was zero
-     * @throws IllegalArgumentException if {@code amount} is negative
+     * @throws InvalidInputException if {@code amount} is negative
      * @throws IllegalStateException if the account is {@link #isClosed() closed}
      */
-	protected final Transaction applyTransaction(BigDecimal amount, Transaction.Type type) {
+	protected final Transaction applyTransaction(BigDecimal amount, Transaction.Type type) throws InvalidInputException {
         if (closed) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("cannot apply a transaction to a closed account");
         } else if (amount.round(Bank.MATH_CONTEXT).compareTo(BigDecimal.ZERO) == 0) {
             // if the amount is zero, we don't want to add anything to the transaction history
             return null;
         } else if (amount.compareTo(BigDecimal.ZERO) < 0) {
             // amounts should never be negative, it's worth having the check
-            throw new IllegalArgumentException("in applyTransaction, amount cannot be negative");
+            throw new InvalidInputException(amount, "the amount for a transaction must be positive");
         }
 
 		if (type.isPositive()) {
@@ -146,7 +154,7 @@ public abstract class Account {
 		repeatingPayments.remove(payment);
 	}
 
-	protected void doPayments() throws InsufficientFundsException, OverdraftException {
+	protected void doPayments() throws InvalidInputException, InsufficientFundsException {
         // don't apply any payments to an account that's closed
         if (closed) {
             return;
@@ -158,8 +166,17 @@ public abstract class Account {
 		}
 
 		// interest
-		BigDecimal interest = balance.multiply(getInterestRate().divide(new BigDecimal(12), Bank.MATH_CONTEXT));
-		applyTransaction(interest, Transaction.Type.INTEREST);
+        BigDecimal interest = balance.multiply(getInterestRate().divide(new BigDecimal(12), Bank.MATH_CONTEXT));
+        if (getType().isLoan()) {
+            if (getBalance().compareTo(BigDecimal.ZERO) > 0) {
+                throw new IllegalStateException("loan balance should never be positive");
+            }
+            // negate the interest because all transaction amounts must be positive
+            applyTransaction(interest.negate(), Transaction.Type.LOAN_INTEREST);
+        } else if (getBalance().compareTo(BigDecimal.ZERO) >= 0) {
+            // only apply interest on non-loans if the balance (and therefore, the interest) is positive
+		    applyTransaction(interest, Transaction.Type.INTEREST);
+        }
 
 		// repeating payments
 		for (Transaction payment : repeatingPayments) {

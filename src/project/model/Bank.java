@@ -11,9 +11,11 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class Bank {
-    public static final MathContext MATH_CONTEXT = new MathContext(4, RoundingMode.HALF_EVEN);
+    public static final MathContext MATH_CONTEXT = new MathContext(4, RoundingMode.HALF_UP);
 
 	private static final File FILE = new File("bank.xml");
 	private static Bank instance;
@@ -46,6 +48,10 @@ public final class Bank {
 
 	private final PaymentSchedule schedule;
 
+    /**
+     * The amount of new loans we are authorized to give out, adjusted whenever a loan is given out or returned. May be
+     * non-negative or {@code null}, the latter representing an unlimited cap.
+     */
 	private BigDecimal loanCap;
 
 	private int currentMonth;
@@ -58,16 +64,16 @@ public final class Bank {
 		currentMonth = 0;
 	}
 	
-	public User getUser(String username) {
+	public User getUser(String username) throws LoginException {
 		if (!users.containsKey(username)) {
-			throw new IllegalArgumentException("Username doesn't exist");
+            throw new LoginException(LoginException.Type.USER_NOT_FOUND, username);
 		}
 		return users.get(username);
 	}
 
-	public void addUser(String username, User user) {
+	public void addUser(String username, User user) throws LoginException {
 		if (users.containsKey(username)) {
-			throw new IllegalArgumentException("Username already taken");
+            throw new LoginException(LoginException.Type.DUPLICATE_USERNAME, username);
 		}
 		users.put(username, user);
 	}
@@ -80,29 +86,41 @@ public final class Bank {
 		return loanCap;
 	}
 
-	public void setLoanCap(BigDecimal loanCap) {
-		if (loanCap.compareTo(BigDecimal.ZERO) < 0) {
-			throw new IllegalArgumentException("LoanCap must be non-negative");
+	public void setLoanCap(BigDecimal loanCap) throws InvalidInputException {
+		if (loanCap != null && loanCap.compareTo(BigDecimal.ZERO) < 0) {
+            throw new InvalidInputException(loanCap, "loan cap must be non-negative");
 		}
 		this.loanCap = loanCap;
 	}
 
     void authorizeLoan(BigDecimal loanAmount) throws LoanCapException {
-        if (loanCap.compareTo(loanAmount) > 0) {
-            throw new LoanCapException();
+        if (loanCap != null) {
+            if (loanCap.compareTo(loanAmount) < 0) {
+                throw new LoanCapException(loanCap, loanAmount);
+            }
+            loanCap = loanCap.subtract(loanAmount);
         }
-        loanCap = loanCap.subtract(loanAmount);
     }
 
     void returnLoan(BigDecimal returnedAmount) {
-        loanCap = loanCap.add(returnedAmount);
+    	if (loanCap != null) {
+    		loanCap = loanCap.add(returnedAmount);
+    	}
     }
 
     public int getCurrentMonth() {
         return currentMonth;
     }
-	
-	public void advanceCurrentMonth() {
+
+    /**
+     * Invokes {@link Account#doPayments()} on all accounts, then advances the simulation month ({@link #getCurrentMonth()})
+     * by one. If any exceptions are thrown when {@code doPayments()} is invoked on an account, the exception is logged
+     * at level {@code FINER}, then counted; the total exception count is returned from the method.
+     *
+     * @return the total number of exceptions thrown in doPayments() invocations
+     */
+	public int advanceCurrentMonth() {
+        int failures = 0;
         // before we advance the month, go through all accounts and call doPayments()
         // do this now so that the Transaction objects reflect the current month
         for (User user : users.values()) {
@@ -110,16 +128,28 @@ public final class Bank {
                 try {
                     account.doPayments();
                 } catch (Exception x) {
-                    // TODO maybe this should be handled differently
-                    // for now I'm going to make it print to the console
-                    x.printStackTrace();
+                    Logger.getLogger(getClass().getCanonicalName())
+                            .log(Level.FINER, "exception while handling doPayments() on " + account, x);
+                    failures += 1;
                 }
             }
         }
         currentMonth += 1;
+        return failures;
     }
 	
 	public int assignAccountNumber() {
 		return ++lastAccountNumber;
 	}
+
+    public Map<String, String> getStatistics() {
+        StatisticsTabulator tabulator = new StatisticsTabulator();
+        for (User user : users.values()) {
+            tabulator.tabulateUser(user);
+            for (Account account : user.getAccounts()) {
+                tabulator.tabulateAccount(account);
+            }
+        }
+        return tabulator.produceStatistics();
+    }
 }

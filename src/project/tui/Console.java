@@ -4,22 +4,19 @@ package project.tui;
 import java.math.BigDecimal;
 import java.util.Scanner;
 
-import project.model.OverdraftException;
-
 
 public class Console {
 
 	/**
 	 * @param args
-	 * @throws OverdraftException 
 	 */
-	public static void main(String[] args) throws OverdraftException {
+	public static void main(String[] args) {
 		printTellerSavingsMenu();
 	}
 	
 	private static Scanner input = new Scanner(System.in);
 	
-	public static void printTellerSavingsMenu() throws OverdraftException {
+	public static void printTellerSavingsMenu() {
 
 		display: while(true) {
 

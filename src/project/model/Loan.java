@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 public final class Loan extends AbstractLoan{
 	private final BigDecimal minimumPayment; // required to be paid by the end of the month
 	
-	public Loan(BigDecimal amount, BigDecimal minimumPayment, BigDecimal interestPremium) throws LoanCapException {
+	public Loan(BigDecimal amount, BigDecimal minimumPayment, BigDecimal interestPremium) throws InvalidInputException, LoanCapException {
 		// TODO possibly calculate minimumPayment ourselves
 		super(interestPremium);
         Bank.getInstance().authorizeLoan(amount);
@@ -19,7 +19,7 @@ public final class Loan extends AbstractLoan{
     }
 	
 	@Override
-	public Transaction deposit(BigDecimal amount) {
+	public Transaction deposit(BigDecimal amount) throws InvalidInputException {
         // call super before altering loanCap, in case there's an exception
         Transaction trans = super.deposit(amount);
         Bank.getInstance().returnLoan(amount);
@@ -32,7 +32,7 @@ public final class Loan extends AbstractLoan{
 	}
 
     @Override
-    protected void doPayments() throws InsufficientFundsException, OverdraftException {
+    protected void doPayments() throws InvalidInputException, InsufficientFundsException {
         if (getBalance().compareTo(BigDecimal.ZERO) == 0) {
             close();
         }

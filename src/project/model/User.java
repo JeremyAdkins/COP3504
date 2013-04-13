@@ -8,7 +8,19 @@ import java.util.Set;
 
 public final class User {
     public static enum Role {
-        TELLER, ACCOUNT_MANAGER, ACCOUNTANT, AUDITOR, OPERATIONS_MANAGER;
+        TELLER("teller"), ACCOUNT_MANAGER("account manager"), ACCOUNTANT("accountant"), AUDITOR("auditor"),
+        OPERATIONS_MANAGER("operations manager");
+
+        private final String displayName;
+
+        private Role(String displayName) {
+            this.displayName = displayName;
+        }
+
+        @Override
+        public String toString() {
+            return displayName;
+        }
     }
 
 	private final String firstName;
@@ -78,9 +90,5 @@ public final class User {
 			}
 		}
 		return false;
-	}
-	
-	public void sendEmail(String subject, String body){
-		// TODO WORRY ABOUT THIS LATER
 	}
 }
