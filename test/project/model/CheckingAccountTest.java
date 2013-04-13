@@ -57,6 +57,18 @@ public final class CheckingAccountTest {
         TestUtil.assertEquals(-0.01, account.getBalance());
     }
     
+    @Test(expected = OverdraftException.class)
+    public void testWithdrawToBelowZeroAndHitOD() throws InsufficientFundsException, OverdraftException {
+        account.deposit(new BigDecimal("1234.56"));
+        TestUtil.assertEquals(1234.56, account.getBalance());
+        account.withdraw(new BigDecimal("1234.57"));
+        TestUtil.assertEquals(-0.01, account.getBalance());
+        account.withdraw(new BigDecimal("1234.57"));
+        TestUtil.assertEquals(-40.01, account.getBalance());
+        account.withdraw(new BigDecimal("1234.57"));
+        TestUtil.assertEquals(-80.01, account.getBalance());
+    }
+
     /**  1234.56 deposit
      *   1334.56 withdrawal
      *    Withdrawal should be denied since balance would go below overdraft limit of (50.00)
