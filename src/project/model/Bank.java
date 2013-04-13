@@ -1,5 +1,7 @@
 package project.model;
 
+import com.thoughtworks.xstream.XStream;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -9,12 +11,11 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
-import java.lang.String;
-
-import com.thoughtworks.xstream.XStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class Bank {
-    public static final MathContext MATH_CONTEXT = new MathContext(4, RoundingMode.HALF_EVEN);
+    public static final MathContext MATH_CONTEXT = new MathContext(4, RoundingMode.HALF_UP);
 
 	private static final File FILE = new File("bank.xml");
 	private static Bank instance;
@@ -47,6 +48,10 @@ public final class Bank {
 
 	private final PaymentSchedule schedule;
 
+    /**
+     * The amount of new loans we are authorized to give out, adjusted whenever a loan is given out or returned. May be
+     * non-negative or {@code null}, the latter representing an unlimited cap.
+     */
 	private BigDecimal loanCap;
 
 	private int currentMonth;
@@ -59,16 +64,16 @@ public final class Bank {
 		currentMonth = 0;
 	}
 	
-	public User getUser(String username) {
+	public User getUser(String username) throws LoginException {
 		if (!users.containsKey(username)) {
-			throw new IllegalArgumentException("Username doesn't exist");
+            throw new LoginException(LoginException.Type.USER_NOT_FOUND, username);
 		}
 		return users.get(username);
 	}
 
-	public void addUser(String username, User user) {
+	public void addUser(String username, User user) throws LoginException {
 		if (users.containsKey(username)) {
-			throw new IllegalArgumentException("Username already taken");
+            throw new LoginException(LoginException.Type.DUPLICATE_USERNAME, username);
 		}
 		users.put(username, user);
 	}
@@ -81,29 +86,41 @@ public final class Bank {
 		return loanCap;
 	}
 
-	public void setLoanCap(BigDecimal loanCap) {
-		if (loanCap.compareTo(BigDecimal.ZERO) < 0) {
-			throw new IllegalArgumentException("LoanCap must be non-negative");
+	public void setLoanCap(BigDecimal loanCap) throws InvalidInputException {
+		if (loanCap != null && loanCap.compareTo(BigDecimal.ZERO) < 0) {
+            throw new InvalidInputException(loanCap, "loan cap must be non-negative");
 		}
 		this.loanCap = loanCap;
 	}
 
     void authorizeLoan(BigDecimal loanAmount) throws LoanCapException {
-        if (loanCap.compareTo(loanAmount) > 0) {
-            throw new LoanCapException();
+        if (loanCap != null) {
+            if (loanCap.compareTo(loanAmount) < 0) {
+                throw new LoanCapException(loanCap, loanAmount);
+            }
+            loanCap = loanCap.subtract(loanAmount);
         }
-        loanCap = loanCap.subtract(loanAmount);
     }
 
     void returnLoan(BigDecimal returnedAmount) {
-        loanCap = loanCap.add(returnedAmount);
+    	if (loanCap != null) {
+    		loanCap = loanCap.add(returnedAmount);
+    	}
     }
 
     public int getCurrentMonth() {
         return currentMonth;
     }
-	
-	public void advanceCurrentMonth() {
+
+    /**
+     * Invokes {@link Account#doPayments()} on all accounts, then advances the simulation month ({@link #getCurrentMonth()})
+     * by one. If any exceptions are thrown when {@code doPayments()} is invoked on an account, the exception is logged
+     * at level {@code FINER}, then counted; the total exception count is returned from the method.
+     *
+     * @return the total number of exceptions thrown in doPayments() invocations
+     */
+	public int advanceCurrentMonth() {
+        int failures = 0;
         // before we advance the month, go through all accounts and call doPayments()
         // do this now so that the Transaction objects reflect the current month
         for (User user : users.values()) {
@@ -111,61 +128,32 @@ public final class Bank {
                 try {
                     account.doPayments();
                 } catch (Exception x) {
-                    // TODO maybe this should be handled differently
-                    x.printStackTrace();
+                    Logger.getLogger(getClass().getCanonicalName())
+                            .log(Level.FINER, "exception while handling doPayments() on " + account, x);
+                    failures += 1;
                 }
             }
         }
         currentMonth += 1;
+        return failures;
     }
 	
 	public int assignAccountNumber() {
 		return ++lastAccountNumber;
 	}
 	
-	public Map<String, String> getBankStats(){//avg balance, number of employees, number of users, number of customers, total number of accounts, sumtotal of assests/sumtotal liabilities
+	private Map<String, String> getStandardDevs(){
 		BigDecimal averageBalance = BigDecimal.ZERO;
 		BigDecimal averageLiabilities = BigDecimal.ZERO;
 		BigDecimal sumAssets = BigDecimal.ZERO;
 		BigDecimal sumLiabilities = BigDecimal.ZERO;
 		BigDecimal standardDeviationAssets = BigDecimal.ZERO;
 		BigDecimal standardDeviationLiabilities = BigDecimal.ZERO;
-		int totalAccounts = 0;
-		int totalUsers = 0;
-		int totalCustomers = 0;
-		int totalEmployees = 0;
-		int totalAccountManagers = 0;
-		int totalTellers = 0;
-		int totalAccountants = 0;
-		int totalAuditors = 0;
-		int totalOperationsManagers = 0;
 		int tempNumberAssets = 0;
 		int tempNumberLiabilities = 0;
 
 		for(User user:users.values()){
-			totalUsers ++;
-			if(user.getRole() == null){
-				totalCustomers ++;
-			} else {
-				if(user.getRole() == User.Role.ACCOUNT_MANAGER){
-					totalAccountManagers ++;
-				}
-				if(user.getRole() == User.Role.ACCOUNTANT){
-					totalAccountants ++;
-				}
-				if(user.getRole() == User.Role.TELLER){
-					totalTellers ++;
-				}
-				if(user.getRole() == User.Role.AUDITOR){
-					totalAuditors ++;
-				}
-				if(user.getRole() == User.Role.OPERATIONS_MANAGER){
-					totalOperationsManagers ++;
-				}
-				totalEmployees ++;
-			}
 			for(Account account:user.getAccounts()){
-				totalAccounts ++;
 				if(account.getType() == Account.Type.CHECKING || account.getType() == Account.Type.SAVINGS || account.getType() == Account.Type.CD){
 					sumAssets = sumAssets.add(account.getBalance());		
 					tempNumberAssets ++;
@@ -194,21 +182,21 @@ public final class Bank {
 		standardDeviationLiabilities = BigDecimal.valueOf(Math.sqrt(standardDeviationLiabilities.doubleValue()));
 		
 		Map<String, String> bankStats = new HashMap<String, String>();
-		bankStats.put("Average Assets across all Accounts", averageBalance.toString());
-		bankStats.put("Average Liabilities across all Accounts", averageLiabilities.toString());
-		bankStats.put("Standard Deviation of Assets", standardDeviationAssets.toString());
-		bankStats.put("Standard Deviation of Liabilities", standardDeviationLiabilities.toString());
-		bankStats.put("Sumtotal of Assets", sumAssets.toString());
-		bankStats.put("Sumtotal of Liabilities", sumLiabilities.toString());
-		bankStats.put("Total number of Accounts", String.valueOf(totalAccounts));
-		bankStats.put("Total number of Users", String.valueOf(totalUsers));
-		bankStats.put("Total number of Customers", String.valueOf(totalCustomers));
-		bankStats.put("Total number of Employees", String.valueOf(totalEmployees));
-		bankStats.put("Total number of Operations Managers", String.valueOf(totalOperationsManagers));
-		bankStats.put("Total number of Auditors", String.valueOf(totalAuditors));
-		bankStats.put("Total number of Tellers", String.valueOf(totalTellers));
-		bankStats.put("Total number of Account Managers", String.valueOf(totalAccountManagers));
-		bankStats.put("Total number of Accountants", String.valueOf(totalAccountants));
+		bankStats.put("Standard deviation of assets", standardDeviationAssets.toString());
+		bankStats.put("Standard deviation of liabilities", standardDeviationLiabilities.toString());
 		return bankStats;
 	}
+
+    public Map<String, String> getStatistics() {
+        StatisticsTabulator tabulator = new StatisticsTabulator();
+        for (User user : users.values()) {
+            tabulator.tabulateUser(user);
+            for (Account account : user.getAccounts()) {
+                tabulator.tabulateAccount(account);
+            }
+        }
+        Map<String, String> stats = tabulator.produceStatistics();
+        stats.putAll(getStandardDevs());
+        return stats;
+    }
 }
