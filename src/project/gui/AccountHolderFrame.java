@@ -2,9 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package project.GUI;
+package project.gui;
 
 import project.Controller;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,7 +19,7 @@ public final class AccountHolderFrame extends AbstractUserWindow {
     /**
      * Creates new form AccountHolderFrame
      */
-    private Set<AccountTab> accountTabs = new HashSet<>();
+    private Set<project.gui.AccountTab> accountTabs = new HashSet<project.gui.AccountTab>();
 
     public AccountHolderFrame(Controller controller){
         super(controller);
@@ -43,8 +44,8 @@ public final class AccountHolderFrame extends AbstractUserWindow {
 
     private void buildAccountTabs() {
         accountTabs.clear();
-        List<AccountTab> accTabList = controller.getTabs(this);
-        for (AccountTab accTab : accTabList) {
+        List<project.gui.AccountTab> accTabList = controller.getTabs(this);
+        for (project.gui.AccountTab accTab : accTabList) {
             accountTabs.add(accTab);
             AccountHolderTabs.add(accTab);
         }

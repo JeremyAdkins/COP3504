@@ -2,17 +2,18 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package project.GUI;
+package project.gui;
 
+import project.Controller;
+
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Calendar;
 import java.util.Date;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import project.Controller;
 
 /**
  *

@@ -4,14 +4,11 @@
  */
 package project;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import project.GUI.*;
+import project.gui.*;
 import project.model.*;
+
+import java.math.BigDecimal;
+import java.util.*;
 
 
 
@@ -25,7 +22,7 @@ public final class Controller {
 
     private Bank instance = Bank.getInstance();
     private User currentUser; //the User currently using the platform based on the window that is open. When a user interacts with a Teller, the teller window is the only window open and this would return the Teller.
-    private List<AbstractUserWindow> windows = new ArrayList<>(); //the Windows open and (therefore) those which this Controller is responsible for
+    private List<AbstractUserWindow> windows = new ArrayList<AbstractUserWindow>(); //the Windows open and (therefore) those which this Controller is responsible for
 
     public List<AbstractUserWindow> getWindows() {
         return windows;
@@ -34,7 +31,7 @@ public final class Controller {
     public List<AccountTab> getTabs() {
         return tabs;
     }
-    private List<AccountTab> tabs = new ArrayList<>(); //the tabs open and (therefore) those which this Controller is responsible for
+    private List<AccountTab> tabs = new ArrayList<AccountTab>(); //the tabs open and (therefore) those which this Controller is responsible for
 
     public void setCurrentUser(User currentUser) {
         this.currentUser = currentUser;
@@ -58,7 +55,13 @@ public final class Controller {
                     break;
                 }
             }
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(LoginWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(LoginWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(LoginWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(LoginWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
     }
@@ -118,7 +121,7 @@ public final class Controller {
                             userWindow = new AuditorFrame(Controller.this);
                             break;
                         case ACCOUNT_MANAGER:
-                            userWindow = new AccountManagerFrame(Controller.this);
+                            userWindow = new project.gui.AccountManagerFrame(Controller.this);
                     }
                 }
                 userWindow.setVisible(true);

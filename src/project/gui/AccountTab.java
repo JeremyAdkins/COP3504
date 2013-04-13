@@ -2,17 +2,18 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package project.GUI;
+package project.gui;
 
 import project.Controller;
 import project.model.Account;
-import project.model.Transaction;
+import project.model.InsufficientFundsException;
 import project.model.OverdraftException;
+import project.model.Transaction;
+
+import javax.swing.*;
 import java.math.RoundingMode;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
-import project.model.InsufficientFundsException;
 
 /**
  *
@@ -325,7 +326,10 @@ public final class AccountTab extends javax.swing.JPanel {
             WithdrawDialog.dispose();
             try {
                 controller.withdraw(account, amount);
-            } catch (OverdraftException | InsufficientFundsException ex) {
+            } catch (InsufficientFundsException ex) {
+                Logger.getLogger(AccountTab.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(parentFrame, "You have withdrawn more than your balance!", "Warning", JOptionPane.WARNING_MESSAGE);
+            } catch (OverdraftException ex) {
                 Logger.getLogger(AccountTab.class.getName()).log(Level.SEVERE, null, ex);
                 JOptionPane.showMessageDialog(parentFrame, "You have withdrawn more than your balance!", "Warning", JOptionPane.WARNING_MESSAGE);
             }
@@ -342,7 +346,7 @@ public final class AccountTab extends javax.swing.JPanel {
     }//GEN-LAST:event_DepositButtonActionPerformed
 
     private void UseTellerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UseTellerActionPerformed
-        LoginWindow temp = new LoginWindow("Teller Login", true, controller);
+        project.gui.LoginWindow temp = new project.gui.LoginWindow("Teller Login", true, controller);
         temp.confirmTellerLogin(true);
         temp.setVisible(true);
     }//GEN-LAST:event_UseTellerActionPerformed

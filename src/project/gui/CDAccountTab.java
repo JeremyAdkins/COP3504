@@ -2,18 +2,18 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package project.GUI;
+package project.gui;
 
 /**
  *
  * @author rich
  */
-public class LoCAccountTab extends javax.swing.JPanel {
+public class CDAccountTab extends javax.swing.JPanel {
 
     /**
      * Creates new form CheckingAccountTab
      */
-    public LoCAccountTab() {
+    public CDAccountTab() {
         initComponents();
     }
 
