@@ -103,7 +103,9 @@ public final class Bank {
     }
 
     void returnLoan(BigDecimal returnedAmount) {
-        loanCap = loanCap.add(returnedAmount);
+    	if (loanCap != null) {
+    		loanCap = loanCap.add(returnedAmount);
+    	}
     }
 
     public int getCurrentMonth() {

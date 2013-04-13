@@ -1,9 +1,12 @@
 package project.model;
 
+import static org.junit.Assert.assertTrue;
+
 import java.math.BigDecimal;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 //Test ideas
@@ -25,9 +28,15 @@ import org.junit.Test;
  */
 
 public class LineOfCreditTest {
-	BigDecimal creditLim = new BigDecimal(600); 
+	BigDecimal creditLim = new BigDecimal(3000); 
 	BigDecimal premiumInt = new BigDecimal(.05); 
-	LineOfCredit account; 
+	LineOfCredit account;
+	
+	@BeforeClass
+	public static void setUpClass() throws InvalidInputException {
+		Bank.getInstance().setLoanCap(new BigDecimal("4000.00"));
+	}
+	
 	 @Before
 	    public void setUp() throws InvalidInputException, LoanCapException {
 	        account = new LineOfCredit(creditLim, premiumInt);
@@ -36,29 +45,33 @@ public class LineOfCreditTest {
 	    }
 
 	    @After
-	    public void tearDown() {
-	    	Bank.getInstance().returnLoan(account.getCreditLimit());
-	        account = null;
+	    public void tearDown() throws InvalidInputException {
+	    	if (account != null && !account.isClosed()) {
+	    		account.deposit(account.getBalance().negate());
+		    	account.close();
+	    	}
+	    	account = null;
 	    }
 	    
 	  //>1
-	    @Test
+	    @Test(expected = LoanCapException.class)
 	    public void pastBankLimit() throws InvalidInputException, InsufficientFundsException, LoanCapException {
-	    	account = new LineOfCredit(new BigDecimal(2000), premiumInt); 
+	    	tearDown();
+	    	account = new LineOfCredit(new BigDecimal(5000), premiumInt); 
 	    }
 	    
 	  //>2
-	    @Test
+	    @Test(expected = InvalidInputException.class)
 	    public void negPremiumInt() throws InvalidInputException, InsufficientFundsException, LoanCapException {
+	    	tearDown();
 	    	account = new LineOfCredit(creditLim, new BigDecimal(-.5)); 
-	    	TestUtil.assertEquals(0.5, account.getInterestPremium()); 
 	    }
 	    
 	  //>3
 	    @Test
 	    public void basicWithdraw() throws InvalidInputException, InsufficientFundsException {
 	    	account.withdraw(new BigDecimal(123.45));
-	    	TestUtil.assertEquals(creditLim.multiply(new BigDecimal(-1)).subtract(new BigDecimal(123.45)), account.getBalance()); 
+	    	TestUtil.assertEquals(-123.45, account.getBalance()); 
 	    }
 	    
 	  //>4
@@ -72,23 +85,19 @@ public class LineOfCreditTest {
 	  //>5
 	    @Test (expected = InsufficientFundsException.class)
 	    public void excessWithdraw() throws InvalidInputException, InsufficientFundsException {
-	    	account.withdraw(new BigDecimal(1234.56)); 
+	    	account.withdraw(new BigDecimal("5678.90")); 
 	    }
 	    
 	  //>6
-	    //Tests both withdraw() AND deposit() for negative input values
-	    @Test
-	    public void negWithdrawDeposit() throws InvalidInputException, InsufficientFundsException, LoanCapException {
-	    	BigDecimal expectedDP = account.getBalance().subtract(account.getCreditLimit().divide(new BigDecimal(4)));
-	    	BigDecimal expectedWD = account.getBalance().add(account.getCreditLimit().divide(new BigDecimal(2)));
-	    	
-	    	//Dividing by negative 2 will make our withdrawal 'amount' negative, withdraw() should ignore the negative
-	    	Transaction tran = account.withdraw(account.getCreditLimit().divide(new BigDecimal(-2))); 
-	    	TestUtil.assertEquals(expectedWD, tran.getAmount()); 
-	    	
-	    	//The transaction value should also be positive
-	    	Transaction trans = account.deposit(account.getCreditLimit().divide(new BigDecimal(-4))); 
-	    	TestUtil.assertEquals(expectedDP, trans.getAmount()); 
+	    @Test(expected = InvalidInputException.class)
+	    public void negDeposit() throws InvalidInputException, InsufficientFundsException, LoanCapException {
+	    	account.withdraw(new BigDecimal("300.00"));
+	    	account.deposit(new BigDecimal("-150.00"));  
+	    }
+	    
+	    @Test(expected = InvalidInputException.class)
+	    public void negWithdraw() throws InvalidInputException, InsufficientFundsException, LoanCapException {
+	    	account.withdraw(new BigDecimal("-300.00")); 
 	    }
 	    
 	  //>7
@@ -112,7 +121,7 @@ public class LineOfCreditTest {
 	    }
 	    
 	  //>10
-	    @Test
+	    @Test(expected = InvalidInputException.class)
 	    public void negativeCreditSet() throws InvalidInputException, LoanCapException {
 	    	account.setCreditLimit(new BigDecimal(-500)); 
 	    }
@@ -121,18 +130,16 @@ public class LineOfCreditTest {
 	    @Test
 	    public void closedTest()throws IllegalArgumentException {
 	    	account.close(); 
-	    	if(!account.isClosed())
-	    	{
-	    		throw new IllegalArgumentException(); 
-	    	}
+	    	assertTrue(account.isClosed());
 	    }
 	    
 	  //>12
 	    @Test
-	    public void minimumPaymentTest() {
+	    public void testBalanceMinimumPayment() throws InvalidInputException, InsufficientFundsException{
 	    	//Note that, for this test, locpercentpayment is 2% and locfixedpayment is 50$
+	    	account.withdraw(new BigDecimal(10)); 
 	    	BigDecimal min = account.getMinimumPayment(); 
-	    	TestUtil.assertEquals(-50, min); 
+	    	TestUtil.assertEquals(-10, min);
 	    }
 	    
 	  //>13
@@ -146,5 +153,22 @@ public class LineOfCreditTest {
 	    public void minDepositPaidTest() throws InvalidInputException {
 	    	account.deposit(account.getMinimumPayment().multiply(new BigDecimal(-2))); 
 	    	TestUtil.assertEquals(BigDecimal.ZERO, account.getMonthlyCharge()); 
+	    }
+	    
+	  //>15
+	    @Test
+	    public void testPercentMinimumPayment() throws InvalidInputException, InsufficientFundsException{
+	    	//Note that, for this test, locpercentpayment is 2% and locfixedpayment is 50$
+	    	account.withdraw(new BigDecimal(2800)); 
+	    	BigDecimal min = account.getMinimumPayment(); 
+	    	TestUtil.assertEquals(-56, min);
+	    }
+	    
+	    @Test
+	    public void testFixedMinimumPayment() throws InvalidInputException, InsufficientFundsException{
+	    	//Note that, for this test, locpercentpayment is 2% and locfixedpayment is 50$
+	    	account.withdraw(new BigDecimal(550)); 
+	    	BigDecimal min = account.getMinimumPayment(); 
+	    	TestUtil.assertEquals(-50, min);
 	    }
 }

@@ -26,6 +26,7 @@ public final class LineOfCredit extends AbstractLoan {
 	
 	@Override
 	public void close() {
+		super.close();
         Bank.getInstance().returnLoan(creditLimit);
 	}
 	
@@ -53,6 +54,7 @@ public final class LineOfCredit extends AbstractLoan {
            // we are decreasing the credit limit, so return some loan authorization
             Bank.getInstance().returnLoan(this.creditLimit.subtract(this.creditLimit));
         }
+        this.creditLimit = creditLimit;
     }
 	
 	@Override
