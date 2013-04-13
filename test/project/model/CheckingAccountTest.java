@@ -57,8 +57,8 @@ public final class CheckingAccountTest {
         TestUtil.assertEquals(-0.01, account.getBalance());
     }
     
-    @Test(expected = OverdraftException.class)
-    public void testWithdrawToBelowZeroAndHitOD() throws InsufficientFundsException, OverdraftException {
+    @Test(expected = InsufficientFundsException.class)
+    public void testWithdrawToBelowZeroAndHitOD() throws InvalidInputException, InsufficientFundsException {
         account.deposit(new BigDecimal("1234.56"));
         TestUtil.assertEquals(1234.56, account.getBalance());
         account.withdraw(new BigDecimal("1234.57"));
