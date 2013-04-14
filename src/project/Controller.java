@@ -7,9 +7,11 @@ package project;
 import project.gui.*;
 import project.model.*;
 
+import javax.swing.*;
+import java.awt.*;
 import java.math.BigDecimal;
 import java.util.*;
-
+import java.util.List;
 
 
 /**
@@ -275,7 +277,7 @@ public final class Controller {
     }
     /**
      * Lays out all of the Accounts
-     * @return 
+     * @return
      */
     public Object[][] updateAccountantTableView(){
         Collection<User> users = instance.getUsers();
@@ -290,24 +292,12 @@ public final class Controller {
         }
         return AccountantTable;
     }
-    
-    public Object[][] updateAuditorTableView(){
-        return null; //TODO
+
+    public void handleException(Component parent, InvalidInputException iix) {
+        JOptionPane.showMessageDialog(parent, iix.getMessage(), iix.getClass().getName(), JOptionPane.ERROR_MESSAGE);
     }
 
-    public void shutDown(){
-
+    public void shutDown() {
+        // TODO
     }
-    
-    public void getPaymentSchedule(){
-        
-    }
-    
-    public void shiftTime1Month(){
-        
-    }
-    
-//    public void shiftTime1Month(){
-//        Bank.getInstance().doPayments();
-//    }
 }

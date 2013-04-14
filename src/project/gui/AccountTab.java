@@ -327,9 +327,9 @@ public final class AccountTab extends javax.swing.JPanel {
             try {
                 controller.withdraw(account, amount);
             } catch (InvalidInputException ex) {
-                Logger.getLogger(AccountTab.class.getName()).log(Level.SEVERE, null, ex);
-                JOptionPane.showMessageDialog(parentFrame, ex.getMessage(), "Warning", JOptionPane.WARNING_MESSAGE);
+                controller.handleException(this, ex);
             } catch (InsufficientFundsException ex) {
+                // TODO handle in Controller
                 Logger.getLogger(AccountTab.class.getName()).log(Level.SEVERE, null, ex);
                 JOptionPane.showMessageDialog(parentFrame, "You have withdrawn more than your balance!", "Warning", JOptionPane.WARNING_MESSAGE);
             }
@@ -359,8 +359,7 @@ public final class AccountTab extends javax.swing.JPanel {
             try {
                 controller.deposit(account, amount);
             } catch (InvalidInputException ex) {
-                Logger.getLogger(AccountTab.class.getName()).log(Level.SEVERE, null, ex);
-                JOptionPane.showMessageDialog(parentFrame, ex.getMessage(), "Warning", JOptionPane.WARNING_MESSAGE);
+                controller.handleException(this, ex);
             }
         }
     }//GEN-LAST:event_DepositDialogButtonActionPerformed

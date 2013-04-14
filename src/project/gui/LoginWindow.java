@@ -122,7 +122,7 @@ public final class LoginWindow extends javax.swing.JFrame {
         try {
             user = Bank.getInstance().getUser(username.getText());
         } catch (InvalidInputException ex) {
-            JOptionPane.showMessageDialog(this, "Wrong Username!", "Error", JOptionPane.ERROR_MESSAGE);
+            controller.handleException(this, ex);
             return;
         }
 

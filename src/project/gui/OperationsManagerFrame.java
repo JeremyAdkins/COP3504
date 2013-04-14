@@ -84,7 +84,7 @@ public class OperationsManagerFrame extends AbstractUserWindow {
                 setField((BigDecimal) ((JFormattedTextField) input).getValue());
                 return true;
             } catch (InvalidInputException iix) {
-                JOptionPane.showMessageDialog(OperationsManagerFrame.this, iix.getMessage(), iix.getClass().getName(), JOptionPane.ERROR_MESSAGE);
+                controller.handleException(OperationsManagerFrame.this, iix);
                 return false;
             } catch (ParseException px) {
                 return false;
