@@ -67,7 +67,7 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
     }
     
     private void initAccountComboBoxModel(){
-        accountTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel<Account.Type>(Account.Type.values()));
+        accountTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel(Account.Type.values()));
     }
     
     private void action(){
@@ -138,7 +138,7 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
         emailField = new javax.swing.JTextField();
         usernameField = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
-        accountTypeComboBox = new JComboBox<Account.Type>();
+        accountTypeComboBox = new JComboBox();
         jLabel10 = new javax.swing.JLabel();
         addUserButton = new javax.swing.JButton();
         addAccountButton = new JButton();
@@ -365,7 +365,7 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
 
     // TODO I modified this
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<Account.Type> accountTypeComboBox;
+    private javax.swing.JComboBox accountTypeComboBox;
     private javax.swing.JTable accountManagerTable;
     private javax.swing.JButton CancelButton;
     private javax.swing.JFormattedTextField DOBField;
