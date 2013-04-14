@@ -14,24 +14,21 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 
 /**
- *
  * @author Rich
  */
-public final class LoginWindow extends javax.swing.JDialog{
-
+public final class LoginWindow extends javax.swing.JDialog {
     /**
      * Creates new form LoginWindow
      */
     private Controller controller;
     private Frame parent;
-    private final String[] userString = new String[] { "Account Holder", "Account Manager", "Accountant", "Auditor", "Operations Manager", "Teller" };
-/**
- * 
- * @param parent
- * @param title The title on the Window
- * @param modal Set to true to make this window modal
- * @param controller The controller
- */
+    private final String[] userString = new String[]{"Account Holder", "Account Manager", "Accountant", "Auditor", "Operations Manager", "Teller"};
+
+    /**
+     * @param title      The title on the Window
+     * @param modal      Set to true to make this window modal
+     * @param controller The controller
+     */
     public LoginWindow(String title, boolean modal, final Controller controller) {
         super(new JFrame(), title, modal);
         this.controller = controller;
@@ -43,11 +40,11 @@ public final class LoginWindow extends javax.swing.JDialog{
             }
         });
     }
-        
-    public void confirmTellerLogin(boolean isTeller){
-        if(isTeller){
-            UserComboBox.setModel(new DefaultComboBoxModel(new String[] {"Teller"}));
-        }else{
+
+    public void confirmTellerLogin(boolean isTeller) {
+        if (isTeller) {
+            UserComboBox.setModel(new DefaultComboBoxModel(new String[]{"Teller"}));
+        } else {
             UserComboBox.setModel(new DefaultComboBoxModel(userString));
         }
         EmployeeLabel.setText(null);
@@ -65,8 +62,6 @@ public final class LoginWindow extends javax.swing.JDialog{
         UsernameLabel = new javax.swing.JLabel();
         LoginButton = new javax.swing.JButton();
         UserComboBox = new javax.swing.JComboBox();
-        PasswordLabel = new javax.swing.JLabel();
-        jPasswordField2 = new javax.swing.JPasswordField();
         EmployeeLabel = new javax.swing.JLabel();
         username = new javax.swing.JTextField();
 
@@ -91,8 +86,6 @@ public final class LoginWindow extends javax.swing.JDialog{
             }
         });
 
-        PasswordLabel.setText("Password:");
-
         EmployeeLabel.setText("Login as an Employee?");
 
         username.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -104,38 +97,32 @@ public final class LoginWindow extends javax.swing.JDialog{
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(UsernameLabel)
-                    .addComponent(username)
-                    .addComponent(PasswordLabel)
-                    .addComponent(jPasswordField2)
-                    .addComponent(EmployeeLabel)
-                    .addComponent(UserComboBox, 0, 200, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(LoginButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(UsernameLabel)
+                                        .addComponent(username)
+                                        .addComponent(EmployeeLabel)
+                                        .addComponent(UserComboBox, 0, 200, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(LoginButton)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(UsernameLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(username, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(PasswordLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPasswordField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(EmployeeLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(UserComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(LoginButton))
-                .addContainerGap(15, Short.MAX_VALUE))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(UsernameLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(username, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(EmployeeLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(UserComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(LoginButton))
+                                .addContainerGap(15, Short.MAX_VALUE))
         );
 
         pack();
@@ -144,29 +131,29 @@ public final class LoginWindow extends javax.swing.JDialog{
     private void LoginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LoginButtonActionPerformed
         User newUser;
         //Make sure the User exsists
-        try{
+        try {
             newUser = Bank.getInstance().getUser(username.getText());
         } catch (InvalidInputException ex) {
             JOptionPane.showMessageDialog(this, "Wrong Username!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
+
         String loginType = UserComboBox.getSelectedItem().toString();
-       
+
         //Makes sure the User has the correct credentials
-        if(loginType.equals("Account Holder")){ //if a User is logging in as a customer, make sure they are a customer
-            if(!newUser.isActiveCustomer()){
+        if (loginType.equals("Account Holder")) { //if a User is logging in as a customer, make sure they are a customer
+            if (!newUser.isActiveCustomer()) {
                 JOptionPane.showMessageDialog(this, "You are not a Customer! You must login as an Employee.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-        }else if(newUser.getRole()==null){//if a User who is only a customer is logging in, make sure they do not log in as an Employee
+        } else if (newUser.getRole() == null) {//if a User who is only a customer is logging in, make sure they do not log in as an Employee
             JOptionPane.showMessageDialog(this, "You are not an Employee. You must login as an Account Holder!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
-        }else if(!newUser.getRole().toString().replace("_", " ").equalsIgnoreCase(loginType)){ //if a User is logging in as Employee, make sure they login in as the right Employee Type
+        } else if (!newUser.getRole().toString().replace("_", " ").equalsIgnoreCase(loginType)) { //if a User is logging in as Employee, make sure they login in as the right Employee Type
             JOptionPane.showMessageDialog(this, "Wrong Employee Type!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
+
         //Closes itself and opens the appropriate Frame through the Controller
         this.dispose();
         controller.newAbstractUserWindow(newUser);
@@ -175,25 +162,23 @@ public final class LoginWindow extends javax.swing.JDialog{
 
     private void usernameKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_usernameKeyPressed
         char c = evt.getKeyChar();
-      if(c==KeyEvent.VK_ENTER){
-          LoginButtonActionPerformed(null);
-      }
+        if (c == KeyEvent.VK_ENTER) {
+            LoginButtonActionPerformed(null);
+        }
     }//GEN-LAST:event_usernameKeyPressed
 
     private void UserComboBoxKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_UserComboBoxKeyPressed
         char c = evt.getKeyChar();
-      if(c==KeyEvent.VK_ENTER){
-          LoginButtonActionPerformed(null);
-      }
+        if (c == KeyEvent.VK_ENTER) {
+            LoginButtonActionPerformed(null);
+        }
     }//GEN-LAST:event_UserComboBoxKeyPressed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel EmployeeLabel;
     private javax.swing.JButton LoginButton;
-    private javax.swing.JLabel PasswordLabel;
     private javax.swing.JComboBox UserComboBox;
     private javax.swing.JLabel UsernameLabel;
-    private javax.swing.JPasswordField jPasswordField2;
     private javax.swing.JTextField username;
     // End of variables declaration//GEN-END:variables
 }
