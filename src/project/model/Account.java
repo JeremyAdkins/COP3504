@@ -232,8 +232,9 @@ public abstract class Account {
         }
 
         StringBuilder str = new StringBuilder();
-        str.append(String.format("End of month balance: $%.2f\n", endOfMonth == null ? BigDecimal.ZERO : endOfMonth));
+        str.append(toString() + "\n");
         str.append(String.format("Balance carried forward: $%.2f\n", carriedForward == null ? BigDecimal.ZERO : carriedForward));
+        str.append(String.format("End of month balance: $%.2f\n", endOfMonth == null ? BigDecimal.ZERO : endOfMonth));
         str.append(String.format("Type             Amount   Balance  Month Fraud\n"));
         for (Transaction transaction : statementHistory) {
             str.append(transaction.toString() + "\n");

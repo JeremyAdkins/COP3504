@@ -14,7 +14,6 @@
     <file url="file://$PROJECT_DIR$/src/project/gui/LoanAccountTab.form" />
     <file url="file://$PROJECT_DIR$/src/project/gui/LoCAccountTab.form" />
     <file url="file://$PROJECT_DIR$/src/project/gui/LoginWindow.form" />
-    <file url="file://$PROJECT_DIR$/src/project/gui/OperationsManagerFrame.form" />
     <file url="file://$PROJECT_DIR$/src/project/gui/SavingsAccountTab.form" />
     <file url="file://$PROJECT_DIR$/src/project/gui/TellerFrame.form" />
   </component>

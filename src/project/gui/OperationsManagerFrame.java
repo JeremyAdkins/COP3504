@@ -13,6 +13,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * 
@@ -107,35 +109,12 @@ public class OperationsManagerFrame extends AbstractUserWindow {
         add(westLayoutPanel, BorderLayout.WEST);
 
         JButton accountStatementButton = new JButton("Account statement");
-        accountStatementButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String username = JOptionPane.showInputDialog(OperationsManagerFrame.this, "Username of customer:",
-                        "Customer", JOptionPane.QUESTION_MESSAGE);
-                try {
-                    User user = Bank.getInstance().getUser(username);
-                    if (user.getAccounts().isEmpty()) {
-                        throw new InvalidInputException(username, "this user has no accounts");
-                    }
-                    Account account = (Account) JOptionPane.showInputDialog(OperationsManagerFrame.this, "Which account?",
-                            "Account", JOptionPane.QUESTION_MESSAGE, null, user.getAccounts().toArray(),
-                            user.getAccounts().iterator().next());
-                    String statement = account.generateStatement();
-
-                    JFrame statementFrame = new JFrame("Statement");
-                    statementFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                    JTextArea textArea = new JTextArea(statement);
-                    textArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
-                    textArea.setEditable(false);
-                    statementFrame.add(textArea);
-                    statementFrame.pack();
-                    statementFrame.setVisible(true);
-                } catch (InvalidInputException iix) {
-                    OperationsManagerFrame.this.controller.handleException(OperationsManagerFrame.this, iix);
-                }
-            }
-        });
+        accountStatementButton.addActionListener(new StatementGenerator(false));
         buttonLayoutPanel.add(accountStatementButton);
+
+        JButton bankStatementButton = new JButton("Bank statement");
+        bankStatementButton.addActionListener(new StatementGenerator(true));
+        buttonLayoutPanel.add(bankStatementButton);
 
         JButton advanceTimeButton = new JButton("Advance time");
         advanceTimeButton.addActionListener(new ActionListener() {
@@ -336,5 +315,49 @@ public class OperationsManagerFrame extends AbstractUserWindow {
         thresholdPanel.add(locPercentPaymentField);
 
         return thresholdPanel;
+    }
+
+    private final class StatementGenerator implements ActionListener {
+        private final boolean allAccounts;
+
+        private StatementGenerator(boolean allAccounts) {
+            this.allAccounts = allAccounts;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String username = JOptionPane.showInputDialog(OperationsManagerFrame.this, "Username of customer:",
+                    "Customer", JOptionPane.QUESTION_MESSAGE);
+            try {
+                User user = Bank.getInstance().getUser(username);
+                if (user.getAccounts().isEmpty()) {
+                    throw new InvalidInputException(username, "this user has no accounts");
+                }
+                Set<Account> statementAccounts;
+                if (allAccounts) {
+                    statementAccounts = user.getAccounts();
+                } else {
+                    Account account = (Account) JOptionPane.showInputDialog(OperationsManagerFrame.this, "Which account?",
+                            "Account", JOptionPane.QUESTION_MESSAGE, null, user.getAccounts().toArray(),
+                            user.getAccounts().iterator().next());
+                    statementAccounts = Collections.singleton(account);
+                }
+                String statement = "";
+                for (Account account : statementAccounts) {
+                    statement += account.generateStatement() + "\n\n";
+                }
+
+                JFrame statementFrame = new JFrame("Statement");
+                statementFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                JTextArea textArea = new JTextArea(user.toString() + "\n\n" + statement);
+                textArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+                textArea.setEditable(false);
+                statementFrame.add(textArea);
+                statementFrame.pack();
+                statementFrame.setVisible(true);
+            } catch (InvalidInputException iix) {
+                OperationsManagerFrame.this.controller.handleException(OperationsManagerFrame.this, iix);
+            }
+        }
     }
 }
