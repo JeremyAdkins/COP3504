@@ -5,7 +5,12 @@
 package project.gui;
 
 import project.Controller;
+import project.gui.util.DollarAmountFormatter;
+import project.gui.util.FieldInputVerifier;
+import project.gui.util.IntegerFormatter;
+import project.gui.util.PercentageFormatter;
 import project.model.Account;
+import project.model.CertificateOfDeposit;
 import project.model.InvalidInputException;
 import project.model.User;
 
@@ -19,6 +24,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -414,11 +421,13 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
 
         private final ComboBoxModel comboBoxModel;
 
-        private JPanel amountPanel;
+        private JFormattedTextField amountTextField;
 
-        private JPanel termPanel;
+        private JComboBox cdTermComboBox;
 
-        private JPanel interestPremiumPanel;
+        private JFormattedTextField loanTermTextField;
+
+        private JFormattedTextField interestPremiumTextField;
 
         private AddAccountDialog(User user) {
             this.user = user;
@@ -430,7 +439,7 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
         }
 
         private void initComponents() {
-            setLayout(new GridLayout(5, 1));
+            setLayout(new GridLayout(6, 1));
 
             JPanel typePanel = new JPanel(new BorderLayout());
             typePanel.add(new JLabel("Account type"), BorderLayout.WEST);
@@ -442,16 +451,65 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
                     updateForSelectedType();
                 }
             });
-            add(typePanel, BorderLayout.NORTH);
+            add(typePanel);
 
-            JPanel centerPanel = new JPanel(new GridLayout(3, 1));
-            amountPanel = new JPanel(new BorderLayout());
-            centerPanel.add(amountPanel);
-            termPanel = new JPanel(new BorderLayout());
-            centerPanel.add(termPanel);
-            interestPremiumPanel = new JPanel(new BorderLayout());
-            centerPanel.add(interestPremiumPanel);
-            add(centerPanel, BorderLayout.CENTER);
+            JPanel amountPanel = new JPanel(new BorderLayout());
+            amountPanel.add(new JLabel("Amount/credit limit"), BorderLayout.WEST);
+            amountTextField = new JFormattedTextField(new DollarAmountFormatter.Factory(), BigDecimal.ZERO);
+            amountTextField.setInputVerifier(new FieldInputVerifier(AccountManagerFrame.this) {
+                @Override
+                protected void setField(BigDecimal value) throws InvalidInputException {
+                    // empty because this is checked when the user hits OK
+                }
+            });
+            amountPanel.add(amountTextField, BorderLayout.EAST);
+            add(amountPanel);
+
+            JPanel cdTermPanel = new JPanel(new BorderLayout());
+            cdTermPanel.add(new JLabel("CD term"), BorderLayout.WEST);
+            cdTermComboBox = new JComboBox(new DefaultComboBoxModel(CertificateOfDeposit.Term.values()));
+            cdTermPanel.add(cdTermComboBox, BorderLayout.EAST);
+            add(cdTermPanel);
+
+            JPanel loanTermPanel = new JPanel(new BorderLayout());
+            loanTermPanel.add(new JLabel("Loan term"), BorderLayout.WEST);
+            loanTermTextField = new JFormattedTextField(new IntegerFormatter.Factory(), 0);
+            loanTermTextField.setInputVerifier(new InputVerifier() {
+                @Override
+                public boolean verify(JComponent input) {
+                    try {
+                        ((JFormattedTextField) input).commitEdit();
+                        int value = (Integer) ((JFormattedTextField) input).getValue();
+                        if (value <= 0) {
+                            InvalidInputException iix = new InvalidInputException(new BigDecimal(value), "term must be positive");
+                            controller.handleException(AccountManagerFrame.this, iix);
+                            return false;
+                        }
+                        return true;
+                    } catch (ParseException px) {
+                        return false;
+                    }
+                }
+
+                @Override
+                public boolean shouldYieldFocus(JComponent input) {
+                    return verify(input);
+                }
+            });
+            loanTermPanel.add(loanTermTextField, BorderLayout.EAST);
+            add(loanTermPanel);
+
+            JPanel interestPremiumPanel = new JPanel(new BorderLayout());
+            interestPremiumPanel.add(new JLabel("Interest premium"), BorderLayout.WEST);
+            interestPremiumTextField = new JFormattedTextField(new PercentageFormatter.Factory(), BigDecimal.ZERO);
+            interestPremiumTextField.setInputVerifier(new FieldInputVerifier(AccountManagerFrame.this) {
+                @Override
+                protected void setField(BigDecimal value) throws InvalidInputException {
+                    // empty because this is checked when the user hits OK
+                }
+            });
+            interestPremiumPanel.add(interestPremiumTextField, BorderLayout.EAST);
+            add(interestPremiumPanel);
 
             JPanel buttonPanel = new JPanel(new BorderLayout());
             JButton addButton = new JButton("Add");
@@ -480,14 +538,12 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
             switch ((Account.Type) comboBoxModel.getSelectedItem()) {
                 case SAVINGS:
                 case CHECKING:
-                    amountPanel.removeAll();
-                    amountPanel.setVisible(false);
-                    termPanel.removeAll();
-                    termPanel.setVisible(false);
-                    interestPremiumPanel.removeAll();
-                    interestPremiumPanel.setVisible(false);
+                    amountTextField.setEnabled(false);
+                    cdTermComboBox.setEnabled(false);
+                    loanTermTextField.setEnabled(false);
+                    interestPremiumTextField.setEnabled(false);
                     break;
-                // TODO handle the other types... going to need to reuse the formatted text box stuff
+                // TODO handle the other types
             }
             pack();
         }
