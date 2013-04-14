@@ -41,7 +41,7 @@ public final class Controller {
         return currentUser;
     }
 
-    public static void main(String[] args) throws LoginException {
+    public static void main(String[] args) throws InvalidInputException {
         setLookAndFeel();
         new Controller();
     }
@@ -66,14 +66,14 @@ public final class Controller {
         }
     }
 
-    private void initializeBank() throws LoginException {
+    private void initializeBank() throws InvalidInputException {
         Bank.getInstance().addUser("admin", new User("Billy", "Bob", Calendar.getInstance(), 555555555, "Bob@mail.com"));
         Bank.getInstance().getUser("admin").setRole(User.Role.OPERATIONS_MANAGER);
         newAbstractUserWindow(Bank.getInstance().getUser("admin"));
     }
 
     //Opens up the first window and gives control to itself
-    public Controller() throws LoginException {
+    public Controller() throws InvalidInputException {
         initializeBank();
     }
 
@@ -181,7 +181,7 @@ public final class Controller {
      * @param email
      * @return 
      */
-    public void createNewUser(String firstName, String lastName, Calendar birthdate, int ssn, String email, String username) throws LoginException {
+    public void createNewUser(String firstName, String lastName, Calendar birthdate, int ssn, String email, String username) throws InvalidInputException {
         Bank.getInstance().addUser(username, new User(firstName, lastName, birthdate, ssn, email));
     }
     /**
@@ -193,11 +193,11 @@ public final class Controller {
      * @param email
      * @param username 
      */
-    public void createNewEmployee(String firstName, String lastName, Calendar birthdate, int ssn, String email, String username, String role) throws LoginException {
+    public void createNewEmployee(String firstName, String lastName, Calendar birthdate, int ssn, String email, String username, String role) throws InvalidInputException {
         Bank.getInstance().addUser(username, new User(firstName, lastName, birthdate, ssn, email));
         Bank.getInstance().getUser(username).setRole(User.Role.valueOf(role));
     }
-    public void addAccountToUser(String account, String username) throws LoginException {
+    public void addAccountToUser(String account, String username) throws InvalidInputException {
         Bank.getInstance().getUser(username).addAccount(newAccount(account));
     }
     

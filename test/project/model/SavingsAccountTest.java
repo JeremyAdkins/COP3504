@@ -52,7 +52,7 @@ public final class SavingsAccountTest {
      * Balance:  +044.52
      */
     @Test
-    public void testDoPayment() throws RepeatingPaymentException, InvalidInputException, InsufficientFundsException {
+    public void testDoPayment() throws InvalidInputException, InsufficientFundsException {
     	account.addRepeatingDeposit("deposit", new BigDecimal("100.00"));
     	account.addRepeatingWithdrawal("withdrawal", new BigDecimal("50.55"));
     	account.doPayments();

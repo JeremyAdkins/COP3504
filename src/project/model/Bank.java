@@ -70,16 +70,16 @@ public final class Bank {
         return Collections.unmodifiableCollection(users.values());
     }
 	
-	public User getUser(String username) throws LoginException {
+	public User getUser(String username) throws InvalidInputException {
 		if (!users.containsKey(username)) {
-            throw new LoginException(LoginException.Type.USER_NOT_FOUND, username);
+            throw new InvalidInputException(username, "no user exists with that username");
 		}
 		return users.get(username);
 	}
 
-	public void addUser(String username, User user) throws LoginException {
+	public void addUser(String username, User user) throws InvalidInputException {
 		if (users.containsKey(username)) {
-            throw new LoginException(LoginException.Type.DUPLICATE_USERNAME, username);
+            throw new InvalidInputException(username, "a user already exists with that username");
 		}
 		users.put(username, user);
 	}

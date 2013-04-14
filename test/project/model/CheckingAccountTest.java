@@ -12,7 +12,7 @@ public final class CheckingAccountTest {
     private static User user1;
     
     @BeforeClass
-    public static void setUpClass() throws LoginException {
+    public static void setUpClass() throws InvalidInputException {
     	user1 = new User("user1FirstName", "user1LastName", null, 123456789, "user1Email");
         Bank.getInstance().addUser("user1", user1);
     }

@@ -5,7 +5,7 @@
 package project.gui;
 
 import project.Controller;
-import project.model.LoginException;
+import project.model.InvalidInputException;
 
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -302,7 +302,7 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
         try {
             controller.createNewUser(firstName, lastName, dateOfBirth, ssn, email, username);
             controller.addAccountToUser(AccountComboBox.getSelectedItem().toString(), username);
-        } catch (LoginException e) {
+        } catch (InvalidInputException e) {
             // TODO exception handling
         }
         UserView.dispose();

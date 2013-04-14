@@ -142,23 +142,23 @@ public abstract class Account {
         return Collections.unmodifiableMap(repeatingPayments);
     }
 
-    public final void addRepeatingDeposit(String description, BigDecimal amount) throws RepeatingPaymentException, InvalidInputException {
+    public final void addRepeatingDeposit(String description, BigDecimal amount) throws InvalidInputException {
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new InvalidInputException(amount, "repeating payment amount must be positive");
         }
         addRepeatingPayment(description, amount);
     }
 
-    public final void addRepeatingWithdrawal(String description, BigDecimal amount) throws RepeatingPaymentException, InvalidInputException {
+    public final void addRepeatingWithdrawal(String description, BigDecimal amount) throws InvalidInputException {
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new InvalidInputException(amount, "repeating payment amount must be positive");
         }
         addRepeatingPayment(description, amount.negate());
     }
 
-    private void addRepeatingPayment(String description, BigDecimal amount) throws RepeatingPaymentException {
+    private void addRepeatingPayment(String description, BigDecimal amount) throws InvalidInputException {
         if (repeatingPayments.containsKey(description)) {
-            throw new RepeatingPaymentException(description);
+            throw new InvalidInputException(description, "a repeating payment already exists with that description");
         }
         repeatingPayments.put(description, amount);
     }

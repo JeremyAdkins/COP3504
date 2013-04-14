@@ -6,7 +6,7 @@ package project.gui;
 
 import project.Controller;
 import project.model.Bank;
-import project.model.LoginException;
+import project.model.InvalidInputException;
 import project.model.User;
 
 import javax.swing.*;
@@ -146,7 +146,7 @@ public final class LoginWindow extends javax.swing.JDialog{
         //Make sure the User exsists
         try{
             newUser = Bank.getInstance().getUser(username.getText());
-        } catch (LoginException ex) {
+        } catch (InvalidInputException ex) {
             JOptionPane.showMessageDialog(this, "Wrong Username!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }

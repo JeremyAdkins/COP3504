@@ -5,7 +5,7 @@
 package project.gui;
 
 import project.Controller;
-import project.model.LoginException;
+import project.model.InvalidInputException;
 
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -616,7 +616,7 @@ public class OperationsManagerFrame extends AbstractUserWindow implements Docume
         String role = EmployeeComboBox.getSelectedItem().toString();
         try {
             controller.createNewEmployee(firstName, lastName, dateOfBirth, ssn, email, username, role);
-        } catch (LoginException e) {
+        } catch (InvalidInputException e) {
             // TODO exception handling
         }
         UserView.dispose();
