@@ -12,6 +12,8 @@ import project.model.PaymentSchedule;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.math.BigDecimal;
 import java.text.ParseException;
 
@@ -99,12 +101,27 @@ public class OperationsManagerFrame extends AbstractUserWindow {
 
     public OperationsManagerFrame(Controller controller) {
         super(controller);
-        setLayout(new GridLayout(1, 2));
-        add(initInterestComponents());
-        JPanel layoutPanel = new JPanel(new GridLayout(2, 1));
-        layoutPanel.add(initFeeComponents());
-        layoutPanel.add(initThresholdComponents());
-        add(layoutPanel);
+        setLayout(new BorderLayout());
+
+        JPanel westLayoutPanel = new JPanel(new BorderLayout());
+        westLayoutPanel.add(initInterestComponents(), BorderLayout.NORTH);
+        JButton advanceTimeButton = new JButton("Advance time");
+        advanceTimeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Bank.getInstance().advanceCurrentMonth();
+                int currentMonth = Bank.getInstance().getCurrentMonth();
+                JOptionPane.showMessageDialog(OperationsManagerFrame.this, "Advanced time by one month; the simulation month is now " + currentMonth, "Advanced time", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+        westLayoutPanel.add(advanceTimeButton, BorderLayout.SOUTH);
+        add(westLayoutPanel, BorderLayout.WEST);
+
+        JPanel eastLayoutPanel = new JPanel(new BorderLayout());
+        eastLayoutPanel.add(initFeeComponents(), BorderLayout.NORTH);
+        eastLayoutPanel.add(initThresholdComponents(), BorderLayout.SOUTH);
+        add(eastLayoutPanel, BorderLayout.EAST);
+
         pack();
     }
     
