@@ -139,7 +139,7 @@ public class LineOfCreditTest {
 	    	//Note that, for this test, locpercentpayment is 2% and locfixedpayment is 50$
 	    	account.withdraw(new BigDecimal(10)); 
 	    	BigDecimal min = account.getMinimumPayment(); 
-	    	TestUtil.assertEquals(-10, min);
+	    	TestUtil.assertEquals(10, min);
 	    }
 	    
 	  //>13
@@ -167,7 +167,7 @@ public class LineOfCreditTest {
 	    	//Note that, for this test, locpercentpayment is 2% and locfixedpayment is 50$
 	    	account.withdraw(new BigDecimal(2800)); 
 	    	BigDecimal min = account.getMinimumPayment(); 
-	    	TestUtil.assertEquals(-56, min);
+	    	TestUtil.assertEquals(56, min);
 	    }
 	    
 	    @Test
@@ -175,6 +175,6 @@ public class LineOfCreditTest {
 	    	//Note that, for this test, locpercentpayment is 2% and locfixedpayment is 50$
 	    	account.withdraw(new BigDecimal(550)); 
 	    	BigDecimal min = account.getMinimumPayment(); 
-	    	TestUtil.assertEquals(-50, min);
+	    	TestUtil.assertEquals(50, min);
 	    }
 }
