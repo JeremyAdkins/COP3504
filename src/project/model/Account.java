@@ -155,9 +155,21 @@ public abstract class Account {
 	}
 
 	protected void doPayments() throws InvalidInputException, InsufficientFundsException {
-        // don't apply any payments to an account that's closed
+        // don't apply any payments or anything else to an account that's closed
         if (closed) {
             return;
+        }
+
+        // repeating payments
+        for (Transaction payment : repeatingPayments) {
+            if (payment.getType() == Transaction.Type.DEPOSIT) {
+                deposit(payment.getAmount());
+            }
+        }
+        for (Transaction payment : repeatingPayments) {
+            if (payment.getType() == Transaction.Type.WITHDRAWAL) {
+                withdraw(payment.getAmount());
+            }
         }
 
 		// monthly existence fee, or minimum payment penalty, as appropriate
@@ -177,18 +189,6 @@ public abstract class Account {
             // only apply interest on non-loans if the balance (and therefore, the interest) is positive
 		    applyTransaction(interest, Transaction.Type.INTEREST);
         }
-
-		// repeating payments
-		for (Transaction payment : repeatingPayments) {
-			if (payment.getType() == Transaction.Type.DEPOSIT) {
-				deposit(payment.getAmount());
-			}
-		}
-		for (Transaction payment : repeatingPayments) {
-			if (payment.getType() == Transaction.Type.WITHDRAWAL) {
-				withdraw(payment.getAmount());
-			}
-		}
 	}
 
 	public abstract BigDecimal getInterestRate();

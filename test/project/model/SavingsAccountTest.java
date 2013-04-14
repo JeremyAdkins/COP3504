@@ -45,10 +45,11 @@ public final class SavingsAccountTest {
     }
 
     /*
-     * Fee:      -005.00
      * Deposit:  +100.00
      * Withdraw: -050.55
-     * Balance:  +044.45
+     * Fee:      -005.00
+     * Interest: +000.07
+     * Balance:  +044.52
      */
     @Test
     public void testDoPayment() throws InvalidInputException, InsufficientFundsException {
@@ -57,6 +58,6 @@ public final class SavingsAccountTest {
     	Transaction testRepeat2 = new Transaction(Transaction.Type.WITHDRAWAL, new BigDecimal(50.55));
     	account.addRepeatingPayment(testRepeat2);
     	account.doPayments();
-    	TestUtil.assertEquals(44.45, account.getBalance());
+    	TestUtil.assertEquals(44.52, account.getBalance());
     }
 }
