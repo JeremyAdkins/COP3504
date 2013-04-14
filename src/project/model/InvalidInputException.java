@@ -7,7 +7,7 @@ import java.math.BigDecimal;
  */
 public final class InvalidInputException extends Exception {
     InvalidInputException(BigDecimal value, String message) {
-        super(String.format("received input $%.2f; %s", value, message));
+        super(String.format("received input %.2f; %s", value, message));
     }
 
     InvalidInputException(String value, String message) {
