@@ -93,6 +93,6 @@ public final class User {
 
     @Override
     public String toString() {
-        return String.format("%s %s, DOB %tD", firstName, lastName, birthdate);
+        return String.format("%s, %s", lastName, firstName);
     }
 }

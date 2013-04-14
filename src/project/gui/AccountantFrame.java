@@ -28,7 +28,7 @@ public final class AccountantFrame extends AbstractUserWindow {
         add(new JScrollPane(statisticTable), BorderLayout.CENTER);
 
         JPanel loanCapPanel = new JPanel(new GridLayout(1, 2));
-        loanCapPanel.add(new JLabel("Loan cap:"));
+        loanCapPanel.add(new JLabel("Loan cap (blank for no cap)"));
         JFormattedTextField loanCapField = new JFormattedTextField(new JFormattedTextField.AbstractFormatterFactory() {
             @Override
             public JFormattedTextField.AbstractFormatter getFormatter(JFormattedTextField tf) {
