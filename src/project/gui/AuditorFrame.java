@@ -5,7 +5,6 @@
 package project.gui;
 
 import project.Controller;
-import project.gui.AbstractUserWindow;
 
 /**
  *
@@ -23,7 +22,7 @@ public class AuditorFrame extends AbstractUserWindow {
     
     public void updateAuditorTable(){
         AuditorTable.setModel(new javax.swing.table.DefaultTableModel(
-                controller.updateAccountManagerTableView(),
+                controller.updateAuditorTableView(),
                 new String[]{
             "User", "Account Type", "Account Balance", "Fraudulent Status", "Employee Flag"
         }) {
