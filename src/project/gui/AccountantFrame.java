@@ -6,6 +6,7 @@ import project.model.InvalidInputException;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -58,14 +59,14 @@ public final class AccountantFrame extends AbstractUserWindow {
     public void updateStatisticTable() {
         statisticTable.setModel(new DefaultTableModel(
                 controller.updateAccountantTableView(),
-                new String[]{
-                        "Statistic", "Value"
-                }) {
+                new String[] { "Statistic", "Value" }) {
             @Override
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return false;
             }
         });
+        statisticTable.setTableHeader(new JTableHeader(statisticTable.getColumnModel()));
         statisticTable.revalidate();
+        pack();
     }
 }
