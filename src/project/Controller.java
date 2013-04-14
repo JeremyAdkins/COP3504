@@ -300,4 +300,29 @@ public final class Controller {
     public void shutDown() {
         // TODO
     }
+
+    public Object[][] updateAuditorTableView() {
+        Collection<User> users = instance.getUsers();
+        int accountHolders = 0;
+        for (User user : users) {
+            if(!user.isActiveCustomer()){
+                continue;
+            }
+            accountHolders++;
+        }
+        Object[][] AuditorTable = new Object[accountHolders][3];
+        int i = 0;
+        for (User user : users) {
+            if(!user.isActiveCustomer()){
+                continue;
+            }
+            AuditorTable[i][0] = user.getLastName()+", "+user.getFirstName();
+            for(Account account : user.getAccounts()){
+                AuditorTable[i][1] = account.getType();
+                AuditorTable[i][2] = account.getBalance();
+                        i++;
+            }
+        }
+        return AuditorTable;
+    }
 }

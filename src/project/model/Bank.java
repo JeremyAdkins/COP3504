@@ -190,7 +190,7 @@ public final class Bank {
 		
 		Map<String, String> bankStats = new HashMap<String, String>();
 		bankStats.put("Standard deviation of assets", standardDeviationAssets.toString());
-		bankStats.put("Standard deviation of liabilities", standardDeviationLiabilities.toString());
+                bankStats.put("Standard deviation of liabilities", standardDeviationLiabilities.toString());
 		return bankStats;
 	}
 
