@@ -67,9 +67,9 @@ public final class Controller {
     }
 
     private void initializeBank() throws InvalidInputException {
-        Bank.getInstance().addUser("admin", new User("Billy", "Bob", Calendar.getInstance(), 555555555, "Bob@mail.com"));
-        Bank.getInstance().getUser("admin").setRole(User.Role.OPERATIONS_MANAGER);
-        newAbstractUserWindow(Bank.getInstance().getUser("admin"));
+        Bank.getInstance().addUser("root", new User("Billy", "Bob", Calendar.getInstance(), 555555555, "Bob@mail.com"));
+        Bank.getInstance().getUser("root").setRole(User.Role.OPERATIONS_MANAGER);
+        newLoginWindow();
     }
 
     //Opens up the first window and gives control to itself
