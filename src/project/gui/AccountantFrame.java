@@ -5,7 +5,6 @@
 package project.gui;
 
 import project.Controller;
-import project.gui.AbstractUserWindow;
 
 /**
  *
