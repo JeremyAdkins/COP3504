@@ -22,10 +22,25 @@ public final class Transaction {
         public boolean canRepeat() {
             return canRepeat;
         }
+
+        @Override
+        public String toString() {
+            return name().toLowerCase().replace('_', ' ');
+        }
     }
 
     public static enum FraudStatus {
-        NOT_FLAGGED, FLAGGED, REVERSED;
+        NOT_FLAGGED {
+            @Override
+            public String toString() {
+                return "";
+            }
+        }, FLAGGED, REVERSED;
+
+        @Override
+        public String toString() {
+            return name().toLowerCase().replace('_', ' ');
+        }
     }
 
     private final Type type;
@@ -71,5 +86,10 @@ public final class Transaction {
 
     public void setFraudStatus(FraudStatus fraudStatus) {
         this.fraudStatus = fraudStatus;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%16s $%4.2f $%4.2f %2d    %s", type, amount, balance, timestamp, fraudStatus);
     }
 }

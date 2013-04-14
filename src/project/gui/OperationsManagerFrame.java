@@ -5,10 +5,7 @@
 package project.gui;
 
 import project.Controller;
-import project.model.Bank;
-import project.model.CertificateOfDeposit;
-import project.model.InvalidInputException;
-import project.model.PaymentSchedule;
+import project.model.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -105,6 +102,41 @@ public class OperationsManagerFrame extends AbstractUserWindow {
 
         JPanel westLayoutPanel = new JPanel(new BorderLayout());
         westLayoutPanel.add(initInterestComponents(), BorderLayout.NORTH);
+        JPanel buttonLayoutPanel = new JPanel(new GridLayout(3, 1));
+        westLayoutPanel.add(buttonLayoutPanel, BorderLayout.SOUTH);
+        add(westLayoutPanel, BorderLayout.WEST);
+
+        JButton accountStatementButton = new JButton("Account statement");
+        accountStatementButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String username = JOptionPane.showInputDialog(OperationsManagerFrame.this, "Username of customer:",
+                        "Customer", JOptionPane.QUESTION_MESSAGE);
+                try {
+                    User user = Bank.getInstance().getUser(username);
+                    if (user.getAccounts().isEmpty()) {
+                        throw new InvalidInputException(username, "this user has no accounts");
+                    }
+                    Account account = (Account) JOptionPane.showInputDialog(OperationsManagerFrame.this, "Which account?",
+                            "Account", JOptionPane.QUESTION_MESSAGE, null, user.getAccounts().toArray(),
+                            user.getAccounts().iterator().next());
+                    String statement = account.generateStatement();
+
+                    JFrame statementFrame = new JFrame("Statement");
+                    statementFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    JTextArea textArea = new JTextArea(statement);
+                    textArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+                    textArea.setEditable(false);
+                    statementFrame.add(textArea);
+                    statementFrame.pack();
+                    statementFrame.setVisible(true);
+                } catch (InvalidInputException iix) {
+                    OperationsManagerFrame.this.controller.handleException(OperationsManagerFrame.this, iix);
+                }
+            }
+        });
+        buttonLayoutPanel.add(accountStatementButton);
+
         JButton advanceTimeButton = new JButton("Advance time");
         advanceTimeButton.addActionListener(new ActionListener() {
             @Override
@@ -114,8 +146,7 @@ public class OperationsManagerFrame extends AbstractUserWindow {
                 JOptionPane.showMessageDialog(OperationsManagerFrame.this, "Advanced time by one month; the simulation month is now " + currentMonth, "Advanced time", JOptionPane.INFORMATION_MESSAGE);
             }
         });
-        westLayoutPanel.add(advanceTimeButton, BorderLayout.SOUTH);
-        add(westLayoutPanel, BorderLayout.WEST);
+        buttonLayoutPanel.add(advanceTimeButton);
 
         JPanel eastLayoutPanel = new JPanel(new BorderLayout());
         eastLayoutPanel.add(initFeeComponents(), BorderLayout.NORTH);
