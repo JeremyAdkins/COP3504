@@ -64,15 +64,15 @@ public final class LineOfCredit extends AbstractLoan {
 
 	@Override
 	protected BigDecimal getMinimumPayment() {
-        // note that both the percentPayment and the fixedPayment end up being negative
+        // note that both the percentPayment and the fixedPayment end up being positive
+		// keep in mind that balance is negative, but minimumPayment is positive!
 		BigDecimal percentPayment = Bank.getInstance().getPaymentSchedule().getLocPercentPayment();
-		BigDecimal fixedPayment = Bank.getInstance().getPaymentSchedule().getLocFixedPayment().negate();
-		BigDecimal percentPaymentValue = percentPayment.multiply(getBalance());
+		BigDecimal fixedPayment = Bank.getInstance().getPaymentSchedule().getLocFixedPayment();
+		BigDecimal percentPaymentValue = percentPayment.multiply(getBalance()).negate();
 
-        // since they are negative, min() will return the value with larger magnitude
-        BigDecimal minimumPayment = percentPaymentValue.min(fixedPayment);
-        if (getBalance().compareTo(minimumPayment) > 0) {
-            minimumPayment = getBalance();
+        BigDecimal minimumPayment = percentPaymentValue.max(fixedPayment);
+        if (getBalance().negate().compareTo(minimumPayment) < 0) {
+            minimumPayment = getBalance().negate();
         }
         return minimumPayment;
 	}
