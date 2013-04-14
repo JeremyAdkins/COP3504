@@ -11,52 +11,90 @@ import project.model.InvalidInputException;
 import project.model.PaymentSchedule;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.math.BigDecimal;
+import java.text.ParseException;
 
 /**
  * 
  * @author Rich
  */
 public class OperationsManagerFrame extends AbstractUserWindow {
-    private abstract class TextFieldListener implements DocumentListener {
+    private static final class DollarAmountFormatter extends JFormattedTextField.AbstractFormatter {
         @Override
-        public void insertUpdate(DocumentEvent e) {
+        public Object stringToValue(String text) throws ParseException {
             try {
-                onUpdate(new BigDecimal(e.getDocument().getText(0, e.getDocument().getLength())));
-            } catch (InvalidInputException iix) {
-                JOptionPane.showMessageDialog(OperationsManagerFrame.this, iix.getMessage(), iix.getClass().getName(), JOptionPane.ERROR_MESSAGE);
-            } catch (BadLocationException blx) {
-                throw new AssertionError("should not occur");
+                return new BigDecimal(text);
+            } catch (NumberFormatException nfx) {
+                throw new ParseException(nfx.getMessage(), 0);
             }
         }
 
         @Override
-        public void removeUpdate(DocumentEvent e) {
+        public String valueToString(Object value) throws ParseException {
+            if (value instanceof BigDecimal) {
+                return String.format("%.2f", value);
+            } else {
+                throw new ParseException("value is not a BigDecimal", 0);
+            }
+        }
+    }
+
+    private static final class DollarAmountFormatterFactory extends JFormattedTextField.AbstractFormatterFactory {
+        @Override
+        public JFormattedTextField.AbstractFormatter getFormatter(JFormattedTextField tf) {
+            return new DollarAmountFormatter();
+        }
+    }
+
+    private static final class PercentageFormatter extends JFormattedTextField.AbstractFormatter {
+        @Override
+        public Object stringToValue(String text) throws ParseException {
             try {
-                onUpdate(new BigDecimal(e.getDocument().getText(0, e.getDocument().getLength())));
-            } catch (InvalidInputException iix) {
-                JOptionPane.showMessageDialog(OperationsManagerFrame.this, iix.getMessage(), iix.getClass().getName(), JOptionPane.ERROR_MESSAGE);
-            } catch (BadLocationException blx) {
-                throw new AssertionError("should not occur");
+                return new BigDecimal(text).divide(new BigDecimal(100), Bank.MATH_CONTEXT);
+            } catch (NumberFormatException nfx) {
+                throw new ParseException(nfx.getMessage(), 0);
             }
         }
 
         @Override
-        public void changedUpdate(DocumentEvent e) {
+        public String valueToString(Object value) throws ParseException {
+            if (value instanceof BigDecimal) {
+                return String.format("%.2f", ((BigDecimal) value).multiply(new BigDecimal("100")));
+            } else {
+                throw new ParseException("value is not a BigDecimal", 0);
+            }
+        }
+    }
+
+    private static final class PercentageFormatterFactory extends JFormattedTextField.AbstractFormatterFactory {
+        @Override
+        public JFormattedTextField.AbstractFormatter getFormatter(JFormattedTextField tf) {
+            return new PercentageFormatter();
+        }
+    }
+
+    private abstract class FieldInputVerifier extends InputVerifier {
+        @Override
+        public boolean verify(JComponent input) {
             try {
-                onUpdate(new BigDecimal(e.getDocument().getText(0, e.getDocument().getLength())));
+                ((JFormattedTextField) input).commitEdit();
+                setField((BigDecimal) ((JFormattedTextField) input).getValue());
+                return true;
             } catch (InvalidInputException iix) {
                 JOptionPane.showMessageDialog(OperationsManagerFrame.this, iix.getMessage(), iix.getClass().getName(), JOptionPane.ERROR_MESSAGE);
-            } catch (BadLocationException blx) {
-                throw new AssertionError("should not occur");
+                return false;
+            } catch (ParseException px) {
+                return false;
             }
         }
 
-        protected abstract void onUpdate(BigDecimal value) throws InvalidInputException;
+        @Override
+        public boolean shouldYieldFocus(JComponent input) {
+            return verify(input);
+        }
+
+        protected abstract void setField(BigDecimal value) throws InvalidInputException;
     }
 
     public OperationsManagerFrame(Controller controller) {
@@ -78,47 +116,43 @@ public class OperationsManagerFrame extends AbstractUserWindow {
         interestPanel.add(new JLabel());
 
         interestPanel.add(new JLabel("Savings"));
-        String savingsInterest = String.format("%.2f", paymentSchedule.getSavingsInterest().multiply(new BigDecimal("100")));
-        JTextField savingsInterestField = new JTextField(savingsInterest);
-        savingsInterestField.getDocument().addDocumentListener(new TextFieldListener() {
+        final JFormattedTextField savingsInterestField = new JFormattedTextField(new PercentageFormatterFactory(), paymentSchedule.getSavingsInterest());
+        savingsInterestField.setInputVerifier(new FieldInputVerifier() {
             @Override
-            protected void onUpdate(BigDecimal value) throws InvalidInputException {
-                paymentSchedule.setSavingsInterest(value.divide(new BigDecimal("100"), Bank.MATH_CONTEXT));
+            protected void setField(BigDecimal value) throws InvalidInputException {
+                paymentSchedule.setSavingsInterest(value);
             }
         });
         interestPanel.add(savingsInterestField);
 
         for (final CertificateOfDeposit.Term term : CertificateOfDeposit.Term.values()) {
             interestPanel.add(new JLabel("CD " + term.toString()));
-            String cdInterest = String.format("%.2f", paymentSchedule.getCdInterest(term).multiply(new BigDecimal("100")));
-            JTextField cdInterestField = new JTextField(cdInterest);
-            cdInterestField.getDocument().addDocumentListener(new TextFieldListener() {
+            JFormattedTextField cdInterestField = new JFormattedTextField(new PercentageFormatterFactory(), paymentSchedule.getCdInterest(term));
+            cdInterestField.setInputVerifier(new FieldInputVerifier() {
                 @Override
-                protected void onUpdate(BigDecimal value) throws InvalidInputException {
-                    paymentSchedule.setCdInterest(term, value.divide(new BigDecimal("100"), Bank.MATH_CONTEXT));
+                protected void setField(BigDecimal value) throws InvalidInputException {
+                    paymentSchedule.setCdInterest(term, value);
                 }
             });
             interestPanel.add(cdInterestField);
         }
 
         interestPanel.add(new JLabel("Loan"));
-        String loanInterest = String.format("%.2f", paymentSchedule.getLoanInterest().multiply(new BigDecimal("100")));
-        JTextField loanInterestField = new JTextField(loanInterest);
-        loanInterestField.getDocument().addDocumentListener(new TextFieldListener() {
+        JFormattedTextField loanInterestField = new JFormattedTextField(new PercentageFormatterFactory(), paymentSchedule.getLoanInterest());
+        loanInterestField.setInputVerifier(new FieldInputVerifier() {
             @Override
-            protected void onUpdate(BigDecimal value) throws InvalidInputException {
-                paymentSchedule.setLoanInterest(value.divide(new BigDecimal("100"), Bank.MATH_CONTEXT));
+            protected void setField(BigDecimal value) throws InvalidInputException {
+                paymentSchedule.setLoanInterest(value);
             }
         });
         interestPanel.add(loanInterestField);
 
         interestPanel.add(new JLabel("Line of credit"));
-        String locInterest = String.format("%.2f", paymentSchedule.getLocInterest().multiply(new BigDecimal("100")));
-        JTextField locInterestField = new JTextField(locInterest);
-        locInterestField.getDocument().addDocumentListener(new TextFieldListener() {
+        JFormattedTextField locInterestField = new JFormattedTextField(new PercentageFormatterFactory(), paymentSchedule.getLocInterest());
+        locInterestField.setInputVerifier(new FieldInputVerifier() {
             @Override
-            protected void onUpdate(BigDecimal value) throws InvalidInputException {
-                paymentSchedule.setLocInterest(value.divide(new BigDecimal("100"), Bank.MATH_CONTEXT));
+            protected void setField(BigDecimal value) throws InvalidInputException {
+                paymentSchedule.setLocInterest(value);
             }
         });
         interestPanel.add(locInterestField);
@@ -134,55 +168,50 @@ public class OperationsManagerFrame extends AbstractUserWindow {
         feePanel.add(new JLabel());
 
         feePanel.add(new JLabel("Savings monthly"));
-        String savingsMonthly = String.format("%.2f", paymentSchedule.getSavingsCharge());
-        JTextField savingsMonthlyField = new JTextField(savingsMonthly);
-        savingsMonthlyField.getDocument().addDocumentListener(new TextFieldListener() {
+        JFormattedTextField savingsMonthlyField = new JFormattedTextField(new DollarAmountFormatterFactory(), paymentSchedule.getSavingsCharge());
+        savingsMonthlyField.setInputVerifier(new FieldInputVerifier() {
             @Override
-            protected void onUpdate(BigDecimal value) throws InvalidInputException {
+            protected void setField(BigDecimal value) throws InvalidInputException {
                 paymentSchedule.setSavingsCharge(value);
             }
         });
         feePanel.add(savingsMonthlyField);
 
         feePanel.add(new JLabel("Checking monthly"));
-        String checkingMonthly = String.format("%.2f", paymentSchedule.getCheckingCharge());
-        JTextField checkingMonthlyField = new JTextField(checkingMonthly);
-        checkingMonthlyField.getDocument().addDocumentListener(new TextFieldListener() {
+        JFormattedTextField checkingMonthlyField = new JFormattedTextField(new DollarAmountFormatterFactory(), paymentSchedule.getCheckingCharge());
+        checkingMonthlyField.setInputVerifier(new FieldInputVerifier() {
             @Override
-            protected void onUpdate(BigDecimal value) throws InvalidInputException {
+            protected void setField(BigDecimal value) throws InvalidInputException {
                 paymentSchedule.setCheckingCharge(value);
             }
         });
         feePanel.add(checkingMonthlyField);
 
         feePanel.add(new JLabel("Checking overdraft"));
-        String checkingOverdraft = String.format("%.2f", paymentSchedule.getOverdraftFee());
-        JTextField checkingOverdraftField = new JTextField(checkingOverdraft);
-        checkingOverdraftField.getDocument().addDocumentListener(new TextFieldListener() {
+        JFormattedTextField checkingOverdraftField = new JFormattedTextField(new DollarAmountFormatterFactory(), paymentSchedule.getOverdraftFee());
+        checkingOverdraftField.setInputVerifier(new FieldInputVerifier() {
             @Override
-            protected void onUpdate(BigDecimal value) throws InvalidInputException {
+            protected void setField(BigDecimal value) throws InvalidInputException {
                 paymentSchedule.setOverdraftFee(value);
             }
         });
         feePanel.add(checkingOverdraftField);
 
         feePanel.add(new JLabel("Loan penalty"));
-        String loanPenalty = String.format("%.2f", paymentSchedule.getLoanPenalty());
-        JTextField loanPenaltyField = new JTextField(loanPenalty);
-        loanPenaltyField.getDocument().addDocumentListener(new TextFieldListener() {
+        JFormattedTextField loanPenaltyField = new JFormattedTextField(new DollarAmountFormatterFactory(), paymentSchedule.getLoanPenalty());
+        loanPenaltyField.setInputVerifier(new FieldInputVerifier() {
             @Override
-            protected void onUpdate(BigDecimal value) throws InvalidInputException {
+            protected void setField(BigDecimal value) throws InvalidInputException {
                 paymentSchedule.setLoanPenalty(value);
             }
         });
         feePanel.add(loanPenaltyField);
 
         feePanel.add(new JLabel("LoC penalty"));
-        String locPenalty = String.format("%.2f", paymentSchedule.getLocPenalty());
-        JTextField locPenaltyField = new JTextField(locPenalty);
-        locPenaltyField.getDocument().addDocumentListener(new TextFieldListener() {
+        JFormattedTextField locPenaltyField = new JFormattedTextField(new DollarAmountFormatterFactory(), paymentSchedule.getLocPenalty());
+        locPenaltyField.setInputVerifier(new FieldInputVerifier() {
             @Override
-            protected void onUpdate(BigDecimal value) throws InvalidInputException {
+            protected void setField(BigDecimal value) throws InvalidInputException {
                 paymentSchedule.setLocPenalty(value);
             }
         });
@@ -199,67 +228,61 @@ public class OperationsManagerFrame extends AbstractUserWindow {
         thresholdPanel.add(new JLabel());
         
         thresholdPanel.add(new JLabel("Savings fee threshold"));
-        String savingsThreshold = String.format("%.2f", paymentSchedule.getSavingsThreshold());
-        JTextField savingsThresholdField = new JTextField(savingsThreshold);
-        savingsThresholdField.getDocument().addDocumentListener(new TextFieldListener() {
+        JFormattedTextField savingsThresholdField = new JFormattedTextField(new DollarAmountFormatterFactory(), paymentSchedule.getSavingsThreshold());
+        savingsThresholdField.setInputVerifier(new FieldInputVerifier() {
             @Override
-            protected void onUpdate(BigDecimal value) throws InvalidInputException {
+            protected void setField(BigDecimal value) throws InvalidInputException {
                 paymentSchedule.setSavingsThreshold(value);
             }
         });
         thresholdPanel.add(savingsThresholdField);
 
         thresholdPanel.add(new JLabel("Checking fee threshold"));
-        String checkingThreshold = String.format("%.2f", paymentSchedule.getCheckingThreshold());
-        JTextField checkingThresholdField = new JTextField(checkingThreshold);
-        checkingThresholdField.getDocument().addDocumentListener(new TextFieldListener() {
+        JFormattedTextField checkingThresholdField = new JFormattedTextField(new DollarAmountFormatterFactory(), paymentSchedule.getCheckingThreshold());
+        checkingThresholdField.setInputVerifier(new FieldInputVerifier() {
             @Override
-            protected void onUpdate(BigDecimal value) throws InvalidInputException {
+            protected void setField(BigDecimal value) throws InvalidInputException {
                 paymentSchedule.setCheckingThreshold(value);
             }
         });
         thresholdPanel.add(checkingThresholdField);
 
         thresholdPanel.add(new JLabel("Overdraft limit"));
-        String overdraftLimit = String.format("%.2f", paymentSchedule.getOverdraftLimit());
-        JTextField overdraftLimitField = new JTextField(overdraftLimit);
-        overdraftLimitField.getDocument().addDocumentListener(new TextFieldListener() {
+        JFormattedTextField overdraftLimitField = new JFormattedTextField(new DollarAmountFormatterFactory(), paymentSchedule.getOverdraftLimit());
+        overdraftLimitField.setInputVerifier(new FieldInputVerifier() {
             @Override
-            protected void onUpdate(BigDecimal value) throws InvalidInputException {
+            protected void setField(BigDecimal value) throws InvalidInputException {
                 paymentSchedule.setOverdraftLimit(value);
             }
         });
         thresholdPanel.add(overdraftLimitField);
 
         thresholdPanel.add(new JLabel("CD minimum"));
-        String cdMinimum = String.format("%.2f", paymentSchedule.getCdMinimum());
-        JTextField cdMinimumField = new JTextField(cdMinimum);
-        cdMinimumField.getDocument().addDocumentListener(new TextFieldListener() {
+        JFormattedTextField cdMinimumField = new JFormattedTextField(new DollarAmountFormatterFactory(), paymentSchedule.getCdMinimum());
+        cdMinimumField.setInputVerifier(new FieldInputVerifier() {
             @Override
-            protected void onUpdate(BigDecimal value) throws InvalidInputException {
+            protected void setField(BigDecimal value) throws InvalidInputException {
                 paymentSchedule.setCdMinimum(value);
             }
         });
         thresholdPanel.add(cdMinimumField);
 
         thresholdPanel.add(new JLabel("LoC fixed minimum payment"));
-        String locFixedPayment = String.format("%.2f", paymentSchedule.getLocFixedPayment());
-        JTextField locFixedPaymentField = new JTextField(locFixedPayment);
-        locFixedPaymentField.getDocument().addDocumentListener(new TextFieldListener() {
+        JFormattedTextField locFixedPaymentField = new JFormattedTextField(new DollarAmountFormatterFactory(), paymentSchedule.getLocFixedPayment());
+        locFixedPaymentField.setInputVerifier(new FieldInputVerifier() {
             @Override
-            protected void onUpdate(BigDecimal value) throws InvalidInputException {
+            protected void setField(BigDecimal value) throws InvalidInputException {
                 paymentSchedule.setLocFixedPayment(value);
             }
         });
         thresholdPanel.add(locFixedPaymentField);
 
         thresholdPanel.add(new JLabel("LoC percentage minimum payment"));
-        String locPercentPayment = String.format("%.2f", paymentSchedule.getLocPercentPayment().multiply(new BigDecimal("100")));
-        JTextField locPercentPaymentField = new JTextField(locPercentPayment);
-        locPercentPaymentField.getDocument().addDocumentListener(new TextFieldListener() {
+        JFormattedTextField locPercentPaymentField = new JFormattedTextField(new PercentageFormatterFactory(), paymentSchedule.getLocPercentPayment());
+        locPercentPaymentField.setInputVerifier(new FieldInputVerifier() {
             @Override
-            protected void onUpdate(BigDecimal value) throws InvalidInputException {
-                paymentSchedule.setLocPercentPayment(value.divide(new BigDecimal("100"), Bank.MATH_CONTEXT));
+            protected void setField(BigDecimal value) throws InvalidInputException {
+                paymentSchedule.setLocPercentPayment(value);
             }
         });
         thresholdPanel.add(locPercentPaymentField);
