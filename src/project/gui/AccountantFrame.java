@@ -6,7 +6,6 @@ import project.model.InvalidInputException;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -26,11 +25,40 @@ public final class AccountantFrame extends AbstractUserWindow {
 
     private void initComponents() {
         setLayout(new BorderLayout());
-        add(statisticTable, BorderLayout.CENTER);
+        add(new JScrollPane(statisticTable), BorderLayout.CENTER);
 
         JPanel loanCapPanel = new JPanel(new GridLayout(1, 2));
         loanCapPanel.add(new JLabel("Loan cap:"));
-        JFormattedTextField loanCapField = new JFormattedTextField(new OperationsManagerFrame.DollarAmountFormatterFactory(), Bank.getInstance().getLoanCap());
+        JFormattedTextField loanCapField = new JFormattedTextField(new JFormattedTextField.AbstractFormatterFactory() {
+            @Override
+            public JFormattedTextField.AbstractFormatter getFormatter(JFormattedTextField tf) {
+                return new JFormattedTextField.AbstractFormatter() {
+                    @Override
+                    public Object stringToValue(String text) throws ParseException {
+                        if (text == null || text.isEmpty()) {
+                            return null;
+                        } else {
+                            try {
+                                return new BigDecimal(text);
+                            } catch (NumberFormatException nfx) {
+                                throw new ParseException(nfx.getMessage(), 0);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public String valueToString(Object value) throws ParseException {
+                        if (value == null) {
+                            return "";
+                        } else if (value instanceof BigDecimal) {
+                            return String.format("%.2f", value);
+                        } else {
+                            throw new ParseException("value is not a BigDecimal", 0);
+                        }
+                    }
+                };
+            }
+        }, Bank.getInstance().getLoanCap());
         loanCapField.setInputVerifier(new InputVerifier() {
             @Override
             public boolean verify(JComponent input) {
@@ -65,7 +93,6 @@ public final class AccountantFrame extends AbstractUserWindow {
                 return false;
             }
         });
-        statisticTable.setTableHeader(new JTableHeader(statisticTable.getColumnModel()));
         statisticTable.revalidate();
         pack();
     }

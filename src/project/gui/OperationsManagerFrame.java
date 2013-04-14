@@ -16,7 +16,7 @@ import java.util.Set;
  * TODO consider only accessing Bank through Controller
  */
 public class OperationsManagerFrame extends AbstractUserWindow {
-    static final class DollarAmountFormatter extends JFormattedTextField.AbstractFormatter {
+    private static final class DollarAmountFormatter extends JFormattedTextField.AbstractFormatter {
         @Override
         public Object stringToValue(String text) throws ParseException {
             try {
@@ -36,14 +36,14 @@ public class OperationsManagerFrame extends AbstractUserWindow {
         }
     }
 
-    static final class DollarAmountFormatterFactory extends JFormattedTextField.AbstractFormatterFactory {
+    private static final class DollarAmountFormatterFactory extends JFormattedTextField.AbstractFormatterFactory {
         @Override
         public JFormattedTextField.AbstractFormatter getFormatter(JFormattedTextField tf) {
             return new DollarAmountFormatter();
         }
     }
 
-    static final class PercentageFormatter extends JFormattedTextField.AbstractFormatter {
+    private static final class PercentageFormatter extends JFormattedTextField.AbstractFormatter {
         @Override
         public Object stringToValue(String text) throws ParseException {
             try {
@@ -63,7 +63,7 @@ public class OperationsManagerFrame extends AbstractUserWindow {
         }
     }
 
-    static final class PercentageFormatterFactory extends JFormattedTextField.AbstractFormatterFactory {
+    private static final class PercentageFormatterFactory extends JFormattedTextField.AbstractFormatterFactory {
         @Override
         public JFormattedTextField.AbstractFormatter getFormatter(JFormattedTextField tf) {
             return new PercentageFormatter();
