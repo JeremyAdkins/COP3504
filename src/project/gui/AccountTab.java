@@ -347,7 +347,7 @@ public final class AccountTab extends javax.swing.JPanel {
 
     private void UseTellerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UseTellerActionPerformed
         project.gui.LoginWindow temp = new project.gui.LoginWindow("Teller Login", true, controller);
-        temp.confirmTellerLogin(true);
+        temp.confirmTellerLogin();
         temp.setVisible(true);
     }//GEN-LAST:event_UseTellerActionPerformed
 
