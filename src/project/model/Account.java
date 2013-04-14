@@ -39,14 +39,14 @@ public abstract class Account {
 
 	private final List<Transaction> history;
 
-	private final Set<Transaction> repeatingPayments;
+	private final Map<String, BigDecimal> repeatingPayments;
 
 	protected Account() {
 		this.accountNumber = Bank.getInstance().assignAccountNumber();
 		this.closed = false;
 		this.balance = new BigDecimal("0");
 		this.history = new ArrayList<Transaction>();
-		this.repeatingPayments = new HashSet<Transaction>();
+		this.repeatingPayments = new HashMap<String, BigDecimal>();
 	}
 
     public abstract Type getType();
@@ -138,20 +138,33 @@ public abstract class Account {
 		return Collections.unmodifiableList(history);
 	}
 
-	public final Set<Transaction> getRepeatingPayments() {
-		return Collections.unmodifiableSet(repeatingPayments);
-	}
+    public final Map<String, BigDecimal> getRepeatingPayments() {
+        return Collections.unmodifiableMap(repeatingPayments);
+    }
 
-	public final void addRepeatingPayment(Transaction payment) {
-        if (payment.getType().canRepeat()) {
-            repeatingPayments.add(payment);
-        } else {
-            throw new IllegalArgumentException("repeating payments can only be deposits or withdrawals");
+    public final void addRepeatingDeposit(String description, BigDecimal amount) throws RepeatingPaymentException, InvalidInputException {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new InvalidInputException(amount, "repeating payment amount must be positive");
         }
-	}
+        addRepeatingPayment(description, amount);
+    }
 
-	public final void removeRepeatingPayment(Transaction payment) {
-		repeatingPayments.remove(payment);
+    public final void addRepeatingWithdrawal(String description, BigDecimal amount) throws RepeatingPaymentException, InvalidInputException {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new InvalidInputException(amount, "repeating payment amount must be positive");
+        }
+        addRepeatingPayment(description, amount.negate());
+    }
+
+    private void addRepeatingPayment(String description, BigDecimal amount) throws RepeatingPaymentException {
+        if (repeatingPayments.containsKey(description)) {
+            throw new RepeatingPaymentException(description);
+        }
+        repeatingPayments.put(description, amount);
+    }
+
+	public final void removeRepeatingPayment(String description) {
+		repeatingPayments.remove(description);
 	}
 
 	protected void doPayments() throws InvalidInputException, InsufficientFundsException {
@@ -161,14 +174,15 @@ public abstract class Account {
         }
 
         // repeating payments
-        for (Transaction payment : repeatingPayments) {
-            if (payment.getType() == Transaction.Type.DEPOSIT) {
-                deposit(payment.getAmount());
+        // run deposits first, then withdrawals
+        for (BigDecimal amount : repeatingPayments.values()) {
+            if (amount.compareTo(BigDecimal.ZERO) > 0) {
+                deposit(amount);
             }
         }
-        for (Transaction payment : repeatingPayments) {
-            if (payment.getType() == Transaction.Type.WITHDRAWAL) {
-                withdraw(payment.getAmount());
+        for (BigDecimal amount : repeatingPayments.values()) {
+            if (amount.compareTo(BigDecimal.ZERO) < 0) {
+                withdraw(amount.negate());
             }
         }
 
