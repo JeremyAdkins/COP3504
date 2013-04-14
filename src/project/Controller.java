@@ -92,7 +92,7 @@ public final class Controller {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                LoginWindow login = new LoginWindow("Login", true, Controller.this);
+                LoginWindow login = new LoginWindow("Login", Controller.this);
                 login.setVisible(true);
             }
         });

@@ -16,7 +16,7 @@ import java.awt.event.KeyEvent;
 /**
  * @author Rich
  */
-public final class LoginWindow extends javax.swing.JDialog {
+public final class LoginWindow extends javax.swing.JFrame {
     /**
      * Creates new form LoginWindow
      */
@@ -26,11 +26,11 @@ public final class LoginWindow extends javax.swing.JDialog {
 
     /**
      * @param title      The title on the Window
-     * @param modal      Set to true to make this window modal
      * @param controller The controller
      */
-    public LoginWindow(String title, boolean modal, final Controller controller) {
-        super(new JFrame(), title, modal);
+    public LoginWindow(String title, final Controller controller) {
+        setTitle(title);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.controller = controller;
         initComponents();
         addWindowListener(new java.awt.event.WindowAdapter() {
