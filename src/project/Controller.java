@@ -278,22 +278,22 @@ public final class Controller {
         }
         return AccountManagerTable;
     }
+
     /**
-     * Lays out all of the Accounts
-     * @return
+     * Generates the table data used in the accountant view.
+     *
+     * @return the accountant table data
      */
-    public Object[][] updateAccountantTableView(){
-        Collection<User> users = instance.getUsers();
-        Object[][] AccountantTable = new Object[users.size()][2];
-        int i = 0;
-        for (User user : users) {
-            for(Account account : user.getAccounts()){
-                AccountantTable[i][0] = account.getType();
-                AccountantTable[i][1] = account.getBalance();
-                        i++;
-            }
+    public Object[][] updateAccountantTableView() {
+        Map<String, String> stats = Bank.getInstance().getStatistics();
+        Object[][] data = new Object[stats.size()][2];
+        Iterator<Map.Entry<String, String>> iterator = stats.entrySet().iterator();
+        for (int i = 0; i < stats.size(); i++) {
+            Map.Entry<String, String> entry = iterator.next();
+            data[i][0] = entry.getKey();
+            data[i][1] = entry.getValue();
         }
-        return AccountantTable;
+        return data;
     }
 
     public void handleException(Component parent, InvalidInputException iix) {

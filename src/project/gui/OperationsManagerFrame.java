@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package project.gui;
 
 import project.Controller;
@@ -16,12 +12,11 @@ import java.text.ParseException;
 import java.util.Collections;
 import java.util.Set;
 
-/**
- * 
- * @author Rich
+/*
+ * TODO consider only accessing Bank through Controller
  */
 public class OperationsManagerFrame extends AbstractUserWindow {
-    private static final class DollarAmountFormatter extends JFormattedTextField.AbstractFormatter {
+    static final class DollarAmountFormatter extends JFormattedTextField.AbstractFormatter {
         @Override
         public Object stringToValue(String text) throws ParseException {
             try {
@@ -41,14 +36,14 @@ public class OperationsManagerFrame extends AbstractUserWindow {
         }
     }
 
-    private static final class DollarAmountFormatterFactory extends JFormattedTextField.AbstractFormatterFactory {
+    static final class DollarAmountFormatterFactory extends JFormattedTextField.AbstractFormatterFactory {
         @Override
         public JFormattedTextField.AbstractFormatter getFormatter(JFormattedTextField tf) {
             return new DollarAmountFormatter();
         }
     }
 
-    private static final class PercentageFormatter extends JFormattedTextField.AbstractFormatter {
+    static final class PercentageFormatter extends JFormattedTextField.AbstractFormatter {
         @Override
         public Object stringToValue(String text) throws ParseException {
             try {
@@ -68,7 +63,7 @@ public class OperationsManagerFrame extends AbstractUserWindow {
         }
     }
 
-    private static final class PercentageFormatterFactory extends JFormattedTextField.AbstractFormatterFactory {
+    static final class PercentageFormatterFactory extends JFormattedTextField.AbstractFormatterFactory {
         @Override
         public JFormattedTextField.AbstractFormatter getFormatter(JFormattedTextField tf) {
             return new PercentageFormatter();
