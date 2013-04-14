@@ -9,22 +9,21 @@ import java.math.BigDecimal;
 
 import static org.junit.Assert.assertTrue;
 
-public class LoanTester {
-BigDecimal minPay = new BigDecimal(50); 
-BigDecimal premiumInt = new BigDecimal(.05);
-BigDecimal loanAmount = new BigDecimal(600); 
-Loan account; 
-	
-@BeforeClass
-public static void setUpClass() throws InvalidInputException {
-	Bank.getInstance().setLoanCap(new BigDecimal("4000.00"));
-}
+public final class LoanTest {
+    private final BigDecimal loanAmount = new BigDecimal(600);
+    private final BigDecimal premiumInt = new BigDecimal(.05);
+    private Loan account;
+
+    @BeforeClass
+    public static void setUpClass() throws InvalidInputException {
+        Bank.getInstance().setLoanCap(new BigDecimal("4000.00"));
+    }
 
 	@Before
 	public void setUp() throws InvalidInputException, LoanCapException{
-		account = new Loan(loanAmount, minPay, loanAmount); 
-		TestUtil.assertEquals(new BigDecimal(-600), account.getBalance());
-	    TestUtil.assertEquals(minPay, account.getMinimumPayment());
+		account = new Loan(loanAmount, 12, premiumInt);
+		TestUtil.assertEquals(loanAmount.negate(), account.getBalance());
+	    TestUtil.assertEquals(52.75, account.getMinimumPayment());
 	}
 	
 	@After
@@ -62,13 +61,13 @@ public static void setUpClass() throws InvalidInputException {
 		assertTrue(account.isClosed()); 
 	}
 	
-	@Test (expected = InvalidInputException.class)
-	public void testNegConstructor() throws InvalidInputException, LoanCapException {
-		account = new Loan(new BigDecimal(500), new BigDecimal(-50), new BigDecimal(.07)); 
+	@Test(expected = InvalidInputException.class)
+	public void testNegativeTerm() throws InvalidInputException, LoanCapException {
+		account = new Loan(new BigDecimal(500), -1, premiumInt);
 	}
 	
-	@Test (expected = LoanCapException.class)
+	@Test(expected = LoanCapException.class)
 	public void testExceedLoanCap() throws InvalidInputException, LoanCapException {
-		account = new Loan(new BigDecimal(5000), minPay, premiumInt); 
+		account = new Loan(new BigDecimal(5000), 12, premiumInt);
 	}
 }
