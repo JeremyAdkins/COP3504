@@ -4,6 +4,7 @@
  */
 package project.gui;
 
+import javax.swing.ListSelectionModel;
 import project.Controller;
 
 /**
@@ -31,6 +32,7 @@ public class AuditorFrame extends AbstractUserWindow {
                 return false;
             }
         });
+        AuditorTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         AuditorTable.revalidate();
     }
 
