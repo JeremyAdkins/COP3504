@@ -14,6 +14,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -326,11 +327,8 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
     }//GEN-LAST:event_addUserButtonActionPerformed
 
     private void addAccountButtonActionPerformed(ActionEvent evt) {
-        Account.Type type = (Account.Type) JOptionPane.showInputDialog(this, "Choose an account type.", "Account type",
-                JOptionPane.QUESTION_MESSAGE, null, Account.Type.values(), Account.Type.SAVINGS);
         User user = (User) accountManagerTable.getModel().getValueAt(accountManagerTable.getSelectedRow(), 0);
-        controller.addAccountToUser(type, user);
-        updateAccountManagerTable();
+        new AddAccountDialog(user).setVisible(true);
     }
 
     private void closeAccountButtonActionPerformed(ActionEvent evt) {
@@ -411,4 +409,87 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
         action();
     }
 
+    private final class AddAccountDialog extends JDialog {
+        private final User user;
+
+        private final ComboBoxModel comboBoxModel;
+
+        private JPanel amountPanel;
+
+        private JPanel termPanel;
+
+        private JPanel interestPremiumPanel;
+
+        private AddAccountDialog(User user) {
+            this.user = user;
+            setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+            comboBoxModel = new DefaultComboBoxModel(Account.Type.values());
+            comboBoxModel.setSelectedItem(Account.Type.SAVINGS);
+            initComponents();
+            updateForSelectedType();
+        }
+
+        private void initComponents() {
+            setLayout(new GridLayout(5, 1));
+
+            JPanel typePanel = new JPanel(new BorderLayout());
+            typePanel.add(new JLabel("Account type"), BorderLayout.WEST);
+            JComboBox comboBox = new JComboBox(comboBoxModel);
+            typePanel.add(comboBox, BorderLayout.EAST);
+            comboBox.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    updateForSelectedType();
+                }
+            });
+            add(typePanel, BorderLayout.NORTH);
+
+            JPanel centerPanel = new JPanel(new GridLayout(3, 1));
+            amountPanel = new JPanel(new BorderLayout());
+            centerPanel.add(amountPanel);
+            termPanel = new JPanel(new BorderLayout());
+            centerPanel.add(termPanel);
+            interestPremiumPanel = new JPanel(new BorderLayout());
+            centerPanel.add(interestPremiumPanel);
+            add(centerPanel, BorderLayout.CENTER);
+
+            JPanel buttonPanel = new JPanel(new BorderLayout());
+            JButton addButton = new JButton("Add");
+            addButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    Account.Type type = (Account.Type) comboBoxModel.getSelectedItem();
+                    controller.addAccountToUser(type, user);
+                    updateAccountManagerTable();
+                    AddAccountDialog.this.dispose();
+                }
+            });
+            buttonPanel.add(addButton, BorderLayout.WEST);
+            JButton cancelButton = new JButton("Cancel");
+            cancelButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    AddAccountDialog.this.dispose();
+                }
+            });
+            buttonPanel.add(cancelButton, BorderLayout.EAST);
+            add(buttonPanel, BorderLayout.SOUTH);
+        }
+
+        private void updateForSelectedType() {
+            switch ((Account.Type) comboBoxModel.getSelectedItem()) {
+                case SAVINGS:
+                case CHECKING:
+                    amountPanel.removeAll();
+                    amountPanel.setVisible(false);
+                    termPanel.removeAll();
+                    termPanel.setVisible(false);
+                    interestPremiumPanel.removeAll();
+                    interestPremiumPanel.setVisible(false);
+                    break;
+                // TODO handle the other types... going to need to reuse the formatted text box stuff
+            }
+            pack();
+        }
+    }
 }
