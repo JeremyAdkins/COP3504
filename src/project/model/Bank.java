@@ -84,7 +84,7 @@ public final class Bank {
 		users.put(username, user);
 	}
 
-	PaymentSchedule getPaymentSchedule() {
+	public PaymentSchedule getPaymentSchedule() {
 		return schedule;
 	}
 

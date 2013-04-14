@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
-final class PaymentSchedule {
+public final class PaymentSchedule {
 	private BigDecimal savingsInterest = new BigDecimal("0.0200");
 	private BigDecimal savingsCharge = new BigDecimal("5.00");
 	private BigDecimal savingsThreshold = new BigDecimal("1000.00");
