@@ -22,7 +22,7 @@ public final class CertificateOfDepositTest {
 
     @Before
     public void setUp() throws InvalidInputException {
-        account = new CertificateOfDeposit(CertificateOfDeposit.Term.ONE_YEAR, basicBalance);
+        account = new CertificateOfDeposit(basicBalance, CertificateOfDeposit.Term.ONE_YEAR);
         TestUtil.assertEquals(basicBalance, account.getBalance());
     }
 

@@ -26,7 +26,7 @@ public final class CertificateOfDeposit extends Account {
 
     int monthsElapsed;
 
-    public CertificateOfDeposit(Term term, BigDecimal amount) throws InvalidInputException {
+    public CertificateOfDeposit(BigDecimal amount, Term term) throws InvalidInputException {
         this.term = term;
         this.monthsElapsed = 0;
 
