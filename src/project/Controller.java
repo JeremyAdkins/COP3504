@@ -325,9 +325,9 @@ public final class Controller {
             if(!user.isActiveCustomer()){
                 continue;
             }
-            AuditorTable[i][0] = user.getLastName()+", "+user.getFirstName();
+            AuditorTable[i][0] = user;
             for(Account account : user.getAccounts()){
-                AuditorTable[i][1] = account.getType();
+                AuditorTable[i][1] = account;
                 AuditorTable[i][2] = account.getBalance();
                         i++;
             }
