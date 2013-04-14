@@ -67,8 +67,16 @@ public final class Controller {
     }
 
     private void initializeBank() throws InvalidInputException {
-        Bank.getInstance().addUser("root", new User("Billy", "Bob", Calendar.getInstance(), 555555555, "Bob@mail.com"));
-        Bank.getInstance().getUser("root").setRole(User.Role.OPERATIONS_MANAGER);
+        Bank.getInstance().addUser("operations_manager", new User("Operations", "Manager", Calendar.getInstance(), 555555555, "omanager@bank.com"));
+        Bank.getInstance().getUser("operations_manager").setRole(User.Role.OPERATIONS_MANAGER);
+        Bank.getInstance().addUser("accountant", new User("Accountant", "Employee", Calendar.getInstance(), 123456789, "accountant@bank.com"));
+        Bank.getInstance().getUser("accountant").setRole(User.Role.ACCOUNTANT);
+        Bank.getInstance().addUser("auditor", new User("Auditor", "Employee", Calendar.getInstance(), 12345678, "auditor@bank.com"));
+        Bank.getInstance().getUser("auditor").setRole(User.Role.AUDITOR);
+        Bank.getInstance().addUser("account_manager", new User("Account", "Manager", Calendar.getInstance(), 222222222, "amanager@bank.com"));
+        Bank.getInstance().getUser("account_manager").setRole(User.Role.ACCOUNT_MANAGER);
+        Bank.getInstance().addUser("teller", new User("Teller", "Employee", Calendar.getInstance(), 777777777, "teller@bank.com"));
+        Bank.getInstance().getUser("teller").setRole(User.Role.TELLER);
         newLoginWindow();
     }
 
@@ -288,7 +296,7 @@ public final class Controller {
     }
 
     public void shutDown(){
-        
+
     }
     
     public void getPaymentSchedule(){
