@@ -346,18 +346,12 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
         String email = emailField.getText();
         Calendar dateOfBirth = Calendar.getInstance();
         dateOfBirth.setTime((Date) DOBField.getValue());
-        int ssn;
-        if (SSNField.getText().matches("[0-9]{3}-[0-9]{2}-[0-9]{4}")) {
-            ssn = Integer.parseInt(SSNField.getText().replace("-", ""));
-        } else {
-            // TODO malformed SSN
-            throw new AssertionError();
-        }
+        int ssn = Integer.parseInt(SSNField.getText().replace("-", "")); // note that the SSN field formats it correctly
         try {
             User user = controller.createNewUser(firstName, lastName, dateOfBirth, ssn, email, username);
             controller.addAccountToUser((Account.Type) accountTypeComboBox.getSelectedItem(), user);
         } catch (InvalidInputException e) {
-            // TODO exception handling
+            controller.handleException(this, e);
         }
         UserView.dispose();
         updateAccountManagerTable();
