@@ -194,8 +194,10 @@ public final class Controller {
      * @param email
      * @return 
      */
-    public void createNewUser(String firstName, String lastName, Calendar birthdate, int ssn, String email, String username) throws InvalidInputException {
-        Bank.getInstance().addUser(username, new User(firstName, lastName, birthdate, ssn, email));
+    public User createNewUser(String firstName, String lastName, Calendar birthdate, int ssn, String email, String username) throws InvalidInputException {
+        User user = new User(firstName, lastName, birthdate, ssn, email);
+        Bank.getInstance().addUser(username, user);
+        return user;
     }
     /**
      * 
@@ -210,24 +212,25 @@ public final class Controller {
         Bank.getInstance().addUser(username, new User(firstName, lastName, birthdate, ssn, email));
         Bank.getInstance().getUser(username).setRole(User.Role.valueOf(role));
     }
-    public void addAccountToUser(String account, String username) throws InvalidInputException {
-        Bank.getInstance().getUser(username).addAccount(newAccount(account));
+    public void addAccountToUser(Account.Type type, User user) {
+        user.addAccount(newAccount(type));
     }
     
-    public Account newAccount(String type){
-        // TODO I'm sure there's a way to make this use strong types
-        if (type.equals("Savings")) {
-            return new SavingsAccount();
-        } else if (type.equals("Checking")) {
-            return new CheckingAccount();
-//        } else if (type.equals("Certificate of Deposit")) {
-//            return new CertificateOfDeposit();
-//        } else if (type.equals("Line of Credit")) {
-//            return new LineOfCredit();
-//        } else if (type.equals("Loan")) {
-//            return new Loan();
+    private Account newAccount(Account.Type type) {
+        switch (type) {
+            case SAVINGS:
+                return new SavingsAccount();
+            case CHECKING:
+                return new CheckingAccount();
+            default:
+                // TODO we need some way to pass the parameters for the other types
+                throw new UnsupportedOperationException();
         }
-        throw new IllegalStateException();
+    }
+
+    public void closeAccount(Account account) {
+        // TODO
+        throw new UnsupportedOperationException();
     }
     
     public Bank getInstance() {
@@ -256,27 +259,26 @@ public final class Controller {
      */
     public Object[][] updateAccountManagerTableView(){
         Collection<User> users = instance.getUsers();
-        int accountHolders = 0;
+        int accounts = 0;
         for (User user : users) {
-            if(!user.isActiveCustomer()){
-                continue;
+            for (Account account : user.getAccounts()) {
+                accounts++;
             }
-            accountHolders++;
         }
-        Object[][] AccountManagerTable = new Object[accountHolders][3];
+        Object[][] accountManagerTable = new Object[accounts][4];
         int i = 0;
         for (User user : users) {
-            if(!user.isActiveCustomer()){
-                continue;
-            }
-            AccountManagerTable[i][0] = user.getLastName()+", "+user.getFirstName();
-            for(Account account : user.getAccounts()){
-                AccountManagerTable[i][1] = account.getType();
-                AccountManagerTable[i][2] = account.getBalance();
-                        i++;
+            for (Account account : user.getAccounts()) {
+                accountManagerTable[i][0] = user;
+                StringBuilder formattedSsn = new StringBuilder(String.format("%09d", user.getSsn()));
+                formattedSsn.insert(3, "-").insert(6, "-");
+                accountManagerTable[i][1] = formattedSsn;
+                accountManagerTable[i][2] = account;
+                accountManagerTable[i][3] = String.format("$%.2f", account.getBalance());
+                i++;
             }
         }
-        return AccountManagerTable;
+        return accountManagerTable;
     }
 
     /**
