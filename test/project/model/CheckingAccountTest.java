@@ -108,7 +108,7 @@ public final class CheckingAccountTest {
      *    signal passage of one month of time, balance should be 56.00 after $8 monthly checking charge for balance under $2000
      */
     @Test
-    public void testBlah() throws InvalidInputException, InsufficientFundsException {
+    public void testMonthAdvance() throws InvalidInputException, InsufficientFundsException {
         account.deposit(new BigDecimal("100.00"));
         TestUtil.assertEquals(100.00, account.getBalance());
         account.withdraw(new BigDecimal("140.00"));
@@ -118,5 +118,4 @@ public final class CheckingAccountTest {
         Bank.getInstance().advanceCurrentMonth();
         TestUtil.assertEquals(-56.00, account.getBalance());
     }
-
 }

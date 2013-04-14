@@ -36,26 +36,26 @@ public final class LoanTest {
 	}
 	
 	@Test
-	public void basicDeposit() throws InvalidInputException {
+	public void testBasicDeposit() throws InvalidInputException {
 		account.deposit(new BigDecimal(300)); 
 		TestUtil.assertEquals(300, account.getBalance().negate()); 
 	}
 	
 	@Test
-	public void testMinNotPayed() throws InvalidInputException {
+	public void testMinNotPaid() throws InvalidInputException {
 		//Note that the minimum payment for this test is 50$
 		account.deposit(new BigDecimal(40)); 
 		TestUtil.assertEquals(account.getMonthlyCharge(), account.getPenalty()); 
 	}
 	
 	@Test
-	public void testMinPayed() throws InvalidInputException {
+	public void testMinPaid() throws InvalidInputException {
 		account.deposit(new BigDecimal(100)); 
 		TestUtil.assertEquals(BigDecimal.ZERO, account.getMonthlyCharge()); 
 	}
 	
 	@Test
-	public void testClosed() throws InsufficientFundsException, InvalidInputException {
+	public void testAutomaticClosure() throws InsufficientFundsException, InvalidInputException {
 		account.deposit(new BigDecimal(600));
 		account.doPayments(); 
 		assertTrue(account.isClosed()); 
