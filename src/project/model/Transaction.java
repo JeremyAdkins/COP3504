@@ -32,13 +32,19 @@ public final class Transaction {
 
     private final BigDecimal amount;
 
+    /**
+     * The account balance after this transaction was completed.
+     */
+    private final BigDecimal balance;
+
     private final int timestamp;
 
     private FraudStatus fraudStatus;
 
-    public Transaction(Type type, BigDecimal amount) {
+    public Transaction(Type type, BigDecimal amount, BigDecimal balance) {
         this.type = type;
         this.amount = amount;
+        this.balance = balance;
         this.timestamp = Bank.getInstance().getCurrentMonth();
         this.fraudStatus = FraudStatus.NOT_FLAGGED;
     }
@@ -49,6 +55,10 @@ public final class Transaction {
 
     public BigDecimal getAmount() {
         return amount;
+    }
+
+    public BigDecimal getBalance() {
+        return balance;
     }
 
     public int getTimestamp() {

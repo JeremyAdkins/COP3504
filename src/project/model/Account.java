@@ -129,7 +129,7 @@ public abstract class Account {
         } else {
             balance = balance.subtract(amount);
         }
-		Transaction trans = new Transaction(type, amount);
+		Transaction trans = new Transaction(type, amount, balance);
 		history.add(trans);
 		return trans;
 	}
