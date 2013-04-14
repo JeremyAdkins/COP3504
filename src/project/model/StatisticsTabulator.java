@@ -1,6 +1,7 @@
 package project.model;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -163,6 +164,16 @@ final class StatisticsTabulator {
         return sum;
     }
 
+    private int sumAssetInteger(Map<AccountCategory, Integer> stats) {
+        int sum = 0;
+        for (Map.Entry<AccountCategory, Integer> entry : stats.entrySet()) {
+            if (entry.getKey().isAsset()) {
+                sum += entry.getValue();
+            }
+        }
+        return sum;
+    }
+
     private BigDecimal sumBigDecimal(Map<?, BigDecimal> stats) {
         BigDecimal sum = BigDecimal.ZERO;
         for (BigDecimal value : stats.values()) {
@@ -170,20 +181,10 @@ final class StatisticsTabulator {
         }
         return sum;
     }
-    
-    private int countAssets() {
-    	int count = 0;
-    	for (Map.Entry<AccountCategory, Integer> entry : accountCount.entrySet()) {
-    		if (entry.getKey().isAsset()) {
-    			count += entry.getValue();
-    		}
-    	}
-    	return count;
-    }
 
-    private BigDecimal sumAssets() {
+    private BigDecimal sumAssetBigDecimal(Map<AccountCategory, BigDecimal> stats) {
         BigDecimal sum = BigDecimal.ZERO;
-        for (Map.Entry<AccountCategory, BigDecimal> entry : totalBalance.entrySet()) {
+        for (Map.Entry<AccountCategory, BigDecimal> entry : stats.entrySet()) {
             if (entry.getKey().isAsset()) {
                 sum = sum.add(entry.getValue());
             }
@@ -200,11 +201,15 @@ final class StatisticsTabulator {
         for (User.Role role : User.Role.values()) {
             put(stats, String.format("Number of %ss", role), employeeCount.get(role));
         }
-        put(stats, "Sum of assets", sumAssets());
-        put(stats, "Sum of liabilities", sumBigDecimal(totalBalance).subtract(sumAssets()));
-        put(stats, "Average of assets", sumAssets().divide(new BigDecimal(countAssets())));
-        put(stats, "Average of liabilities", sumBigDecimal(totalBalance).subtract(sumAssets()).divide(new BigDecimal(sumInteger(accountCount) - countAssets())));
-        put(stats, "Average balance", sumBigDecimal(totalBalance).divide(new BigDecimal(sumInteger(accountCount))));
+        int assetAccounts = sumAssetInteger(accountCount);
+        int liabilityAccounts = sumInteger(accountCount) - assetAccounts;
+        BigDecimal sumOfAssets = sumAssetBigDecimal(totalBalance);
+        BigDecimal sumOfLiabilities = sumBigDecimal(totalBalance).subtract(sumOfAssets);
+        put(stats, "Sum of assets", sumOfAssets);
+        put(stats, "Sum of liabilities", sumOfLiabilities);
+        put(stats, "Average of assets", sumOfAssets.divide(new BigDecimal(assetAccounts), 2, RoundingMode.HALF_UP));
+        put(stats, "Average of liabilities", sumOfLiabilities.divide(new BigDecimal(liabilityAccounts), 2, RoundingMode.HALF_UP));
+        put(stats, "Average balance", sumOfAssets.add(sumOfLiabilities).divide(new BigDecimal(assetAccounts + liabilityAccounts), 2, RoundingMode.HALF_UP));
 
         // per category statistics
         for (AccountCategory category : accountCount.keySet()) {
