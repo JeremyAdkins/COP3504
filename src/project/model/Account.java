@@ -215,4 +215,30 @@ public abstract class Account {
     public String toString() {
         return String.format("%s (x%04d)", getType(), accountNumber % 10000);
     }
+
+    public String generateStatement() {
+        int statementMonth = Bank.getInstance().getCurrentMonth() - 1;
+        List<Transaction> statementHistory = new ArrayList<Transaction>();
+        BigDecimal carriedForward = null;
+        BigDecimal endOfMonth = null;
+        for (Transaction transaction : history) {
+            if (transaction.getTimestamp() == statementMonth) {
+                if (carriedForward == null && history.indexOf(transaction) > 0) {
+                    carriedForward = history.get(history.indexOf(transaction) - 1).getBalance();
+                }
+                statementHistory.add(transaction);
+                endOfMonth = transaction.getBalance();
+            }
+        }
+
+        StringBuilder str = new StringBuilder();
+        str.append(toString() + "\n");
+        str.append(String.format("Balance carried forward: $%.2f\n", carriedForward == null ? BigDecimal.ZERO : carriedForward));
+        str.append(String.format("End of month balance: $%.2f\n", endOfMonth == null ? BigDecimal.ZERO : endOfMonth));
+        str.append(String.format("Type             Amount   Balance  Month Fraud\n"));
+        for (Transaction transaction : statementHistory) {
+            str.append(transaction.toString() + "\n");
+        }
+        return str.toString();
+    }
 }

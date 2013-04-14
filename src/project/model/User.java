@@ -90,4 +90,9 @@ public final class User {
 		}
 		return false;
 	}
+
+    @Override
+    public String toString() {
+        return String.format("%s %s, DOB %tD", firstName, lastName, birthdate);
+    }
 }

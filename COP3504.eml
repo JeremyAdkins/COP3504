@@ -10,4 +10,7 @@
 	<lib name="xstream-1.4.4.jar" scope="COMPILE">
 		<relative-module-cls project-related="jar://$PROJECT_DIR$/lib/xstream-1.4.4.jar!/"/>
 	</lib>
+	<levels>
+		<level name="lib" value="project"/>
+	</levels>
 </component>

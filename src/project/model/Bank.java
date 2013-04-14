@@ -161,7 +161,7 @@ public final class Bank {
 
 		for(User user:users.values()){
 			for(Account account:user.getAccounts()){
-				if(account.getType() == Account.Type.CHECKING || account.getType() == Account.Type.SAVINGS || account.getType() == Account.Type.CD){
+				if (account.getType().isLoan()) {
 					sumAssets = sumAssets.add(account.getBalance());		
 					tempNumberAssets ++;
 				} else {
@@ -170,27 +170,42 @@ public final class Bank {
 				}
 			}
 		}
-		averageBalance = sumAssets.divide(new BigDecimal(tempNumberAssets));
-		averageLiabilities = sumLiabilities.divide(new BigDecimal(tempNumberLiabilities));
+        if (tempNumberAssets > 0) {
+		    averageBalance = sumAssets.divide(new BigDecimal(tempNumberAssets));
+        }
+        if (tempNumberLiabilities > 0) {
+		    averageLiabilities = sumLiabilities.divide(new BigDecimal(tempNumberLiabilities));
+        }
 		
 		for(User user:users.values()){
 			for(Account account:user.getAccounts()){
-				if(account.getType() == Account.Type.CHECKING || account.getType() == Account.Type.SAVINGS || account.getType() == Account.Type.CD){
+				if (account.getType().isLoan()) {
 					standardDeviationAssets = standardDeviationAssets.add(account.getBalance().subtract(averageBalance)).multiply(standardDeviationAssets.add(account.getBalance().subtract(averageBalance)));
-				}
-				else{
-					standardDeviationLiabilities = standardDeviationAssets.add(account.getBalance().subtract(averageLiabilities)).multiply(standardDeviationAssets.add(account.getBalance().subtract(averageLiabilities)));
+				} else {
+					standardDeviationLiabilities = standardDeviationLiabilities.add(account.getBalance().subtract(averageLiabilities)).multiply(standardDeviationLiabilities.add(account.getBalance().subtract(averageLiabilities)));
 				}
 			}
 		}
-		standardDeviationAssets = standardDeviationAssets.divide(new BigDecimal(tempNumberAssets));
-		standardDeviationLiabilities = standardDeviationLiabilities.divide(new BigDecimal(tempNumberLiabilities));
+        if (tempNumberAssets > 0) {
+		    standardDeviationAssets = standardDeviationAssets.divide(new BigDecimal(tempNumberAssets));
+        }
+        if (tempNumberLiabilities > 0) {
+		    standardDeviationLiabilities = standardDeviationLiabilities.divide(new BigDecimal(tempNumberLiabilities));
+        }
 		standardDeviationAssets = BigDecimal.valueOf(Math.sqrt(standardDeviationAssets.doubleValue()));
 		standardDeviationLiabilities = BigDecimal.valueOf(Math.sqrt(standardDeviationLiabilities.doubleValue()));
 		
 		Map<String, String> bankStats = new HashMap<String, String>();
-		bankStats.put("Standard deviation of assets", standardDeviationAssets.toString());
-                bankStats.put("Standard deviation of liabilities", standardDeviationLiabilities.toString());
+        if (tempNumberAssets > 0) {
+		    bankStats.put("Standard deviation of assets", standardDeviationAssets.toString());
+        } else {
+            bankStats.put("Standard deviation of assets", "N/A");
+        }
+        if (tempNumberAssets > 0) {
+            bankStats.put("Standard deviation of liabilities", standardDeviationLiabilities.toString());
+        } else {
+            bankStats.put("Standard deviation of liabilities", "N/A");
+        }
 		return bankStats;
 	}
 

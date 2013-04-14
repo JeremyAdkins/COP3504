@@ -41,11 +41,10 @@ final class StatisticsTabulator {
         @Override
         public int compareTo(AccountCategory other) {
             int baseCompare = baseType.compareTo(other.baseType);
-            if (baseCompare == 0) {
+            if (baseCompare == 0 && baseType == Account.Type.CD) {
                 return term.compareTo(other.term);
-            } else {
-                return baseCompare;
             }
+            return baseCompare;
         }
 
         @Override
@@ -207,9 +206,21 @@ final class StatisticsTabulator {
         BigDecimal sumOfLiabilities = sumBigDecimal(totalBalance).subtract(sumOfAssets);
         put(stats, "Sum of assets", sumOfAssets);
         put(stats, "Sum of liabilities", sumOfLiabilities);
-        put(stats, "Average of assets", sumOfAssets.divide(new BigDecimal(assetAccounts), 2, RoundingMode.HALF_UP));
-        put(stats, "Average of liabilities", sumOfLiabilities.divide(new BigDecimal(liabilityAccounts), 2, RoundingMode.HALF_UP));
-        put(stats, "Average balance", sumOfAssets.add(sumOfLiabilities).divide(new BigDecimal(assetAccounts + liabilityAccounts), 2, RoundingMode.HALF_UP));
+        if (assetAccounts > 0) {
+            put(stats, "Average of assets", sumOfAssets.divide(new BigDecimal(assetAccounts), 2, RoundingMode.HALF_UP));
+        } else {
+            putNoValue(stats, "Average of assets");
+        }
+        if (liabilityAccounts > 0) {
+            put(stats, "Average of liabilities", sumOfLiabilities.divide(new BigDecimal(liabilityAccounts), 2, RoundingMode.HALF_UP));
+        } else {
+            putNoValue(stats, "Average of liabilities");
+        }
+        if ((assetAccounts + liabilityAccounts) > 0) {
+            put(stats, "Average balance", sumOfAssets.add(sumOfLiabilities).divide(new BigDecimal(assetAccounts + liabilityAccounts), 2, RoundingMode.HALF_UP));
+        } else {
+            putNoValue(stats, "Average of liabilities");
+        }
 
         // per category statistics
         for (AccountCategory category : accountCount.keySet()) {
@@ -234,5 +245,9 @@ final class StatisticsTabulator {
 
     private void put(Map<String, String> stats, String name, BigDecimal value) {
         stats.put(name, String.format("$%.2f", value));
+    }
+
+    private void putNoValue(Map<String, String> stats, String name) {
+        stats.put(name, "N/A");
     }
 }

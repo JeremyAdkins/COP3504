@@ -9,6 +9,7 @@ import project.model.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.List;
@@ -69,16 +70,18 @@ public final class Controller {
     }
 
     private void initializeBank() throws InvalidInputException {
-        Bank.getInstance().addUser("operations_manager", new User("Operations", "Manager", Calendar.getInstance(), 555555555, "omanager@bank.com"));
-        Bank.getInstance().getUser("operations_manager").setRole(User.Role.OPERATIONS_MANAGER);
-        Bank.getInstance().addUser("accountant", new User("Accountant", "Employee", Calendar.getInstance(), 123456789, "accountant@bank.com"));
-        Bank.getInstance().getUser("accountant").setRole(User.Role.ACCOUNTANT);
-        Bank.getInstance().addUser("auditor", new User("Auditor", "Employee", Calendar.getInstance(), 12345678, "auditor@bank.com"));
-        Bank.getInstance().getUser("auditor").setRole(User.Role.AUDITOR);
-        Bank.getInstance().addUser("account_manager", new User("Account", "Manager", Calendar.getInstance(), 222222222, "amanager@bank.com"));
-        Bank.getInstance().getUser("account_manager").setRole(User.Role.ACCOUNT_MANAGER);
-        Bank.getInstance().addUser("teller", new User("Teller", "Employee", Calendar.getInstance(), 777777777, "teller@bank.com"));
-        Bank.getInstance().getUser("teller").setRole(User.Role.TELLER);
+        if (Bank.getInstance().getUsers().isEmpty()) {
+            Bank.getInstance().addUser("operations_manager", new User("Operations", "Manager", Calendar.getInstance(), 555555555, "omanager@bank.com"));
+            Bank.getInstance().getUser("operations_manager").setRole(User.Role.OPERATIONS_MANAGER);
+            Bank.getInstance().addUser("accountant", new User("Accountant", "Employee", Calendar.getInstance(), 123456789, "accountant@bank.com"));
+            Bank.getInstance().getUser("accountant").setRole(User.Role.ACCOUNTANT);
+            Bank.getInstance().addUser("auditor", new User("Auditor", "Employee", Calendar.getInstance(), 12345678, "auditor@bank.com"));
+            Bank.getInstance().getUser("auditor").setRole(User.Role.AUDITOR);
+            Bank.getInstance().addUser("account_manager", new User("Account", "Manager", Calendar.getInstance(), 222222222, "amanager@bank.com"));
+            Bank.getInstance().getUser("account_manager").setRole(User.Role.ACCOUNT_MANAGER);
+            Bank.getInstance().addUser("teller", new User("Teller", "Employee", Calendar.getInstance(), 777777777, "teller@bank.com"));
+            Bank.getInstance().getUser("teller").setRole(User.Role.TELLER);
+        }
         newLoginWindow();
     }
 
@@ -275,22 +278,22 @@ public final class Controller {
         }
         return AccountManagerTable;
     }
+
     /**
-     * Lays out all of the Accounts
-     * @return
+     * Generates the table data used in the accountant view.
+     *
+     * @return the accountant table data
      */
-    public Object[][] updateAccountantTableView(){
-        Collection<User> users = instance.getUsers();
-        Object[][] AccountantTable = new Object[users.size()][2];
-        int i = 0;
-        for (User user : users) {
-            for(Account account : user.getAccounts()){
-                AccountantTable[i][0] = account.getType();
-                AccountantTable[i][1] = account.getBalance();
-                        i++;
-            }
+    public Object[][] updateAccountantTableView() {
+        Map<String, String> stats = Bank.getInstance().getStatistics();
+        Object[][] data = new Object[stats.size()][2];
+        Iterator<Map.Entry<String, String>> iterator = stats.entrySet().iterator();
+        for (int i = 0; i < stats.size(); i++) {
+            Map.Entry<String, String> entry = iterator.next();
+            data[i][0] = entry.getKey();
+            data[i][1] = entry.getValue();
         }
-        return AccountantTable;
+        return data;
     }
 
     public void handleException(Component parent, InvalidInputException iix) {
@@ -298,7 +301,11 @@ public final class Controller {
     }
 
     public void shutDown() {
-        // TODO
+        try {
+            Bank.saveInstance();
+        } catch (IOException iox) {
+            JOptionPane.showMessageDialog(null, "Could not serialize Bank using XStream!", iox.getClass().getName(), JOptionPane.WARNING_MESSAGE);
+        }
     }
 
     public Object[][] updateAuditorTableView() {
