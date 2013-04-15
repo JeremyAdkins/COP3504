@@ -121,6 +121,7 @@ public final class Controller {
                 } else {
                     switch (currentUser.getRole()) {
                         case TELLER:
+                            JOptionPane.showInputDialog("Please enter the Account Holder's username:");
                             userWindow = new TellerFrame(Controller.this);
                             break;
                         case ACCOUNTANT:
@@ -190,20 +191,7 @@ public final class Controller {
         Bank.getInstance().addUser(username, user);
         return user;
     }
-    /**
-     * 
-     * @param firstName
-     * @param lastName
-     * @param birthdate
-     * @param ssn
-     * @param email
-     * @param username 
-     */
-    public void createNewEmployee(String firstName, String lastName, Calendar birthdate, int ssn, String email, String username, String role) throws InvalidInputException {
-        Bank.getInstance().addUser(username, new User(firstName, lastName, birthdate, ssn, email));
-        Bank.getInstance().getUser(username).setRole(User.Role.valueOf(role));
-    }
-
+   
     public void addAccountToUser(User user, Account account) {
         user.addAccount(account);
     }
@@ -239,18 +227,16 @@ public final class Controller {
      */
     public Object[][] updateAccountManagerTableView(){
         Collection<User> users = instance.getUsers();
-        int accounts = 0;
+        //calculate number of rows
+        int rows = 0;
         for (User user : users) {
-            for (Account account : user.getAccounts()) {
-                accounts++;
-            }
+            rows++;
+            rows += user.getAccounts().size();
         }
-        Object[][] accountManagerTable = new Object[accounts][4];
+        Object[][] accountManagerTable = new Object[rows][4];
+        //display users
         int i = 0;
         for (User user : users) {
-            if(!user.isActiveCustomer()){
-                continue;
-            }
                 accountManagerTable[i][0] = user;
                 StringBuilder formattedSsn = new StringBuilder(String.format("%09d", user.getSsn()));
                 formattedSsn.insert(3, "-").insert(6, "-");
@@ -315,6 +301,10 @@ public final class Controller {
             }
         }
         return AuditorTable;
+    }
+    
+    public void addTellerTabs(){
+        
     }
     
     public void updateBankDisplay() {

@@ -4,8 +4,10 @@
  */
 package project.gui;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import project.Controller;
-import project.gui.AbstractUserWindow;
+import project.model.InvalidInputException;
 
 /**
  *
@@ -13,18 +15,14 @@ import project.gui.AbstractUserWindow;
  */
 public class TellerFrame extends AbstractUserWindow {
 
-    private static boolean hadCustomerOnLoad = false;
     /**
-     * Returns a new Frame for a Teller, with a 
-     * @param controller
-     * @param user
-     * @param customer 
+     * Creates new form TellerFrame
      */
     public TellerFrame(Controller controller) {
         super(controller);
-        hadCustomerOnLoad = true;
+        initComponents();
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -34,92 +32,69 @@ public class TellerFrame extends AbstractUserWindow {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        WithdrawFromSavingsAccount = new javax.swing.JButton();
-        DepositToSavingsAccount = new javax.swing.JButton();
-        jSeparator2 = new javax.swing.JSeparator();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        TransactionHistory = new javax.swing.JTable();
-        CustomerName = new javax.swing.JLabel();
-        CustomerIDNumber = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox();
-        AutoDeposit = new javax.swing.JButton();
+        TellerTabHolder = new javax.swing.JTabbedPane();
+        jPanel1 = new javax.swing.JPanel();
+        usernameField = new javax.swing.JFormattedTextField();
+        selectUserButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setLocationByPlatform(true);
 
-        WithdrawFromSavingsAccount.setText("Withdraw");
+        selectUserButton.setText("Select");
+        selectUserButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectUserButtonActionPerformed(evt);
+            }
+        });
 
-        DepositToSavingsAccount.setText("Deposit");
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(usernameField, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(selectUserButton)
+                .addContainerGap(206, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(usernameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(selectUserButton))
+                .addContainerGap(238, Short.MAX_VALUE))
+        );
 
-        jScrollPane1.setViewportView(TransactionHistory);
-
-        CustomerName.setText("jLabel1");
-
-        CustomerIDNumber.setText("jLabel1");
-
-        AutoDeposit.setText("Automate Deposits");
+        TellerTabHolder.addTab("Home", jPanel1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jSeparator2)
-                            .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(WithdrawFromSavingsAccount, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(DepositToSavingsAccount, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(CustomerName)
-                                    .addComponent(CustomerIDNumber))
-                                .addGap(0, 0, Short.MAX_VALUE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(AutoDeposit)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 322, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(TellerTabHolder)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(CustomerName)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(CustomerIDNumber)
-                        .addGap(18, 18, 18)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(WithdrawFromSavingsAccount)
-                        .addGap(18, 18, 18)
-                        .addComponent(DepositToSavingsAccount)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
-                        .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(86, 86, 86)
-                        .addComponent(AutoDeposit)))
-                .addContainerGap())
+            .addComponent(TellerTabHolder)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void selectUserButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectUserButtonActionPerformed
+        try {
+            controller.getInstance().getUser(usernameField.getText());
+        } catch (InvalidInputException ex) {
+            controller.handleException(this, ex);
+        }
+    }//GEN-LAST:event_selectUserButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton AutoDeposit;
-    private javax.swing.JLabel CustomerIDNumber;
-    private javax.swing.JLabel CustomerName;
-    private javax.swing.JButton DepositToSavingsAccount;
-    private javax.swing.JTable TransactionHistory;
-    private javax.swing.JButton WithdrawFromSavingsAccount;
-    private javax.swing.JComboBox jComboBox1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JTabbedPane TellerTabHolder;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JButton selectUserButton;
+    private javax.swing.JFormattedTextField usernameField;
     // End of variables declaration//GEN-END:variables
 }
