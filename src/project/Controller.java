@@ -27,14 +27,11 @@ public final class Controller {
     private User currentUser; //the User currently using the platform based on the window that is open. When a user interacts with a Teller, the teller window is the only window open and this would return the Teller.
     private List<AbstractUserWindow> windows = new ArrayList<AbstractUserWindow>(); //the Windows open and (therefore) those which this Controller is responsible for
 
+    private List<AccountTab> tabs = new ArrayList<AccountTab>(); //the tabs open and (therefore) those which this Controller is responsible for
+
     public List<AbstractUserWindow> getWindows() {
         return windows;
     }
-
-    public List<AccountTab> getTabs() {
-        return tabs;
-    }
-    private List<AccountTab> tabs = new ArrayList<AccountTab>(); //the tabs open and (therefore) those which this Controller is responsible for
 
     public void setCurrentUser(User currentUser) {
         this.currentUser = currentUser;
@@ -118,6 +115,8 @@ public final class Controller {
             public void run() {
                 AbstractUserWindow userWindow = null;
                 if (currentUser.getRole() == null) {
+                    clearTabs();
+                    setTabs((AccountHolderFrame) userWindow);
                     userWindow = new AccountHolderFrame(Controller.this);
                 } else {
                     switch (currentUser.getRole()) {
@@ -134,7 +133,7 @@ public final class Controller {
                             userWindow = new AuditorFrame(Controller.this);
                             break;
                         case ACCOUNT_MANAGER:
-                            userWindow = new project.gui.AccountManagerFrame(Controller.this);
+                            userWindow = new AccountManagerFrame(Controller.this);
                     }
                 }
                 userWindow.setVisible(true);
@@ -142,17 +141,27 @@ public final class Controller {
             }
         });
     }
-
-    public List<AccountTab> getTabs(AccountHolderFrame parent) {
-        tabs.clear();
-        for (Account acc : currentUser.getAccounts()) {
+    private void setTabs(AccountHolderFrame parent) {
+        for(Account acc : currentUser.getAccounts()){
             tabs.add(newAccountTab(acc, parent));
         }
+    }
+
+    public List<AccountTab> getTabs(AccountHolderFrame parent) {
         return tabs;
     }
 
-    //helper method for getTabs
-    private AccountTab newAccountTab(Account account, AccountHolderFrame parent) {
+    public void clearTabs() {
+        tabs.clear();
+    }
+
+    /**
+     * 
+     * @param account
+     * @param parent
+     * @return 
+     */
+    public AccountTab newAccountTab(Account account, AccountHolderFrame parent) {
         AccountTab accTab = new AccountTab(account, parent, this);
         accTab.setVisible(true);
         return accTab;
@@ -162,24 +171,12 @@ public final class Controller {
     //Interact with model
     public void withdraw(Account account, String amount) throws InvalidInputException, InsufficientFundsException {
         account.withdraw(new BigDecimal(amount));
-        for (AccountTab accTab : tabs) {
-            accTab.updateBalanceLabel();
-            accTab.updateHistoryTableModel();
-        }
-        for (AbstractUserWindow w : windows) {
-            w.update("setSummaryTableModel");
-        }
+        updateBankDisplay();
     }
 
     public void deposit(Account account, String amount) throws InvalidInputException {
         account.deposit(new BigDecimal(amount));
-        for (AccountTab accTab : tabs) {
-            accTab.updateBalanceLabel();
-            accTab.updateHistoryTableModel();
-        }
-        for (AbstractUserWindow w : windows) {
-            w.update("setSummaryTableModel");
-        }
+        updateBankDisplay();
     }
     public BigDecimal getInterestRate(Account account) {
         return account.getInterestRate().multiply(new BigDecimal("100"));
@@ -333,5 +330,19 @@ public final class Controller {
             }
         }
         return AuditorTable;
+    }
+    
+    private void updateBankDisplay(){
+        for (AbstractUserWindow w : windows) {
+            switch(w.getClass().getSimpleName()){
+                case "AccountHolderFrame":
+                    AccountHolderFrame myFrame = (AccountHolderFrame) w;
+                    myFrame.setSummaryTableModel();
+            }
+        }
+        for (AccountTab accTab : tabs) {
+            accTab.updateBalanceLabel();
+            accTab.updateHistoryTableModel();
+        }
     }
 }

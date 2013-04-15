@@ -24,7 +24,7 @@ public final class AccountTab extends javax.swing.JPanel {
     /**
      * Creates new form CheckingAccountTab
      */
-    private static Account account;
+    private Account account;
     private static AccountHolderFrame parentFrame;
 
     public static AccountHolderFrame getParentFrame() {
@@ -125,6 +125,7 @@ public final class AccountTab extends javax.swing.JPanel {
             }
         });
 
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel1.setText("Amount:   $");
 
         WithdrawAmountField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#,##0.00"))));
@@ -139,7 +140,7 @@ public final class AccountTab extends javax.swing.JPanel {
                     .addGroup(WithdrawDialogLayout.createSequentialGroup()
                         .addComponent(WithdrawDialogButton, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(CancelWithdraw, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE))
+                        .addComponent(CancelWithdraw, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(WithdrawDialogLayout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -150,9 +151,9 @@ public final class AccountTab extends javax.swing.JPanel {
             WithdrawDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(WithdrawDialogLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(WithdrawDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(WithdrawAmountField, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(WithdrawDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(WithdrawAmountField))
                 .addGap(18, 18, Short.MAX_VALUE)
                 .addGroup(WithdrawDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(WithdrawDialogButton)
@@ -180,6 +181,7 @@ public final class AccountTab extends javax.swing.JPanel {
             }
         });
 
+        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel2.setText("Amount:   $");
 
         DepositAmountField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#,##0.00"))));
@@ -194,7 +196,7 @@ public final class AccountTab extends javax.swing.JPanel {
                     .addGroup(DepositDialogLayout.createSequentialGroup()
                         .addComponent(DepositDialogButton, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(CancelDeposit, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE))
+                        .addComponent(CancelDeposit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(DepositDialogLayout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -205,9 +207,9 @@ public final class AccountTab extends javax.swing.JPanel {
             DepositDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(DepositDialogLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(DepositDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(DepositAmountField, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(DepositDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(DepositAmountField))
                 .addGap(18, 18, Short.MAX_VALUE)
                 .addGroup(DepositDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(DepositDialogButton)
@@ -354,6 +356,7 @@ public final class AccountTab extends javax.swing.JPanel {
         if (selection==JOptionPane.YES_OPTION) {
             DepositDialog.dispose();
             try {
+        System.out.println("deposit "+amount+" to "+account);
                 controller.deposit(account, amount);
             } catch (InvalidInputException ex) {
                 controller.handleException(this, ex);
