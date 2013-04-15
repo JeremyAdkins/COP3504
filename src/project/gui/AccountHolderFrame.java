@@ -5,10 +5,7 @@
 package project.gui;
 
 import project.Controller;
-
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  *
@@ -19,16 +16,16 @@ public final class AccountHolderFrame extends AbstractUserWindow {
     /**
      * Creates new form AccountHolderFrame
      */
-    private Set<project.gui.AccountTab> accountTabs = new HashSet<project.gui.AccountTab>();
+    private List<AccountTab> accountTabs;
 
     public AccountHolderFrame(Controller controller){
         super(controller);
         initComponents();
-        setSummaryTableModel();
         buildAccountTabs();
+        setSummaryTableModel();
     }
     
-    private void setSummaryTableModel() {
+    public void setSummaryTableModel() {
         SummaryTable.setModel(new javax.swing.table.DefaultTableModel(
                 controller.updateAccountHolderTableView(),
                 new String[]{
@@ -43,10 +40,8 @@ public final class AccountHolderFrame extends AbstractUserWindow {
     }
 
     private void buildAccountTabs() {
-        accountTabs.clear();
-        List<project.gui.AccountTab> accTabList = controller.getTabs(this);
-        for (project.gui.AccountTab accTab : accTabList) {
-            accountTabs.add(accTab);
+        accountTabs = controller.getTabs(this);
+        for (AccountTab accTab : accountTabs) {
             AccountHolderTabs.add(accTab);
         }
         AccountHolderTabs.revalidate();

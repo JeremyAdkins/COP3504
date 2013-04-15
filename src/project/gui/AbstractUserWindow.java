@@ -68,18 +68,4 @@ public abstract class AbstractUserWindow extends JFrame {
         this.dispose();
         controller.newLoginWindow();
     }
-    
-    public void newLogin(){
-        controller.newLoginWindow();
-    }
-
-    public final void update(String... methods) {
-        for (String method : methods) {
-            try {
-                this.getClass().getMethod(method, null).invoke(this, null);
-            } catch (Exception ex) {
-                assert false;
-            }
-        }
-    }
 }

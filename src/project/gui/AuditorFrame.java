@@ -4,8 +4,8 @@
  */
 package project.gui;
 
+import javax.swing.ListSelectionModel;
 import project.Controller;
-import project.gui.AbstractUserWindow;
 
 /**
  *
@@ -23,7 +23,7 @@ public class AuditorFrame extends AbstractUserWindow {
     
     public void updateAuditorTable(){
         AuditorTable.setModel(new javax.swing.table.DefaultTableModel(
-                controller.updateAccountManagerTableView(),
+                controller.updateAuditorTableView(),
                 new String[]{
             "User", "Account Type", "Account Balance", "Fraudulent Status", "Employee Flag"
         }) {
@@ -32,6 +32,7 @@ public class AuditorFrame extends AbstractUserWindow {
                 return false;
             }
         });
+        AuditorTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         AuditorTable.revalidate();
     }
 
@@ -44,35 +45,44 @@ public class AuditorFrame extends AbstractUserWindow {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jTabbedPane1 = new javax.swing.JTabbedPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         AuditorTable = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        AuditorTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                AuditorTableMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(AuditorTable);
+
+        jTabbedPane1.addTab("ALL ACCOUNTS", jScrollPane1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void AuditorTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AuditorTableMouseClicked
+        if(evt.getClickCount()==2){
+            //TODO open new tab
+        }
+    }//GEN-LAST:event_AuditorTableMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable AuditorTable;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTabbedPane jTabbedPane1;
     // End of variables declaration//GEN-END:variables
 }
