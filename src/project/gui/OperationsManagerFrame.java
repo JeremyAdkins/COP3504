@@ -47,8 +47,8 @@ public class OperationsManagerFrame extends AbstractUserWindow {
                         JOptionPane.INFORMATION_MESSAGE);
                 if (exceptions > 0) {
                     JOptionPane.showMessageDialog(OperationsManagerFrame.this,
-                            exceptions + " exceptions occurred processing repeating payments", "Advanced time",
-                            JOptionPane.INFORMATION_MESSAGE);
+                            String.format("Exceptions occurred on %d accounts while processing repeating payments", exceptions),
+                            "Advanced time", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         });

@@ -174,17 +174,27 @@ public abstract class Account {
             return;
         }
 
+        InvalidInputException iix = null;
+        InsufficientFundsException ifx = null;
+
         // repeating payments
         // run deposits first, then withdrawals
-        for (BigDecimal amount : repeatingPayments.values()) {
-            if (amount.compareTo(BigDecimal.ZERO) > 0) {
-                deposit(amount);
+        // catch exceptions that occur within this block, so that they do not affect other payments
+        try {
+            for (BigDecimal amount : repeatingPayments.values()) {
+                if (amount.compareTo(BigDecimal.ZERO) > 0) {
+                    deposit(amount);
+                }
             }
-        }
-        for (BigDecimal amount : repeatingPayments.values()) {
-            if (amount.compareTo(BigDecimal.ZERO) < 0) {
-                withdraw(amount.negate());
+            for (BigDecimal amount : repeatingPayments.values()) {
+                if (amount.compareTo(BigDecimal.ZERO) < 0) {
+                    withdraw(amount.negate());
+                }
             }
+        } catch (InvalidInputException x) {
+            iix = x;
+        } catch (InsufficientFundsException x) {
+            ifx = x;
         }
 
 		// monthly existence fee, or minimum payment penalty, as appropriate
@@ -203,6 +213,13 @@ public abstract class Account {
         } else if (getBalance().compareTo(BigDecimal.ZERO) >= 0) {
             // only apply interest on non-loans if the balance (and therefore, the interest) is positive
 		    applyTransaction(interest, Transaction.Type.INTEREST);
+        }
+
+        // throw the exceptions from repeating payments after we're done
+        if (iix != null) {
+            throw iix;
+        } else if (ifx != null) {
+            throw ifx;
         }
 	}
 
