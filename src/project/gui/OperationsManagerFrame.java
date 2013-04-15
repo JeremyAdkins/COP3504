@@ -36,6 +36,7 @@ public class OperationsManagerFrame extends AbstractUserWindow {
         bankStatementButton.addActionListener(new StatementGenerator(true));
         buttonLayoutPanel.add(bankStatementButton);
 
+        // TODO display the number of errors
         JButton advanceTimeButton = new JButton("Advance time");
         advanceTimeButton.addActionListener(new ActionListener() {
             @Override
