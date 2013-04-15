@@ -184,6 +184,11 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
         });
 
         CancelButton.setText("Cancel");
+        CancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                UserView.dispose();
+            }
+        });
 
         try {
             SSNField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("###-##-####")));
@@ -390,9 +395,7 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
         UserView.dispose();
         updateAccountManagerTable();
     }                                        
-
-    // TODO I modified this
-    // Variables declaration - do not modify                     
+                   
     private javax.swing.JTable accountManagerTable;
     private javax.swing.JButton CancelButton;
     private javax.swing.JFormattedTextField DOBField;
