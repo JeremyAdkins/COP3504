@@ -145,9 +145,7 @@ public final class Controller {
     
     private void setTabs(AccountHolderFrame parent) {
         for (Account acc : currentUser.getAccounts()) {
-            if (!acc.isClosed()) {
-                tabs.add(newAccountTab(currentUser, acc));
-            }
+            tabs.add(newAccountTab(currentUser, acc));
         }
     }
 
@@ -216,13 +214,11 @@ public final class Controller {
         Object[][] summaryTable = new Object[accounts.size()][3];
         int i = 0;
         for (Account account : accounts) {
-            if (!account.isClosed()) {
-                summaryTable[i][0] = account.getType();
-                summaryTable[i][1] = account.getAccountNumber();
-                BigDecimal balance = account.getType().isLoan() ? account.getBalance().negate() : account.getBalance();
-                summaryTable[i][2] = new DollarAmountFormatter().valueToString(balance);
-                i++;
-            }
+            summaryTable[i][0] = account.getType();
+            summaryTable[i][1] = account.getAccountNumber();
+            BigDecimal balance = account.getType().isLoan() ? account.getBalance().negate() : account.getBalance();
+            summaryTable[i][2] = new DollarAmountFormatter().valueToString(balance);
+            i++;
         }
         return summaryTable;
     }
