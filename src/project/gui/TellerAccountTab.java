@@ -45,6 +45,9 @@ public final class TellerAccountTab extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 String amountStr = JOptionPane.showInputDialog(TellerAccountTab.this, "Deposit amount:", "Deposit",
                         JOptionPane.QUESTION_MESSAGE);
+                if (amountStr == null) {
+                    return;
+                }
                 try {
                     BigDecimal amount = new DollarAmountFormatter().stringToValue(amountStr);
                     account.deposit(amount);
@@ -65,6 +68,9 @@ public final class TellerAccountTab extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 String amountStr = JOptionPane.showInputDialog(TellerAccountTab.this, "Withdrawal amount:", "Withdraw",
                         JOptionPane.QUESTION_MESSAGE);
+                if (amountStr == null) {
+                    return;
+                }
                 try {
                     BigDecimal amount = new DollarAmountFormatter().stringToValue(amountStr);
                     account.withdraw(amount);
@@ -87,8 +93,14 @@ public final class TellerAccountTab extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 String amountStr = JOptionPane.showInputDialog(TellerAccountTab.this, "Repeating deposit amount:",
                         "Repeating deposit", JOptionPane.QUESTION_MESSAGE);
+                if (amountStr == null) {
+                    return;
+                }
                 String description = JOptionPane.showInputDialog(TellerAccountTab.this, "Description:", "Repeating deposit",
                         JOptionPane.QUESTION_MESSAGE);
+                if (description == null) {
+                    return;
+                }
                 try {
                     BigDecimal amount = new DollarAmountFormatter().stringToValue(amountStr);
                     account.addRepeatingDeposit(description, amount);
@@ -111,8 +123,14 @@ public final class TellerAccountTab extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 String amountStr = JOptionPane.showInputDialog(TellerAccountTab.this, "Repeating withdrawal amount:",
                         "Repeating withdrawal", JOptionPane.QUESTION_MESSAGE);
+                if (amountStr == null) {
+                    return;
+                }
                 String description = JOptionPane.showInputDialog(TellerAccountTab.this, "Description:", "Repeating withdrawal",
                         JOptionPane.QUESTION_MESSAGE);
+                if (description == null) {
+                    return;
+                }
                 try {
                     BigDecimal amount = new DollarAmountFormatter().stringToValue(amountStr);
                     account.addRepeatingWithdrawal(description, amount);
@@ -137,6 +155,9 @@ public final class TellerAccountTab extends JPanel {
                 String description = (String) JOptionPane.showInputDialog(TellerAccountTab.this, "Which one?",
                         "End automatic deposit", JOptionPane.QUESTION_MESSAGE, null, repeatingPayments.keySet().toArray(),
                         repeatingPayments.keySet().iterator().next());
+                if (description == null) {
+                    return;
+                }
                 account.removeRepeatingPayment(description);
             }
         });

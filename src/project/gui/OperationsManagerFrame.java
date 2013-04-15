@@ -249,6 +249,9 @@ public class OperationsManagerFrame extends AbstractUserWindow {
         public void actionPerformed(ActionEvent e) {
             String username = JOptionPane.showInputDialog(OperationsManagerFrame.this, "Username of customer:",
                     "Customer", JOptionPane.QUESTION_MESSAGE);
+            if (username == null) {
+                return;
+            }
             try {
                 User user = Bank.getInstance().getUser(username);
                 if (user.getAccounts().isEmpty()) {
@@ -261,7 +264,13 @@ public class OperationsManagerFrame extends AbstractUserWindow {
                     Account account = (Account) JOptionPane.showInputDialog(OperationsManagerFrame.this, "Which account?",
                             "Account", JOptionPane.QUESTION_MESSAGE, null, user.getAccounts().toArray(),
                             user.getAccounts().iterator().next());
+                    if (account == null) {
+                        return;
+                    }
                     statementAccounts = Collections.singleton(account);
+                }
+                if (statementAccounts.isEmpty()) {
+                    return;
                 }
                 String statement = "";
                 for (Account account : statementAccounts) {

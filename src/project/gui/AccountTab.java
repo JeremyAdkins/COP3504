@@ -148,11 +148,17 @@ public final class AccountTab extends javax.swing.JPanel {
 
     private void spend() {
         String amountStr = JOptionPane.showInputDialog(this, "Input an amount to spend:", "Spend", JOptionPane.QUESTION_MESSAGE);
+        if (amountStr == null) {
+            return;
+        }
         String accountNumberStr = JOptionPane.showInputDialog(this, "To what account number? (blank is allowed)", "Spend", JOptionPane.QUESTION_MESSAGE);
+        if (accountNumberStr == null) {
+            return;
+        }
         try {
             BigDecimal amount = FORMATTER.stringToValue(amountStr);
             Account target;
-            if (accountNumberStr == null || accountNumberStr.isEmpty()) {
+            if (accountNumberStr.isEmpty()) {
                 target = null;
             } else {
                 int accountNumber = new IntegerFormatter().stringToValue(accountNumberStr);
@@ -185,6 +191,9 @@ public final class AccountTab extends javax.swing.JPanel {
 
     private void transfer() {
         String amountStr = JOptionPane.showInputDialog(this, "Input an amount to transfer:", "Transfer", JOptionPane.QUESTION_MESSAGE);
+        if (amountStr == null) {
+            return;
+        }
         try {
             BigDecimal amount = FORMATTER.stringToValue(amountStr);
             Set<Account> accounts = new HashSet<Account>(controller.getCurrentUser().getAccounts());
@@ -200,9 +209,11 @@ public final class AccountTab extends javax.swing.JPanel {
             if (!accounts.isEmpty()) {
                 Account account = (Account) JOptionPane.showInputDialog(this, "Choose an account:", "Transfer",
                         JOptionPane.QUESTION_MESSAGE, null, accounts.toArray(), accounts.iterator().next());
-                this.account.withdraw(amount);
-                account.deposit(amount);
-                controller.updateBankDisplay();
+                if (account != null) {
+                    this.account.withdraw(amount);
+                    account.deposit(amount);
+                    controller.updateBankDisplay();
+                }
             } else {
                 JOptionPane.showMessageDialog(this, "No accounts can accept that balance.", "Transfer failed", JOptionPane.ERROR_MESSAGE);
                 return;
@@ -224,6 +235,9 @@ public final class AccountTab extends javax.swing.JPanel {
 
         Transaction.FraudStatus status = (Transaction.FraudStatus) JOptionPane.showInputDialog(this, "Flag as:", "Flag",
                 JOptionPane.QUESTION_MESSAGE, null, permittedFlags.toArray(), Transaction.FraudStatus.NOT_FLAGGED);
+        if (status == null) {
+            return;
+        }
         try {
             Transaction transaction = account.getHistory().get(historyTable.getSelectedRow());
             transaction.setFraudStatus(status, account);
