@@ -33,8 +33,9 @@ public final class TellerAccountTab extends JPanel {
         } catch (InvalidInputException ex) {
             controller.handleException(this, ex);
         }
+        infoPanel.update();
     }
-
+    
     private final AccountInfoPanel infoPanel;
 
     public TellerAccountTab(Controller controller, Account account) {
