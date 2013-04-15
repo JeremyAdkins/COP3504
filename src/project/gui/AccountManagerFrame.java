@@ -61,6 +61,7 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
             public void valueChanged(ListSelectionEvent e) {
                 addAccountButton.setEnabled(false);
                 closeAccountButton.setEnabled(false);
+                setCreditLimitButton.setEnabled(false);
 
                 int selectedRow = accountManagerTable.getSelectedRow();
                 if (selectedRow >= 0) {
@@ -72,6 +73,9 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
                     if (account != null && !account.isClosed()) {
                         if (account.getBalance().setScale(2, RoundingMode.HALF_UP).compareTo(BigDecimal.ZERO) == 0) {
                             closeAccountButton.setEnabled(true);
+                        }
+                        if (account.getType() == Account.Type.LINE_OF_CREDIT) {
+                            setCreditLimitButton.setEnabled(true);
                         }
                     }
                 }
@@ -146,6 +150,7 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
         addUserButton = new javax.swing.JButton();
         addAccountButton = new JButton();
         closeAccountButton = new JButton();
+        setCreditLimitButton = new JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         accountManagerTable = new javax.swing.JTable();
 
@@ -280,7 +285,16 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
         });
         closeAccountButton.setEnabled(false);
 
-        jScrollPane1.setViewportView(accountManagerTable);
+        setCreditLimitButton.setText("Set credit limit");
+        setCreditLimitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                setCreditLimitButtonActionPerformed(evt);
+            }
+        });
+        setCreditLimitButton.setEnabled(false);
+
+                jScrollPane1.setViewportView(accountManagerTable);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -291,7 +305,8 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(closeAccountButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(addAccountButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(addUserButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(addUserButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(setCreditLimitButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGap(18, 18, 18)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 452, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -307,7 +322,9 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
                         .addGap(10, 10, 10)
                         .addComponent(addAccountButton)
                         .addGap(10, 10, 10)
-                        .addComponent(closeAccountButton)))
+                        .addComponent(closeAccountButton)
+                        .addGap(10, 10, 10)
+                        .addComponent(setCreditLimitButton)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -328,6 +345,24 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
         Account account = (Account) accountManagerTable.getModel().getValueAt(accountManagerTable.getSelectedRow(), 2);
         controller.closeAccount(account);
         updateAccountManagerTable();
+    }
+
+    private void setCreditLimitButtonActionPerformed(ActionEvent evt) {
+        LineOfCredit account = (LineOfCredit) accountManagerTable.getModel().getValueAt(accountManagerTable.getSelectedRow(), 2);
+        String amountStr = JOptionPane.showInputDialog(this, "New credit limit:", "Set credit limit", JOptionPane.QUESTION_MESSAGE);
+        if (amountStr == null) {
+            return;
+        }
+        try {
+            BigDecimal amount = new DollarAmountFormatter().stringToValue(amountStr);
+            account.setCreditLimit(amount);
+        } catch (ParseException px) {
+            controller.handleException(this, px);
+        } catch (InvalidInputException iix) {
+            controller.handleException(this, iix);
+        } catch (LoanCapException lcx) {
+            controller.handleException(this, lcx);
+        }
     }
 
     private void OKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OKButtonActionPerformed
@@ -360,6 +395,7 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
     private javax.swing.JButton addAccountButton;
     private javax.swing.JButton addUserButton;
     private javax.swing.JButton closeAccountButton;
+    private javax.swing.JButton setCreditLimitButton;
     private javax.swing.JTextField emailField;
     private javax.swing.JTextField firstNameField;
     private javax.swing.JLabel jLabel3;
