@@ -36,6 +36,10 @@ public final class TellerAccountTab extends JPanel {
         infoPanel.update();
     }
     
+    public void waiveFee(){
+        feeIncurred = true;
+    }
+    
     private final AccountInfoPanel infoPanel;
 
     public TellerAccountTab(Controller controller, Account account) {
