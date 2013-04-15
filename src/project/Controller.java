@@ -312,7 +312,7 @@ public final class Controller {
     }
     
     public List<TellerAccountTab> getTellerTabs(User user){
-        List<TellerAccountTab> accTabs = new ArrayList<>();
+        List<TellerAccountTab> accTabs = new ArrayList<TellerAccountTab>();
         for(Account acc : user.getAccounts()){
             accTabs.add(new TellerAccountTab(this, acc));
         }

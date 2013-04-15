@@ -4,10 +4,11 @@
  */
 package project.gui;
 
-import java.util.ArrayList;
-import java.util.List;
 import project.Controller;
 import project.model.InvalidInputException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -16,7 +17,7 @@ import project.model.InvalidInputException;
 public class TellerFrame extends AbstractUserWindow {
 
     
-    List<TellerAccountTab> tabs = new ArrayList<>();
+    List<TellerAccountTab> tabs = new ArrayList<TellerAccountTab>();
     
     /**
      * Creates new form TellerFrame
