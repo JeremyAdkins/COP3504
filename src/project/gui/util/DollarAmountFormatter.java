@@ -37,6 +37,9 @@ public final class DollarAmountFormatter extends JFormattedTextField.AbstractFor
         if (acceptsNull && (text == null || text.isEmpty())) {
             return null;
         } else {
+            if (text.startsWith("$")) {
+                text = text.substring(1);
+            }
             try {
                 return new BigDecimal(text);
             } catch (NumberFormatException nfx) {
@@ -58,7 +61,7 @@ public final class DollarAmountFormatter extends JFormattedTextField.AbstractFor
         if (acceptsNull && value == null) {
             return "";
         } else {
-            return String.format("%.2f", value);
+            return String.format("$%.2f", value);
         }
     }
 }
