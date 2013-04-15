@@ -26,6 +26,8 @@ public final class TellerAccountTab extends JPanel {
         this.controller = controller;
         this.account = account;
         infoPanel = new AccountInfoPanel(controller, account);
+        setName(account.toString());
+        initComponents();
     }
 
     private void initComponents() {
