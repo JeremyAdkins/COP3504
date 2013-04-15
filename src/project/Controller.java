@@ -162,7 +162,7 @@ public final class Controller {
      * @return 
      */
     public AccountTab newAccountTab(Account account, AbstractUserWindow parent) {
-        AccountTab accTab = new AccountTab(account, parent, this);
+        AccountTab accTab = new AccountTab(this, account);
         accTab.setVisible(true); 
         return accTab;
     }

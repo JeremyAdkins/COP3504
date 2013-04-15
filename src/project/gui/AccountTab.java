@@ -40,6 +40,10 @@ public final class AccountTab extends javax.swing.JPanel {
         update();
     }
 
+    public Account getAccount() {
+        return account;
+    }
+
     private void initComponents() {
         setLayout(new BorderLayout());
 
