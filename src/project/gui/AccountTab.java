@@ -4,11 +4,19 @@ import project.Controller;
 import project.gui.util.DollarAmountFormatter;
 import project.gui.util.PercentageFormatter;
 import project.model.Account;
+import project.model.InsufficientFundsException;
+import project.model.InvalidInputException;
 import project.model.Transaction;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 public final class AccountTab extends javax.swing.JPanel {
     private static final DollarAmountFormatter FORMATTER = new DollarAmountFormatter();
@@ -67,6 +75,32 @@ public final class AccountTab extends javax.swing.JPanel {
         labelPanel.add(interestRateLabel);
 
         sidePanel.add(labelPanel, BorderLayout.NORTH);
+        sidePanel.add(new JSeparator(), BorderLayout.CENTER);
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
+
+        JButton spendButton = new JButton("Spend");
+        spendButton.setEnabled(account.getType() == Account.Type.CHECKING || account.getType() == Account.Type.LINE_OF_CREDIT);
+        spendButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                spend();
+            }
+        });
+        buttonPanel.add(spendButton);
+
+        JButton transferButton = new JButton("Transfer");
+        transferButton.setEnabled(!account.getType().isLoan());
+        transferButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                transfer();
+            }
+        });
+        buttonPanel.add(transferButton);
+
+        sidePanel.add(buttonPanel, BorderLayout.SOUTH);
 
         add(sidePanel, BorderLayout.WEST);
 
@@ -115,5 +149,49 @@ public final class AccountTab extends javax.swing.JPanel {
         });
         historyTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         historyTable.revalidate();
+    }
+
+    private void spend() {
+        String amountStr = JOptionPane.showInputDialog(this, "Input an amount to spend:", "Spend", JOptionPane.QUESTION_MESSAGE);
+        try {
+            BigDecimal amount = FORMATTER.stringToValue(amountStr);
+            account.withdraw(amount);
+            controller.updateBankDisplay();
+        } catch (ParseException px) { // TODO
+        } catch (InvalidInputException iix) {
+            controller.handleException(this, iix);
+        } catch (InsufficientFundsException ifx) { // TODO
+        }
+    }
+
+    private void transfer() {
+        String amountStr = JOptionPane.showInputDialog(this, "Input an amount to transfer:", "Transfer", JOptionPane.QUESTION_MESSAGE);
+        try {
+            BigDecimal amount = FORMATTER.stringToValue(amountStr);
+            Set<Account> accounts = new HashSet<Account>(controller.getCurrentUser().getAccounts());
+            Iterator<Account> iterator = accounts.iterator();
+            while (iterator.hasNext()) {
+                Account account = iterator.next();
+                if (account.getType() == Account.Type.CD) {
+                    iterator.remove();
+                } else if (account.getType().isLoan() && account.getBalance().negate().compareTo(amount) < 0) {
+                    iterator.remove();
+                }
+            }
+            if (!accounts.isEmpty()) {
+                Account account = (Account) JOptionPane.showInputDialog(this, "Choose an account:", "Transfer",
+                        JOptionPane.QUESTION_MESSAGE, null, accounts.toArray(), accounts.iterator().next());
+                this.account.withdraw(amount);
+                account.deposit(amount);
+                controller.updateBankDisplay();
+            } else {
+                JOptionPane.showMessageDialog(this, "No accounts can accept that balance.", "Transfer failed", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            // TODO
+        } catch (ParseException px) {
+        } catch (InvalidInputException iix) {
+        } catch (InsufficientFundsException ifx) {
+        }
     }
 }

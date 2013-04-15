@@ -18,7 +18,7 @@ public final class PercentageFormatter extends JFormattedTextField.AbstractForma
     }
 
     @Override
-    public Object stringToValue(String text) throws ParseException {
+    public BigDecimal stringToValue(String text) throws ParseException {
         try {
             return new BigDecimal(text).divide(new BigDecimal(100), Bank.MATH_CONTEXT);
         } catch (NumberFormatException nfx) {

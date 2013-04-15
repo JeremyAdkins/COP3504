@@ -33,7 +33,7 @@ public final class DollarAmountFormatter extends JFormattedTextField.AbstractFor
     }
 
     @Override
-    public Object stringToValue(String text) throws ParseException {
+    public BigDecimal stringToValue(String text) throws ParseException {
         if (acceptsNull && (text == null || text.isEmpty())) {
             return null;
         } else {

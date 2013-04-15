@@ -321,7 +321,7 @@ public final class Controller {
         return AuditorTable;
     }
     
-    private void updateBankDisplay() {
+    public void updateBankDisplay() {
         for (AbstractUserWindow w : windows) {
             if (w.getClass().getSimpleName().equals("AccountHolderFrame")) {
                 AccountHolderFrame accountHolderFrame = (AccountHolderFrame) w;
