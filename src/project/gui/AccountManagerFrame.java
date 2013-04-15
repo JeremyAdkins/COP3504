@@ -5,10 +5,7 @@
 package project.gui;
 
 import project.Controller;
-import project.gui.util.DollarAmountFormatter;
-import project.gui.util.FieldInputVerifier;
-import project.gui.util.IntegerFormatter;
-import project.gui.util.PercentageFormatter;
+import project.gui.util.*;
 import project.model.*;
 
 import javax.swing.*;
@@ -25,6 +22,11 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
+import static project.model.Account.Type.CD;
+import static project.model.Account.Type.CHECKING;
+import static project.model.Account.Type.LINE_OF_CREDIT;
+import static project.model.Account.Type.LOAN;
+import static project.model.Account.Type.SAVINGS;
 
 /**
  *
@@ -115,7 +117,7 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
      * TODO I edited this
      */
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
     private void initComponents() {
 
         UserView = new javax.swing.JDialog();
@@ -302,16 +304,16 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
         );
 
         pack();
-    }// </editor-fold>//GEN-END:initComponents
+    }// </editor-fold>                        
 
-    private void addUserButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addUserButtonActionPerformed
+    private void addUserButtonActionPerformed(java.awt.event.ActionEvent evt) {                                              
         UserView.pack();
         UserView.setVisible(true);
-    }//GEN-LAST:event_addUserButtonActionPerformed
+    }                                             
 
     private void addAccountButtonActionPerformed(ActionEvent evt) {
         User user = (User) accountManagerTable.getModel().getValueAt(accountManagerTable.getSelectedRow(), 0);
-        new AddAccountDialog(user).setVisible(true);
+        new AccountManagerFrame.AddAccountDialog(user).setVisible(true);
     }
 
     private void closeAccountButtonActionPerformed(ActionEvent evt) {
@@ -320,7 +322,7 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
         updateAccountManagerTable();
     }
 
-    private void OKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OKButtonActionPerformed
+    private void OKButtonActionPerformed(java.awt.event.ActionEvent evt) {                                         
         String firstName = firstNameField.getText();
         String lastName = lastNameField.getText();
         String username = usernameField.getText();
@@ -330,17 +332,22 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
         int ssn = Integer.parseInt(SSNField.getText().replace("-", "")); // note that the SSN field formats it correctly
         try {
             User user = controller.createNewUser(firstName, lastName, dateOfBirth, ssn, email, username);
-            new AddAccountDialog(user).setVisible(true);
+            AddAccountDialog temp = new AddAccountDialog(user);
+            temp.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+            temp.setVisible(true);
+            if(user.isActiveCustomer()){
+                controller.addUserToBank(username, user);
+            }
             // TODO what if they hit cancel on this dialog?
         } catch (InvalidInputException e) {
             controller.handleException(this, e);
         }
         UserView.dispose();
         updateAccountManagerTable();
-    }//GEN-LAST:event_OKButtonActionPerformed
+    }                                        
 
     // TODO I modified this
-    // Variables declaration - do not modify//GEN-BEGIN:variables
+    // Variables declaration - do not modify                     
     private javax.swing.JTable accountManagerTable;
     private javax.swing.JButton CancelButton;
     private javax.swing.JFormattedTextField DOBField;
@@ -361,7 +368,7 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField lastNameField;
     private javax.swing.JTextField usernameField;
-    // End of variables declaration//GEN-END:variables
+    // End of variables declaration                   
 
     //DocumentListener
     @Override
@@ -503,7 +510,7 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
                         }
                         controller.addAccountToUser(user, account);
                         updateAccountManagerTable();
-                        AddAccountDialog.this.dispose();
+                        AccountManagerFrame.AddAccountDialog.this.dispose();
                     } catch (InvalidInputException iix) {
                         controller.handleException(AccountManagerFrame.this, iix);
                     } catch (LoanCapException lcx) {
@@ -516,7 +523,7 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
             cancelButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    AddAccountDialog.this.dispose();
+                    AccountManagerFrame.AddAccountDialog.this.dispose();
                 }
             });
             add(cancelButton);
