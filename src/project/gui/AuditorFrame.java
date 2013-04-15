@@ -4,10 +4,12 @@
  */
 package project.gui;
 
-import java.awt.event.KeyEvent;
-import javax.swing.ListSelectionModel;
 import project.Controller;
 import project.model.Account;
+import project.model.User;
+
+import javax.swing.*;
+import java.awt.event.KeyEvent;
 
 /**
  *
@@ -85,6 +87,7 @@ public final class AuditorFrame extends AbstractUserWindow {
     }// </editor-fold>//GEN-END:initComponents
 
     private void AuditorTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AuditorTableMouseClicked
+        User accountOwner = (User) AuditorTable.getValueAt(AuditorTable.getSelectedRow(), 0);
         Account account =  (Account) AuditorTable.getValueAt(AuditorTable.getSelectedRow(), 1);
         if(evt.getClickCount()==2){
             //check if tab is already there (ignore first tab)
@@ -95,7 +98,7 @@ public final class AuditorFrame extends AbstractUserWindow {
                     return;
                 }
             }
-            AccountTab newTab = controller.newAccountTab(account, this);
+            AccountTab newTab = controller.newAccountTab(accountOwner, account);
             AuditorTabHolder.add(newTab);
         }
     }//GEN-LAST:event_AuditorTableMouseClicked

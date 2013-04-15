@@ -3,10 +3,7 @@ package project.gui;
 import project.Controller;
 import project.gui.util.DollarAmountFormatter;
 import project.gui.util.PercentageFormatter;
-import project.model.Account;
-import project.model.InsufficientFundsException;
-import project.model.InvalidInputException;
-import project.model.Transaction;
+import project.model.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,14 +22,17 @@ public final class AccountTab extends javax.swing.JPanel {
 
     private final Controller controller;
 
+    private final User accountOwner;
+
     private final Account account;
 
     private final AccountInfoPanel infoPanel;
 
     private JTable historyTable;
 
-    public AccountTab(Controller controller, Account account) {
+    public AccountTab(Controller controller, User accountOwner, Account account) {
         this.controller = controller;
+        this.accountOwner = accountOwner;
         this.account = account;
         infoPanel = new AccountInfoPanel(controller, account);
         setName(account.toString());
@@ -55,7 +55,8 @@ public final class AccountTab extends javax.swing.JPanel {
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
 
         JButton spendButton = new JButton("Spend");
-        spendButton.setEnabled(account.getType() == Account.Type.CHECKING || account.getType() == Account.Type.LINE_OF_CREDIT);
+        spendButton.setEnabled(controller.getCurrentUser() == accountOwner
+                && (account.getType() == Account.Type.CHECKING || account.getType() == Account.Type.LINE_OF_CREDIT));
         spendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -65,7 +66,7 @@ public final class AccountTab extends javax.swing.JPanel {
         buttonPanel.add(spendButton);
 
         JButton transferButton = new JButton("Transfer");
-        transferButton.setEnabled(!account.getType().isLoan());
+        transferButton.setEnabled(controller.getCurrentUser() == accountOwner && !account.getType().isLoan());
         transferButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

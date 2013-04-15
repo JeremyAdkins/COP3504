@@ -143,7 +143,7 @@ public final class Controller {
     }
     private void setTabs(AccountHolderFrame parent) {
         for(Account acc : currentUser.getAccounts()){
-            tabs.add(newAccountTab(acc, parent));
+            tabs.add(newAccountTab(currentUser, acc));
         }
     }
 
@@ -155,14 +155,8 @@ public final class Controller {
         tabs.clear();
     }
 
-    /**
-     * 
-     * @param account
-     * @param parent
-     * @return 
-     */
-    public AccountTab newAccountTab(Account account, AbstractUserWindow parent) {
-        AccountTab accTab = new AccountTab(this, account);
+    public AccountTab newAccountTab(User accountOwner, Account account) {
+        AccountTab accTab = new AccountTab(this, accountOwner, account);
         accTab.setVisible(true); 
         return accTab;
     }
