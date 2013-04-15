@@ -198,8 +198,7 @@ public final class Controller {
     }
 
     public void closeAccount(Account account) {
-        // TODO
-        throw new UnsupportedOperationException();
+        account.close();
     }
     
     public Bank getInstance() {

@@ -60,7 +60,12 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
             public void valueChanged(ListSelectionEvent e) {
                 if (accountManagerTable.getSelectedRow() >= 0) {
                     addAccountButton.setEnabled(true);
-                    closeAccountButton.setEnabled(true);
+                    Account account = (Account) accountManagerTable.getValueAt(accountManagerTable.getSelectedRow(), 2);
+                    if (account.getBalance().round(Bank.MATH_CONTEXT).compareTo(BigDecimal.ZERO) == 0) {
+                        closeAccountButton.setEnabled(true);
+                    } else {
+                        closeAccountButton.setEnabled(false);
+                    }
                 } else {
                     addAccountButton.setEnabled(false);
                     closeAccountButton.setEnabled(false);
