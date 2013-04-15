@@ -435,7 +435,7 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
             cdTermComboBox = new JComboBox(new DefaultComboBoxModel(CertificateOfDeposit.Term.values()));
             add(cdTermComboBox);
 
-            add(new JLabel("Loan term"));
+            add(new JLabel("Loan term (mo.)"));
             loanTermTextField = new JFormattedTextField(new IntegerFormatter.Factory(), 0);
             loanTermTextField.setInputVerifier(new InputVerifier() {
                 @Override
