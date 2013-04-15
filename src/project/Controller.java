@@ -323,10 +323,9 @@ public final class Controller {
     
     private void updateBankDisplay(){
         for (AbstractUserWindow w : windows) {
-            switch(w.getClass().getSimpleName()){
-                case "AccountHolderFrame":
-                    AccountHolderFrame myFrame = (AccountHolderFrame) w;
-                    myFrame.setSummaryTableModel();
+            if (w.getClass().getSimpleName().equals("AccountHolderFrame")) {
+                AccountHolderFrame accountHolderFrame = (AccountHolderFrame) w;
+                accountHolderFrame.setSummaryTableModel();
             }
         }
         for (AccountTab accTab : tabs) {
