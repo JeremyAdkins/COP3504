@@ -209,20 +209,9 @@ public final class Controller {
         Bank.getInstance().addUser(username, new User(firstName, lastName, birthdate, ssn, email));
         Bank.getInstance().getUser(username).setRole(User.Role.valueOf(role));
     }
-    public void addAccountToUser(Account.Type type, User user) {
-        user.addAccount(newAccount(type));
-    }
-    
-    private Account newAccount(Account.Type type) {
-        switch (type) {
-            case SAVINGS:
-                return new SavingsAccount();
-            case CHECKING:
-                return new CheckingAccount();
-            default:
-                // TODO we need some way to pass the parameters for the other types
-                throw new UnsupportedOperationException();
-        }
+
+    public void addAccountToUser(User user, Account account) {
+        user.addAccount(account);
     }
 
     public void closeAccount(Account account) {

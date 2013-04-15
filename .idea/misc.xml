@@ -4,7 +4,6 @@
     <entry_points version="2.0" />
   </component>
   <component name="ProjectPlainTextFileTypeManager">
-    <file url="file://$PROJECT_DIR$/src/project/gui/AccountantFrame.form" />
     <file url="file://$PROJECT_DIR$/src/project/gui/AccountHolderFrame.form" />
     <file url="file://$PROJECT_DIR$/src/project/gui/AccountManagerFrame.form" />
     <file url="file://$PROJECT_DIR$/src/project/gui/AccountTab.form" />

@@ -90,6 +90,6 @@ public final class Transaction {
 
     @Override
     public String toString() {
-        return String.format("%-16s $%7.2f $%7.2f %5d    %-8s", type, amount, balance, timestamp, fraudStatus);
+        return String.format("%-16s $%14.2f $%14.2f %5d    %-8s", type, amount, balance.abs(), timestamp, fraudStatus);
     }
 }

@@ -1,0 +1,37 @@
+package project.gui.util;
+
+import project.model.Bank;
+
+import javax.swing.*;
+import java.math.BigDecimal;
+import java.text.ParseException;
+
+public final class PercentageFormatter extends JFormattedTextField.AbstractFormatter {
+    public static final class Factory extends JFormattedTextField.AbstractFormatterFactory {
+        @Override
+        public PercentageFormatter getFormatter(JFormattedTextField tf) {
+            return new PercentageFormatter();
+        }
+    }
+
+    public PercentageFormatter() {
+    }
+
+    @Override
+    public Object stringToValue(String text) throws ParseException {
+        try {
+            return new BigDecimal(text).divide(new BigDecimal(100), Bank.MATH_CONTEXT);
+        } catch (NumberFormatException nfx) {
+            throw new ParseException(nfx.getMessage(), 0);
+        }
+    }
+
+    @Override
+    public String valueToString(Object value) throws ParseException {
+        if (value instanceof BigDecimal) {
+            return String.format("%.2f", ((BigDecimal) value).multiply(new BigDecimal("100")));
+        } else {
+            throw new ParseException("value is not a BigDecimal", 0);
+        }
+    }
+}

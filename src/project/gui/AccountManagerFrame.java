@@ -5,19 +5,24 @@
 package project.gui;
 
 import project.Controller;
-import project.model.Account;
-import project.model.InvalidInputException;
-import project.model.User;
+import project.gui.util.DollarAmountFormatter;
+import project.gui.util.FieldInputVerifier;
+import project.gui.util.IntegerFormatter;
+import project.gui.util.PercentageFormatter;
+import project.model.*;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -25,7 +30,7 @@ import java.util.Date;
  *
  * @author Rich
  */
-public final class AccountManagerFrame extends AbstractUserWindow implements DocumentListener, PropertyChangeListener, ActionListener {
+public final class AccountManagerFrame extends AbstractUserWindow implements DocumentListener, PropertyChangeListener {
 
     
     /**
@@ -35,7 +40,6 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
         super(controller);
         initComponents();
         setListeners();
-        initAccountComboBoxModel();
         updateAccountManagerTable();
     }
     
@@ -66,10 +70,6 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
         accountManagerTable.revalidate();
     }
     
-    private void initAccountComboBoxModel(){
-        accountTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel(Account.Type.values()));
-    }
-    
     private void action(){
         if(firstNameField.getText().equals("")){
             OKButton.setEnabled(false);
@@ -95,10 +95,6 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
             OKButton.setEnabled(false);
             return;
         }
-        if(accountTypeComboBox.getSelectedItem().equals("")){
-            OKButton.setEnabled(false);
-            return;
-        }
         OKButton.setEnabled(true);
     }
 
@@ -109,7 +105,6 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
         emailField.getDocument().addDocumentListener(this);
         DOBField.addPropertyChangeListener("value", this);
         SSNField.addPropertyChangeListener("value", this);
-        accountTypeComboBox.addActionListener(this);
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -138,8 +133,6 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
         emailField = new javax.swing.JTextField();
         usernameField = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
-        accountTypeComboBox = new JComboBox();
-        jLabel10 = new javax.swing.JLabel();
         addUserButton = new javax.swing.JButton();
         addAccountButton = new JButton();
         closeAccountButton = new JButton();
@@ -186,9 +179,6 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
         jLabel9.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel9.setText("Username:");
 
-        jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel10.setText("new Account:");
-
         javax.swing.GroupLayout UserViewLayout = new javax.swing.GroupLayout(UserView.getContentPane());
         UserView.getContentPane().setLayout(UserViewLayout);
         UserViewLayout.setHorizontalGroup(
@@ -208,8 +198,7 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
                             .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel10, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(5, 5, 5)
                         .addGroup(UserViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(SSNField, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
@@ -217,8 +206,7 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
                             .addComponent(firstNameField)
                             .addComponent(lastNameField)
                             .addComponent(emailField)
-                            .addComponent(usernameField)
-                            .addComponent(accountTypeComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(usernameField))))
                 .addContainerGap())
         );
         UserViewLayout.setVerticalGroup(
@@ -250,10 +238,6 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
                     .addComponent(emailField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(UserViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel10)
-                    .addComponent(accountTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(UserViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(OKButton)
                     .addComponent(CancelButton))
                 .addGap(0, 11, Short.MAX_VALUE))
@@ -268,7 +252,7 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
             }
         });
 
-        addAccountButton.setText("Add account");
+        addAccountButton.setText("Add account for selected user");
         addAccountButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
@@ -277,7 +261,7 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
         });
         addAccountButton.setEnabled(false);
 
-        closeAccountButton.setText("Close account");
+        closeAccountButton.setText("Close selected account");
         closeAccountButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
@@ -326,11 +310,8 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
     }//GEN-LAST:event_addUserButtonActionPerformed
 
     private void addAccountButtonActionPerformed(ActionEvent evt) {
-        Account.Type type = (Account.Type) JOptionPane.showInputDialog(this, "Choose an account type.", "Account type",
-                JOptionPane.QUESTION_MESSAGE, null, Account.Type.values(), Account.Type.SAVINGS);
         User user = (User) accountManagerTable.getModel().getValueAt(accountManagerTable.getSelectedRow(), 0);
-        controller.addAccountToUser(type, user);
-        updateAccountManagerTable();
+        new AddAccountDialog(user).setVisible(true);
     }
 
     private void closeAccountButtonActionPerformed(ActionEvent evt) {
@@ -346,18 +327,13 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
         String email = emailField.getText();
         Calendar dateOfBirth = Calendar.getInstance();
         dateOfBirth.setTime((Date) DOBField.getValue());
-        int ssn;
-        if (SSNField.getText().matches("[0-9]{3}-[0-9]{2}-[0-9]{4}")) {
-            ssn = Integer.parseInt(SSNField.getText().replace("-", ""));
-        } else {
-            // TODO malformed SSN
-            throw new AssertionError();
-        }
+        int ssn = Integer.parseInt(SSNField.getText().replace("-", "")); // note that the SSN field formats it correctly
         try {
             User user = controller.createNewUser(firstName, lastName, dateOfBirth, ssn, email, username);
-            controller.addAccountToUser((Account.Type) accountTypeComboBox.getSelectedItem(), user);
+            new AddAccountDialog(user).setVisible(true);
+            // TODO what if they hit cancel on this dialog?
         } catch (InvalidInputException e) {
-            // TODO exception handling
+            controller.handleException(this, e);
         }
         UserView.dispose();
         updateAccountManagerTable();
@@ -365,7 +341,6 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
 
     // TODO I modified this
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox accountTypeComboBox;
     private javax.swing.JTable accountManagerTable;
     private javax.swing.JButton CancelButton;
     private javax.swing.JFormattedTextField DOBField;
@@ -377,7 +352,6 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
     private javax.swing.JButton closeAccountButton;
     private javax.swing.JTextField emailField;
     private javax.swing.JTextField firstNameField;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -411,10 +385,174 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
         action();
     }
 
-    //ActionListener
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        action();
-    }
+    private final class AddAccountDialog extends JDialog {
+        private final User user;
 
+        private final ComboBoxModel comboBoxModel;
+
+        private JFormattedTextField amountTextField;
+
+        private JComboBox cdTermComboBox;
+
+        private JFormattedTextField loanTermTextField;
+
+        private JFormattedTextField interestPremiumTextField;
+
+        private AddAccountDialog(User user) {
+            this.user = user;
+            setTitle("Add account");
+            setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+            comboBoxModel = new DefaultComboBoxModel(Account.Type.values());
+            comboBoxModel.setSelectedItem(Account.Type.SAVINGS);
+            initComponents();
+            updateForSelectedType();
+        }
+
+        private void initComponents() {
+            setLayout(new GridLayout(6, 2));
+
+            add(new JLabel("Account type"));
+            JComboBox comboBox = new JComboBox(comboBoxModel);
+            add(comboBox);
+            comboBox.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    updateForSelectedType();
+                }
+            });
+
+            add(new JLabel("Amount/credit limit"));
+            amountTextField = new JFormattedTextField(new DollarAmountFormatter.Factory(), BigDecimal.ZERO);
+            amountTextField.setInputVerifier(new FieldInputVerifier(AccountManagerFrame.this) {
+                @Override
+                protected void setField(BigDecimal value) throws InvalidInputException {
+                    // empty because this is checked when the user hits OK
+                }
+            });
+            add(amountTextField);
+
+            add(new JLabel("CD term"));
+            cdTermComboBox = new JComboBox(new DefaultComboBoxModel(CertificateOfDeposit.Term.values()));
+            add(cdTermComboBox);
+
+            add(new JLabel("Loan term (mo.)"));
+            loanTermTextField = new JFormattedTextField(new IntegerFormatter.Factory(), 0);
+            loanTermTextField.setInputVerifier(new InputVerifier() {
+                @Override
+                public boolean verify(JComponent input) {
+                    try {
+                        ((JFormattedTextField) input).commitEdit();
+                        int value = (Integer) ((JFormattedTextField) input).getValue();
+                        if (value <= 0) {
+                            InvalidInputException iix = new InvalidInputException(new BigDecimal(value), "term must be positive");
+                            controller.handleException(AccountManagerFrame.this, iix);
+                            return false;
+                        }
+                        return true;
+                    } catch (ParseException px) {
+                        return false;
+                    }
+                }
+
+                @Override
+                public boolean shouldYieldFocus(JComponent input) {
+                    return verify(input);
+                }
+            });
+            add(loanTermTextField);
+
+            add(new JLabel("Interest premium"));
+            interestPremiumTextField = new JFormattedTextField(new PercentageFormatter.Factory(), BigDecimal.ZERO);
+            interestPremiumTextField.setInputVerifier(new FieldInputVerifier(AccountManagerFrame.this) {
+                @Override
+                protected void setField(BigDecimal value) throws InvalidInputException {
+                    // empty because this is checked when the user hits OK
+                }
+            });
+            add(interestPremiumTextField);
+
+            JButton addButton = new JButton("Add");
+            addButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    Account.Type type = (Account.Type) comboBoxModel.getSelectedItem();
+                    try {
+                        Account account;
+                        switch (type) {
+                            case CHECKING:
+                                account = new CheckingAccount();
+                                break;
+                            case SAVINGS:
+                                account = new SavingsAccount();
+                                break;
+                            case CD:
+                                account = new CertificateOfDeposit((BigDecimal) amountTextField.getValue(),
+                                        (CertificateOfDeposit.Term) cdTermComboBox.getSelectedItem());
+                                break;
+                            case LOAN:
+                                account = new Loan((BigDecimal) amountTextField.getValue(),
+                                        (Integer) loanTermTextField.getValue(),
+                                        (BigDecimal) interestPremiumTextField.getValue());
+                                break;
+                            case LINE_OF_CREDIT:
+                                account = new LineOfCredit((BigDecimal) amountTextField.getValue(),
+                                        (BigDecimal) interestPremiumTextField.getValue());
+                                break;
+                            default:
+                                throw new UnsupportedOperationException("unknown account type");
+                        }
+                        controller.addAccountToUser(user, account);
+                        updateAccountManagerTable();
+                        AddAccountDialog.this.dispose();
+                    } catch (InvalidInputException iix) {
+                        controller.handleException(AccountManagerFrame.this, iix);
+                    } catch (LoanCapException lcx) {
+                        // TODO
+                    }
+                }
+            });
+            add(addButton);
+            JButton cancelButton = new JButton("Cancel");
+            cancelButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    AddAccountDialog.this.dispose();
+                }
+            });
+            add(cancelButton);
+        }
+
+        private void updateForSelectedType() {
+            switch ((Account.Type) comboBoxModel.getSelectedItem()) {
+                case SAVINGS:
+                case CHECKING:
+                    amountTextField.setEnabled(false);
+                    cdTermComboBox.setEnabled(false);
+                    loanTermTextField.setEnabled(false);
+                    interestPremiumTextField.setEnabled(false);
+                    break;
+                case CD:
+                    amountTextField.setEnabled(true);
+                    cdTermComboBox.setEnabled(true);
+                    loanTermTextField.setEnabled(false);
+                    interestPremiumTextField.setEnabled(false);
+                    break;
+                case LOAN:
+                    amountTextField.setEnabled(true);
+                    cdTermComboBox.setEnabled(false);
+                    loanTermTextField.setEnabled(true);
+                    interestPremiumTextField.setEnabled(true);
+                    break;
+                case LINE_OF_CREDIT:
+                    amountTextField.setEnabled(true);
+                    cdTermComboBox.setEnabled(false);
+                    loanTermTextField.setEnabled(false);
+                    interestPremiumTextField.setEnabled(true);
+                    break;
+                default:
+                    throw new UnsupportedOperationException("unknown account type");
+            }
+            pack();
+        }
+    }
 }
