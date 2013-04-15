@@ -73,7 +73,7 @@ public final class Controller {
             Bank.getInstance().getUser("operations_manager").setRole(User.Role.OPERATIONS_MANAGER);
             Bank.getInstance().addUser("accountant", new User("Accountant", "Employee", Calendar.getInstance(), 123456789, "accountant@bank.com"));
             Bank.getInstance().getUser("accountant").setRole(User.Role.ACCOUNTANT);
-            Bank.getInstance().addUser("auditor", new User("Auditor", "Employee", Calendar.getInstance(), 12345678, "auditor@bank.com"));
+            Bank.getInstance().addUser("auditor", new User("Auditor", "Employee", Calendar.getInstance(), 123456780, "auditor@bank.com"));
             Bank.getInstance().getUser("auditor").setRole(User.Role.AUDITOR);
             Bank.getInstance().addUser("account_manager", new User("Account", "Manager", Calendar.getInstance(), 222222222, "amanager@bank.com"));
             Bank.getInstance().getUser("account_manager").setRole(User.Role.ACCOUNT_MANAGER);
@@ -189,8 +189,11 @@ public final class Controller {
      */
     public User createNewUser(String firstName, String lastName, Calendar birthdate, int ssn, String email, String username) throws InvalidInputException {
         User user = new User(firstName, lastName, birthdate, ssn, email);
-        Bank.getInstance().addUser(username, user);
         return user;
+    }
+    
+    public void addUserToBank(String username, User user) throws InvalidInputException{
+        Bank.getInstance().addUser(username, user);
     }
    
     public void addAccountToUser(User user, Account account) {
@@ -232,7 +235,9 @@ public final class Controller {
         int rows = 0;
         for (User user : users) {
             rows++;
-            rows += user.getAccounts().size();
+            if(user.isActiveCustomer()){
+                rows += user.getAccounts().size()-1;
+            }
         }
         Object[][] accountManagerTable = new Object[rows][4];
         //display users
@@ -248,6 +253,9 @@ public final class Controller {
                     accountManagerTable[i][3] = String.format("$%.2f", account.getBalance());
                     i++;
                 }
+            }
+            if(!user.isActiveCustomer()){
+                i++;
             }
         }
         return accountManagerTable;
