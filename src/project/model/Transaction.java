@@ -4,7 +4,8 @@ import java.math.BigDecimal;
 
 public final class Transaction {
     public static enum Type {
-        DEPOSIT(true, true), INTEREST(true, false), LOAN_INTEREST(false, false), WITHDRAWAL(false, true), FEE(false, false);
+        DEPOSIT(true, true), INTEREST(true, false), LOAN_INTEREST(false, false), WITHDRAWAL(false, true), FEE(false, false),
+        REVERSED_DEPOSIT(false, false), REVERSED_WITHDRAWAL(true, false);
 
         private final boolean isPositive;
 
@@ -33,7 +34,7 @@ public final class Transaction {
         NOT_FLAGGED {
             @Override
             public String toString() {
-                return "";
+                return "--";
             }
         }, FLAGGED, REVERSED;
 
@@ -84,13 +85,20 @@ public final class Transaction {
         return fraudStatus;
     }
 
-    public void setFraudStatus(FraudStatus fraudStatus) {
+    public void setFraudStatus(FraudStatus fraudStatus, Account account) throws InvalidInputException, InsufficientFundsException {
+        if (fraudStatus == FraudStatus.REVERSED) {
+            if (getType().isPositive()) {
+                account.applyTransaction(amount, Type.REVERSED_DEPOSIT);
+            } else {
+                account.applyTransaction(amount, Type.REVERSED_WITHDRAWAL);
+            }
+        }
         this.fraudStatus = fraudStatus;
     }
 
     @Override
     public String toString() {
         BigDecimal displayAmount = type.isPositive() ? amount : amount.negate();
-        return String.format("%-16s $%14.2f $%14.2f %5d    %-8s", type, displayAmount, balance, timestamp, fraudStatus);
+        return String.format("%-24s $%14.2f $%14.2f %5d    %-8s", type, displayAmount, balance, timestamp, fraudStatus);
     }
 }
