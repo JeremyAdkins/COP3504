@@ -204,10 +204,10 @@ final class StatisticsTabulator {
         int liabilityAccounts = sumInteger(accountCount) - assetAccounts;
         BigDecimal sumOfAssets = sumAssetBigDecimal(totalBalance);
         BigDecimal sumOfLiabilities = sumBigDecimal(totalBalance).subtract(sumOfAssets);
-        put(stats, "Sum of assets", sumOfAssets);
+        put(stats, "Sum of assets", sumOfAssets.negate());
         put(stats, "Sum of liabilities", sumOfLiabilities);
         if (assetAccounts > 0) {
-            put(stats, "Average of assets", sumOfAssets.divide(new BigDecimal(assetAccounts), 2, RoundingMode.HALF_UP));
+            put(stats, "Average of assets", sumOfAssets.negate().divide(new BigDecimal(assetAccounts), 2, RoundingMode.HALF_UP));
         } else {
             putNoValue(stats, "Average of assets");
         }
@@ -230,7 +230,11 @@ final class StatisticsTabulator {
                 put(stats, "Mature " + category, matureCount.get(category.term));
             }
             put(stats, "Closed " + category, accountCount.get(category) - openCount.get(category));
-            put(stats, "Balance in " + category, totalBalance.get(category));
+            if (category.baseType.isLoan()) {
+                put(stats, "Balance in " + category, totalBalance.get(category).negate());
+            } else {
+                put(stats, "Balance in " + category, totalBalance.get(category));
+            }
             if (category.baseType == Account.Type.LINE_OF_CREDIT) {
                 put(stats, "Total credit limit", totalLocCreditLimit);
             }
