@@ -117,7 +117,7 @@ public class OperationsManagerFrame extends AbstractUserWindow {
     private JPanel initFeeComponents() {
         final PaymentSchedule paymentSchedule = Bank.getInstance().getPaymentSchedule();
 
-        JPanel feePanel = new JPanel(new GridLayout(6, 2));
+        JPanel feePanel = new JPanel(new GridLayout(7, 2));
         feePanel.add(new JLabel("Fees"));
         feePanel.add(new JLabel());
 
@@ -170,6 +170,16 @@ public class OperationsManagerFrame extends AbstractUserWindow {
             }
         });
         feePanel.add(locPenaltyField);
+
+        feePanel.add(new JLabel("Teller fee"));
+        JFormattedTextField tellerFeeField = new JFormattedTextField(new DollarAmountFormatter.Factory(), paymentSchedule.getTellerFee());
+        tellerFeeField.setInputVerifier(new FieldInputVerifier(this) {
+            @Override
+            protected void setField(BigDecimal value) throws InvalidInputException {
+                paymentSchedule.setTellerFee(value);
+            }
+        });
+        feePanel.add(tellerFeeField);
 
         return feePanel;
     }
