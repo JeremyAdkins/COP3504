@@ -4,8 +4,8 @@
  */
 package project.gui;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.ArrayList;
+import java.util.List;
 import project.Controller;
 import project.model.InvalidInputException;
 
@@ -15,12 +15,21 @@ import project.model.InvalidInputException;
  */
 public class TellerFrame extends AbstractUserWindow {
 
+    
+    List<TellerAccountTab> tabs = new ArrayList<>();
+    
     /**
      * Creates new form TellerFrame
      */
     public TellerFrame(Controller controller) {
         super(controller);
         initComponents();
+    }
+    
+    private void setUpTabs(){
+        for(TellerAccountTab tab : tabs){
+            TellerTabHolder.add(tab);
+        }
     }
 
     /**
@@ -85,7 +94,8 @@ public class TellerFrame extends AbstractUserWindow {
 
     private void selectUserButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectUserButtonActionPerformed
         try {
-            controller.getInstance().getUser(usernameField.getText());
+            tabs = controller.getTellerTabs(controller.getInstance().getUser(usernameField.getText()));
+            setUpTabs();
         } catch (InvalidInputException ex) {
             controller.handleException(this, ex);
         }

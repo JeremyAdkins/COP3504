@@ -122,7 +122,6 @@ public final class Controller {
                 } else {
                     switch (currentUser.getRole()) {
                         case TELLER:
-                            JOptionPane.showInputDialog("Please enter the Account Holder's username:");
                             userWindow = new TellerFrame(Controller.this);
                             break;
                         case ACCOUNTANT:
@@ -143,6 +142,7 @@ public final class Controller {
             }
         });
     }
+    
     private void setTabs(AccountHolderFrame parent) {
         for(Account acc : currentUser.getAccounts()){
             tabs.add(newAccountTab(currentUser, acc));
@@ -311,8 +311,12 @@ public final class Controller {
         return AuditorTable;
     }
     
-    public void addTellerTabs(){
-        
+    public List<TellerAccountTab> getTellerTabs(User user){
+        List<TellerAccountTab> accTabs = new ArrayList<>();
+        for(Account acc : user.getAccounts()){
+            accTabs.add(new TellerAccountTab(this, acc));
+        }
+        return accTabs;
     }
     
     public void updateBankDisplay() {
