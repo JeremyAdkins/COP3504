@@ -59,7 +59,7 @@ public final class LineOfCredit extends AbstractLoan {
 	
 	@Override
 	protected BigDecimal getBaseInterest() {
-		return Bank.getInstance().getPaymentSchedule().getLocInterest();
+		return Bank.getInstance().getPaymentSchedule().getLoanInterest().add(Bank.getInstance().getPaymentSchedule().getLocPremium());
 	}
 
 	@Override

@@ -14,9 +14,9 @@ public final class PaymentSchedule {
 	private BigDecimal checkingThreshold = new BigDecimal("2000.00");
 	private BigDecimal overdraftLimit = new BigDecimal("50.00");
 	private BigDecimal overdraftFee = new BigDecimal("40.00");
-	private BigDecimal loanInterest = new BigDecimal("0.0500");
+	private BigDecimal loanInterest = new BigDecimal("0.0400");
 	private BigDecimal loanPenalty = new BigDecimal("20.00");
-	private BigDecimal locInterest = new BigDecimal("0.0500");
+	private BigDecimal locPremium = new BigDecimal("0.0100");
 	private BigDecimal locFixedPayment = new BigDecimal("50.00");
 	private BigDecimal locPercentPayment = new BigDecimal("0.0200");
 	private BigDecimal locPenalty = new BigDecimal("20.00");
@@ -149,15 +149,15 @@ public final class PaymentSchedule {
 		this.loanPenalty = loanPenalty.round(Bank.MATH_CONTEXT);
 	}
 
-	public BigDecimal getLocInterest() {
-		return locInterest;
+	public BigDecimal getLocPremium() {
+		return locPremium;
 	}
 
-	public void setLocInterest(BigDecimal locInterest) throws InvalidInputException {
-        if (locInterest.compareTo(BigDecimal.ZERO) < 0) {
-            throw new InvalidInputException(locInterest, "payment schedule values must be non-negative");
+	public void setLocPremium(BigDecimal locPremium) throws InvalidInputException {
+        if (locPremium.compareTo(BigDecimal.ZERO) < 0) {
+            throw new InvalidInputException(locPremium, "payment schedule values must be non-negative");
         }
-		this.locInterest = locInterest.round(Bank.MATH_CONTEXT);
+		this.locPremium = locPremium.round(Bank.MATH_CONTEXT);
 	}
 
 	public BigDecimal getLocFixedPayment() {

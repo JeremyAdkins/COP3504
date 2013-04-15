@@ -101,12 +101,12 @@ public class OperationsManagerFrame extends AbstractUserWindow {
         });
         interestPanel.add(loanInterestField);
 
-        interestPanel.add(new JLabel("Line of credit"));
-        JFormattedTextField locInterestField = new JFormattedTextField(new PercentageFormatter.Factory(), paymentSchedule.getLocInterest());
+        interestPanel.add(new JLabel("LoC premium"));
+        JFormattedTextField locInterestField = new JFormattedTextField(new PercentageFormatter.Factory(), paymentSchedule.getLocPremium());
         locInterestField.setInputVerifier(new FieldInputVerifier(this) {
             @Override
             protected void setField(BigDecimal value) throws InvalidInputException {
-                paymentSchedule.setLocInterest(value);
+                paymentSchedule.setLocPremium(value);
             }
         });
         interestPanel.add(locInterestField);

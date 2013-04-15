@@ -11,7 +11,7 @@ import static org.junit.Assert.assertTrue;
 
 public final class LoanTest {
     private final BigDecimal loanAmount = new BigDecimal(600);
-    private final BigDecimal premiumInt = new BigDecimal(.05);
+    private final BigDecimal premiumInt = new BigDecimal(.02);
     private Loan account;
 
     @BeforeClass
@@ -23,7 +23,7 @@ public final class LoanTest {
 	public void setUp() throws InvalidInputException, LoanCapException{
 		account = new Loan(loanAmount, 12, premiumInt);
 		TestUtil.assertEquals(loanAmount.negate(), account.getBalance());
-	    TestUtil.assertEquals(52.75, account.getMinimumPayment());
+	    TestUtil.assertEquals(51.64, account.getMinimumPayment());
 	}
 	
 	@After
