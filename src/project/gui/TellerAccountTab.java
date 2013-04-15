@@ -26,6 +26,8 @@ public final class TellerAccountTab extends JPanel {
         this.controller = controller;
         this.account = account;
         infoPanel = new AccountInfoPanel(controller, account);
+        setName(account.toString());
+        initComponents();
     }
 
     private void initComponents() {
@@ -46,6 +48,7 @@ public final class TellerAccountTab extends JPanel {
                 try {
                     BigDecimal amount = new DollarAmountFormatter().stringToValue(amountStr);
                     account.deposit(amount);
+                    infoPanel.update();
                 } catch (ParseException px) {
                     controller.handleException(TellerAccountTab.this, px);
                 } catch (InvalidInputException iix) {
@@ -65,6 +68,7 @@ public final class TellerAccountTab extends JPanel {
                 try {
                     BigDecimal amount = new DollarAmountFormatter().stringToValue(amountStr);
                     account.withdraw(amount);
+                    infoPanel.update();
                 } catch (ParseException px) {
                     controller.handleException(TellerAccountTab.this, px);
                 } catch (InvalidInputException iix) {
