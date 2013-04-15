@@ -36,14 +36,20 @@ public class OperationsManagerFrame extends AbstractUserWindow {
         bankStatementButton.addActionListener(new StatementGenerator(true));
         buttonLayoutPanel.add(bankStatementButton);
 
-        // TODO display the number of errors
         JButton advanceTimeButton = new JButton("Advance time");
         advanceTimeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Bank.getInstance().advanceCurrentMonth();
+                int exceptions = Bank.getInstance().advanceCurrentMonth();
                 int currentMonth = Bank.getInstance().getCurrentMonth();
-                JOptionPane.showMessageDialog(OperationsManagerFrame.this, "Advanced time by one month; the simulation month is now " + currentMonth, "Advanced time", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(OperationsManagerFrame.this,
+                        "Advanced time by one month; the simulation month is now " + currentMonth, "Advanced time",
+                        JOptionPane.INFORMATION_MESSAGE);
+                if (exceptions > 0) {
+                    JOptionPane.showMessageDialog(OperationsManagerFrame.this,
+                            exceptions + " exceptions occurred processing repeating payments", "Advanced time",
+                            JOptionPane.INFORMATION_MESSAGE);
+                }
             }
         });
         buttonLayoutPanel.add(advanceTimeButton);
