@@ -4,12 +4,20 @@
  */
 package project.gui;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import project.Controller;
 import project.model.Account;
 import project.model.User;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import javax.swing.plaf.basic.BasicButtonUI;
 
 /**
  *
@@ -25,8 +33,8 @@ public final class AuditorFrame extends AbstractUserWindow {
         initComponents();
         updateAuditorTable();
     }
-    
-    public void updateAuditorTable(){
+
+    public void updateAuditorTable() {
         AuditorTable.setModel(new javax.swing.table.DefaultTableModel(
                 controller.updateAuditorTableView(),
                 new String[]{
@@ -56,13 +64,7 @@ public final class AuditorFrame extends AbstractUserWindow {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
-        AuditorTabHolder.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                AuditorTabHolderKeyPressed(evt);
-            }
-        });
-
-        AuditorTable.setToolTipText("");
+        AuditorTable.setToolTipText("Double click on a row to view that account in a new tab.");
         AuditorTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 AuditorTableMouseClicked(evt);
@@ -88,30 +90,66 @@ public final class AuditorFrame extends AbstractUserWindow {
 
     private void AuditorTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AuditorTableMouseClicked
         User accountOwner = (User) AuditorTable.getValueAt(AuditorTable.getSelectedRow(), 0);
-        Account account =  (Account) AuditorTable.getValueAt(AuditorTable.getSelectedRow(), 1);
-        if(evt.getClickCount()==2){
+        Account account = (Account) AuditorTable.getValueAt(AuditorTable.getSelectedRow(), 1);
+        if (evt.getClickCount() == 2) {
             //check if tab is already there (ignore first tab)
-            for(int tabIndex = 1; tabIndex<AuditorTabHolder.getTabCount(); tabIndex++){
+            for (int tabIndex = 1; tabIndex < AuditorTabHolder.getTabCount(); tabIndex++) {
                 AccountTab tab = (AccountTab) AuditorTabHolder.getComponentAt(tabIndex);
-                if(tab.getAccount().equals(account)){
+                if (tab.getAccount().equals(account)) {
                     AuditorTabHolder.setSelectedIndex(tabIndex);
                     return;
                 }
             }
-            AccountTab newTab = controller.newAccountTab(accountOwner, account);
+            final AccountTab newTab = controller.newAccountTab(accountOwner, account);
+            JPanel tabComp = new JPanel();
+            JLabel title = new JLabel() {
+                @Override
+                public String getText() {
+                    return newTab.getName();
+                }
+            };
+            tabComp.add(title);
+            title.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
+            tabComp.add(new TabButton(newTab));
+            tabComp.setOpaque(false);
             AuditorTabHolder.add(newTab);
+            AuditorTabHolder.setTabComponentAt(AuditorTabHolder.getTabCount()-1, tabComp);
         }
     }//GEN-LAST:event_AuditorTableMouseClicked
 
-    private void AuditorTabHolderKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_AuditorTabHolderKeyPressed
-        if(evt.getKeyChar() == KeyEvent.VK_DELETE){
-            int i = AuditorTabHolder.getSelectedIndex();
-            if(i>0){
-                AuditorTabHolder.remove(i);   
-            }
-        }
-    }//GEN-LAST:event_AuditorTabHolderKeyPressed
+    public class TabButton extends JButton implements ActionListener {
 
+        final AccountTab accTab;
+        public TabButton(AccountTab tab) {
+            super("x");
+            accTab = tab;
+            setToolTipText("close this tab");
+            setContentAreaFilled(false);
+            setFocusable(false);
+            setBorderPainted(false);
+            addMouseListener(buttonMouseListener);
+            setRolloverEnabled(true);
+            addActionListener(this);
+            setUI(new BasicButtonUI());
+            pack();
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            AuditorTabHolder.remove(accTab);
+        }
+        private MouseListener buttonMouseListener = new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                TabButton.this.setForeground(Color.red);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                TabButton.this.setForeground(Color.black);
+            }
+        };
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTabbedPane AuditorTabHolder;
     private javax.swing.JTable AuditorTable;

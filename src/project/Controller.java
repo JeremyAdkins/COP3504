@@ -219,11 +219,23 @@ public final class Controller {
      * Lays out all of the accounts of a certain User
      * @return 
      */
-    public Object[][] updateAccountHolderTableView(){
+    public Object[][] updateAccountHolderTableView(boolean hideClosed){
         Set<Account> accounts = currentUser.getAccounts();
-        Object[][] summaryTable = new Object[accounts.size()][3];
+        //get number of rows
+        int rows = 0;
+        for(Account account : accounts){
+            if(account.isClosed() && hideClosed){
+                continue;
+            }
+            rows++;
+        }
+        //layout table
+        Object[][] summaryTable = new Object[rows][3];
         int i = 0;
         for (Account account : accounts) {
+            if(account.isClosed() && hideClosed){
+                continue;
+            }
             summaryTable[i][0] = account.getType();
             summaryTable[i][1] = account.getAccountNumber();
             BigDecimal balance = account.getType().isLoan() ? account.getBalance().negate() : account.getBalance();
@@ -241,9 +253,13 @@ public final class Controller {
         //calculate number of rows
         int rows = 0;
         for (User user : users) {
+            if(!user.isActiveCustomer()){
             rows++;
-            if(user.isActiveCustomer()){
-                rows += user.getAccounts().size()-1;
+            }
+            for(Account acc : user.getAccounts()){
+                if(!acc.isClosed()){
+                    rows++;
+                }
             }
         }
         Object[][] accountManagerTable = new Object[rows][4];

@@ -6,6 +6,7 @@ package project.gui;
 
 import project.Controller;
 import java.util.List;
+import javax.swing.JCheckBoxMenuItem;
 
 /**
  *
@@ -17,17 +18,39 @@ public final class AccountHolderFrame extends AbstractUserWindow {
      * Creates new form AccountHolderFrame
      */
     private List<AccountTab> accountTabs;
+    private JCheckBoxMenuItem hideClosedAccounts = new JCheckBoxMenuItem();
 
-    public AccountHolderFrame(Controller controller){
+    public AccountHolderFrame(Controller controller) {
         super(controller);
         initComponents();
+        initMoreComponents();
         buildAccountTabs();
         setSummaryTableModel();
     }
-    
+
+    private void initMoreComponents() {
+        FileMenu.add(hideClosedAccounts);
+        hideClosedAccounts.setText("Hide Closed Accounts");
+        hideClosedAccounts.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
+        hideClosedAccounts.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                if (hideClosedAccounts.isSelected()) {
+                    for (AccountTab accTab : accountTabs) {
+                        if (accTab.getAccount().isClosed()) {
+                            AccountHolderTabs.remove(accTab);
+                        }
+                    }
+                }else{
+                buildAccountTabs();
+                }
+                setSummaryTableModel();
+            }
+        });
+    }
+
     public void setSummaryTableModel() {
         SummaryTable.setModel(new javax.swing.table.DefaultTableModel(
-                controller.updateAccountHolderTableView(),
+                controller.updateAccountHolderTableView(hideClosedAccounts.isSelected()),
                 new String[]{
             "Account type", "Account number", "Balance"
         }) {
@@ -42,16 +65,20 @@ public final class AccountHolderFrame extends AbstractUserWindow {
     private void buildAccountTabs() {
         accountTabs = controller.getTabs(this);
         for (AccountTab accTab : accountTabs) {
+            if (accTab.getAccount().isClosed() && hideClosedAccounts.isSelected()) {
+                continue;
+            }
             AccountHolderTabs.add(accTab);
         }
         AccountHolderTabs.revalidate();
     }
-    
+
     @Override
-    public void logout(){
+    public void logout() {
         super.logout();
         controller.clearTabs();
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -114,7 +141,6 @@ public final class AccountHolderFrame extends AbstractUserWindow {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTabbedPane AccountHolderTabs;
     private javax.swing.JPanel HomePanel;
@@ -122,5 +148,4 @@ public final class AccountHolderFrame extends AbstractUserWindow {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
-
 }
