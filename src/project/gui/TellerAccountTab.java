@@ -59,7 +59,6 @@ public final class TellerAccountTab extends JPanel {
         JPanel buttonPanel = new JPanel(new GridLayout(3, 2));
 
         JButton depositButton = new JButton("Deposit");
-        depositButton.setEnabled(account.getType() != Account.Type.CD);
         depositButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -107,7 +106,6 @@ public final class TellerAccountTab extends JPanel {
         buttonPanel.add(withdrawButton);
 
         JButton repeatingDepositButton = new JButton("Add repeating deposit");
-        repeatingDepositButton.setEnabled(account.getType() != Account.Type.CD);
         repeatingDepositButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -137,7 +135,7 @@ public final class TellerAccountTab extends JPanel {
         buttonPanel.add(repeatingDepositButton);
 
         JButton repeatingWithdrawalButton = new JButton("Add repeating withdrawal");
-        repeatingWithdrawalButton.setEnabled(account.getType() != Account.Type.CD && account.getType() != Account.Type.LOAN);
+        repeatingWithdrawalButton.setEnabled(account.getType() != Account.Type.LOAN);
         repeatingWithdrawalButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -167,7 +165,6 @@ public final class TellerAccountTab extends JPanel {
         buttonPanel.add(repeatingWithdrawalButton);
 
         JButton endRepeatingButton = new JButton("End repeating payment");
-        endRepeatingButton.setEnabled(account.getType() != Account.Type.CD);
         endRepeatingButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

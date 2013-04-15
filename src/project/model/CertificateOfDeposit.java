@@ -67,11 +67,6 @@ public final class CertificateOfDeposit extends Account {
     }
 
     @Override
-    public Transaction deposit(BigDecimal amount) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
 	public Transaction withdraw(BigDecimal amount) throws InvalidInputException, InsufficientFundsException {
 		BigDecimal fee = getInterestRate().divide(new BigDecimal(2), Bank.MATH_CONTEXT).multiply(getBalance());
 		BigDecimal newBalance = getBalance().subtract(amount).subtract(fee);
