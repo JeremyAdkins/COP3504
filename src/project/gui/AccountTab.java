@@ -55,7 +55,7 @@ public final class AccountTab extends javax.swing.JPanel {
         JPanel buttonPanel = new JPanel(new GridLayout(3, 1));
 
         JButton spendButton = new JButton("Spend");
-        spendButton.setEnabled(!account.isClosed() && controller.getCurrentUser() == accountOwner
+        spendButton.setVisible(!account.isClosed() && controller.getCurrentUser() == accountOwner
                 && (account.getType() == Account.Type.CHECKING || account.getType() == Account.Type.LINE_OF_CREDIT));
         spendButton.addActionListener(new ActionListener() {
             @Override
@@ -66,7 +66,7 @@ public final class AccountTab extends javax.swing.JPanel {
         buttonPanel.add(spendButton);
 
         JButton transferButton = new JButton("Transfer");
-        transferButton.setEnabled(!account.isClosed() && controller.getCurrentUser() == accountOwner &&
+        transferButton.setVisible(!account.isClosed() && controller.getCurrentUser() == accountOwner &&
                 !account.getType().isLoan());
         transferButton.addActionListener(new ActionListener() {
             @Override

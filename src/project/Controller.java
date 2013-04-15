@@ -15,20 +15,11 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.List;
 
-
-/**
- *
- * @author rich
- */
-
-
 public final class Controller {
 
     private Bank instance = Bank.getInstance();
-    
     private User currentUser; //the User currently using the platform based on the window that is open. When a user interacts with a Teller, the teller window is the only window open and this would return the Teller.
     private List<AbstractUserWindow> windows = new ArrayList<AbstractUserWindow>(); //the Windows open and (therefore) those which this Controller is responsible for
-
     private List<AccountTab> tabs = new ArrayList<AccountTab>(); //the tabs open and (therefore) those which this Controller is responsible for
 
     public List<AbstractUserWindow> getWindows() {
@@ -90,7 +81,6 @@ public final class Controller {
     }
 
     //non-static methods 
-    
     //builds GUI
     public void newLoginWindow() {
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -149,7 +139,7 @@ public final class Controller {
             }
         });
     }
-    
+
     private void setTabs() {
         for (Account acc : currentUser.getAccounts()) {
             tabs.add(newAccountTab(currentUser, acc));
@@ -166,7 +156,7 @@ public final class Controller {
 
     public AccountTab newAccountTab(User accountOwner, Account account) {
         AccountTab accTab = new AccountTab(this, accountOwner, account);
-        accTab.setVisible(true); 
+        accTab.setVisible(true);
         return accTab;
     }
 
@@ -180,29 +170,29 @@ public final class Controller {
         account.deposit(new BigDecimal(amount));
         updateBankDisplay();
     }
-    
+
     public BigDecimal getInterestRate(Account account) {
         return account.getInterestRate().multiply(new BigDecimal("100"));
     }
-    
+
     /**
-     * 
+     *
      * @param firstName
      * @param lastName
      * @param birthdate
      * @param ssn
      * @param email
-     * @return 
+     * @return
      */
     public User createNewUser(String firstName, String lastName, Calendar birthdate, int ssn, String email, String username) throws InvalidInputException {
         User user = new User(firstName, lastName, birthdate, ssn, email);
         return user;
     }
-    
-    public void addUserToBank(String username, User user) throws InvalidInputException{
+
+    public void addUserToBank(String username, User user) throws InvalidInputException {
         Bank.getInstance().addUser(username, user);
     }
-   
+
     public void addAccountToUser(User user, Account account) {
         user.addAccount(account);
     }
@@ -210,21 +200,23 @@ public final class Controller {
     public void closeAccount(Account account) {
         account.close();
     }
-    
+
     public Bank getInstance() {
         this.instance = Bank.getInstance();
         return Bank.getInstance();
     }
+
     /**
      * Lays out all of the accounts of a certain User
-     * @return 
+     *
+     * @return
      */
-    public Object[][] updateAccountHolderTableView(boolean hideClosed){
+    public Object[][] updateAccountHolderTableView(boolean hideClosed) {
         Set<Account> accounts = currentUser.getAccounts();
         //get number of rows
         int rows = 0;
-        for(Account account : accounts){
-            if(account.isClosed() && hideClosed){
+        for (Account account : accounts) {
+            if (account.isClosed() && hideClosed) {
                 continue;
             }
             rows++;
@@ -233,7 +225,7 @@ public final class Controller {
         Object[][] summaryTable = new Object[rows][3];
         int i = 0;
         for (Account account : accounts) {
-            if(account.isClosed() && hideClosed){
+            if (account.isClosed() && hideClosed) {
                 continue;
             }
             summaryTable[i][0] = account.getType();
@@ -244,20 +236,22 @@ public final class Controller {
         }
         return summaryTable;
     }
+
     /**
      * Lays out all of the Users and their Accounts
-     * @return 
+     *
+     * @return
      */
-    public Object[][] updateAccountManagerTableView(){
+    public Object[][] updateAccountManagerTableView() {
         Collection<User> users = instance.getUsers();
         //calculate number of rows
         int rows = 0;
         for (User user : users) {
-            if(!user.isActiveCustomer()){
-            rows++;
+            if (!user.isActiveCustomer()) {
+                rows++;
             }
-            for(Account acc : user.getAccounts()){
-                if(!acc.isClosed()){
+            for (Account acc : user.getAccounts()) {
+                if (!acc.isClosed()) {
                     rows++;
                 }
             }
@@ -266,18 +260,19 @@ public final class Controller {
         //display users
         int i = 0;
         for (User user : users) {
-                accountManagerTable[i][0] = user;
-                StringBuilder formattedSsn = new StringBuilder(String.format("%09d", user.getSsn()));
-                formattedSsn.insert(3, "-").insert(6, "-");
-                accountManagerTable[i][1] = formattedSsn;
+            accountManagerTable[i][0] = user;
+            StringBuilder formattedSsn = new StringBuilder(String.format("%09d", user.getSsn()));
+            formattedSsn.insert(3, "-").insert(6, "-");
+            accountManagerTable[i][1] = formattedSsn;
             for (Account account : user.getAccounts()) {
                 if (!account.isClosed()) {
                     accountManagerTable[i][2] = account;
-                    accountManagerTable[i][3] = String.format("$%.2f", account.getBalance());
+                    BigDecimal balance = account.getType().isLoan() ? account.getBalance().negate() : account.getBalance();
+                    accountManagerTable[i][3] = new DollarAmountFormatter().valueToString(balance);
                     i++;
                 }
             }
-            if(!user.isActiveCustomer()){
+            if (!user.isActiveCustomer()) {
                 i++;
             }
         }
@@ -342,8 +337,8 @@ public final class Controller {
         }
         return AuditorTable;
     }
-    
-    public List<TellerAccountTab> getTellerTabs(User user){
+
+    public List<TellerAccountTab> getTellerTabs(User user) {
         List<TellerAccountTab> accTabs = new ArrayList<TellerAccountTab>();
         for (Account acc : user.getAccounts()) {
             if (!acc.isClosed()) {
@@ -352,7 +347,7 @@ public final class Controller {
         }
         return accTabs;
     }
-    
+
     public void updateBankDisplay() {
         for (AbstractUserWindow w : windows) {
             if (w.getClass().getSimpleName().equals("AccountHolderFrame")) {
@@ -364,8 +359,8 @@ public final class Controller {
             accTab.update();
         }
     }
-    
-    public void incurTellerFees(Account account) throws InvalidInputException{
+
+    public void incurTellerFees(Account account) throws InvalidInputException {
         account.applyFee(Bank.getInstance().getPaymentSchedule().getTellerFee());
     }
 }

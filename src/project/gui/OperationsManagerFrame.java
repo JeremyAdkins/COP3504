@@ -290,6 +290,9 @@ public class OperationsManagerFrame extends AbstractUserWindow {
                 }
                 String statement = "";
                 for (Account account : statementAccounts) {
+                    if(account.isClosed() && Bank.getInstance().getCurrentMonth()>account.getMonthClosed()+1){
+                        continue;
+                    }
                     statement += account.generateStatement() + "\n\n";
                 }
 
