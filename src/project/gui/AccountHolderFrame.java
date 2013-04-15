@@ -5,8 +5,9 @@
 package project.gui;
 
 import project.Controller;
+
+import javax.swing.*;
 import java.util.List;
-import javax.swing.JCheckBoxMenuItem;
 
 /**
  *

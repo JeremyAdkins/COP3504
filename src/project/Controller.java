@@ -267,7 +267,10 @@ public final class Controller {
             for (Account account : user.getAccounts()) {
                 if (!account.isClosed()) {
                     accountManagerTable[i][2] = account;
-                    BigDecimal balance = account.getType().isLoan() ? account.getBalance().negate() : account.getBalance();
+                    BigDecimal balance = account.getBalance();
+                    if (account.getType().isLoan()) {
+                        balance = balance.negate();
+                    }
                     accountManagerTable[i][3] = new DollarAmountFormatter().valueToString(balance);
                     i++;
                 }

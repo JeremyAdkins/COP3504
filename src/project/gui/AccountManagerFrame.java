@@ -5,7 +5,10 @@
 package project.gui;
 
 import project.Controller;
-import project.gui.util.*;
+import project.gui.util.DollarAmountFormatter;
+import project.gui.util.FieldInputVerifier;
+import project.gui.util.IntegerFormatter;
+import project.gui.util.PercentageFormatter;
 import project.model.*;
 
 import javax.swing.*;
@@ -23,11 +26,6 @@ import java.math.RoundingMode;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
-import static project.model.Account.Type.CD;
-import static project.model.Account.Type.CHECKING;
-import static project.model.Account.Type.LINE_OF_CREDIT;
-import static project.model.Account.Type.LOAN;
-import static project.model.Account.Type.SAVINGS;
 
 /**
  *
@@ -184,8 +182,9 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
         });
 
         CancelButton.setText("Cancel");
-        CancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        CancelButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
                 UserView.dispose();
             }
         });

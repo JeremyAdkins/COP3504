@@ -1,6 +1,7 @@
 package project.model;
 
 import com.thoughtworks.xstream.XStream;
+import project.gui.util.DollarAmountFormatter;
 
 import java.io.File;
 import java.io.FileReader;
@@ -187,22 +188,22 @@ public final class Bank {
 			}
 		}
         if (tempNumberAssets > 0) {
-		    standardDeviationAssets = standardDeviationAssets.divide(new BigDecimal(tempNumberAssets));
+		    standardDeviationAssets = standardDeviationAssets.divide(new BigDecimal(tempNumberAssets), Bank.MATH_CONTEXT);
         }
         if (tempNumberLiabilities > 0) {
-		    standardDeviationLiabilities = standardDeviationLiabilities.divide(new BigDecimal(tempNumberLiabilities));
+		    standardDeviationLiabilities = standardDeviationLiabilities.divide(new BigDecimal(tempNumberLiabilities), Bank.MATH_CONTEXT);
         }
 		standardDeviationAssets = BigDecimal.valueOf(Math.sqrt(standardDeviationAssets.doubleValue()));
 		standardDeviationLiabilities = BigDecimal.valueOf(Math.sqrt(standardDeviationLiabilities.doubleValue()));
 		
 		Map<String, String> bankStats = new HashMap<String, String>();
         if (tempNumberAssets > 0) {
-		    bankStats.put("Standard deviation of assets", standardDeviationAssets.toString());
+		    bankStats.put("Standard deviation of assets", new DollarAmountFormatter().valueToString(standardDeviationAssets));
         } else {
             bankStats.put("Standard deviation of assets", "N/A");
         }
         if (tempNumberAssets > 0) {
-            bankStats.put("Standard deviation of liabilities", standardDeviationLiabilities.toString());
+            bankStats.put("Standard deviation of liabilities", new DollarAmountFormatter().valueToString(standardDeviationLiabilities));
         } else {
             bankStats.put("Standard deviation of liabilities", "N/A");
         }

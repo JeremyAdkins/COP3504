@@ -169,8 +169,7 @@ public final class AccountTab extends javax.swing.JPanel {
                     }
                 }
             }
-            if (target != null && (target.getType() == Account.Type.CD ||
-                    (target.getType().isLoan() && target.getBalance().negate().compareTo(amount) < 0))) {
+            if (target != null && (target.getType().isLoan() && target.getBalance().negate().compareTo(amount) < 0)) {
                 throw new InvalidInputException(accountNumberStr, "account does not exist or cannot accept this deposit");
             }
             account.withdraw(amount);
@@ -198,9 +197,7 @@ public final class AccountTab extends javax.swing.JPanel {
             Iterator<Account> iterator = accounts.iterator();
             while (iterator.hasNext()) {
                 Account account = iterator.next();
-                if (account.getType() == Account.Type.CD) {
-                    iterator.remove();
-                } else if (account.getType().isLoan() && account.getBalance().negate().compareTo(amount) < 0) {
+                if (account.getType().isLoan() && account.getBalance().negate().compareTo(amount) < 0) {
                     iterator.remove();
                 }
             }
