@@ -30,7 +30,7 @@ public final class AuditorFrame extends AbstractUserWindow {
         AuditorTable.setModel(new javax.swing.table.DefaultTableModel(
                 controller.updateAuditorTableView(),
                 new String[]{
-            "User", "Account", "Account Balance", "Fraudulent Status", "Employee Flag"
+            "User", "Account", "Balance", "Fraud status", "Employee?"
         }) {
             @Override
             public boolean isCellEditable(int rowIndex, int columnIndex) {

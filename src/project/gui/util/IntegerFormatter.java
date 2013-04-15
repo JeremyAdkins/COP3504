@@ -15,7 +15,7 @@ public final class IntegerFormatter extends JFormattedTextField.AbstractFormatte
     }
 
     @Override
-    public Object stringToValue(String text) throws ParseException {
+    public Integer stringToValue(String text) throws ParseException {
         try {
             return Integer.parseInt(text);
         } catch (NumberFormatException nfx) {

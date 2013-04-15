@@ -5,6 +5,7 @@
 package project;
 
 import project.gui.*;
+import project.gui.util.DollarAmountFormatter;
 import project.model.*;
 
 import javax.swing.*;
@@ -216,7 +217,8 @@ public final class Controller {
         for (Account account : accounts) {
             summaryTable[i][0] = account.getType();
             summaryTable[i][1] = account.getAccountNumber();
-            summaryTable[i][2] = "$"+account.getBalance();
+            BigDecimal balance = account.getType().isLoan() ? account.getBalance().negate() : account.getBalance();
+            summaryTable[i][2] = new DollarAmountFormatter().valueToString(balance);
             i++;
         }
         return summaryTable;
@@ -287,17 +289,23 @@ public final class Controller {
             accounts += user.getAccounts().size();
         }
         //lays out the Table contents
-        Object[][] AuditorTable = new Object[accounts][3];
+        Object[][] AuditorTable = new Object[accounts][5];
         int i = 0;
         for (User user : users) {
-            if(!user.isActiveCustomer()){
-                continue;
-            }
-            AuditorTable[i][0] = user;
-            for(Account account : user.getAccounts()){
+            for (Account account : user.getAccounts()) {
+                AuditorTable[i][0] = user;
                 AuditorTable[i][1] = account;
-                AuditorTable[i][2] = account.getBalance();
-                        i++;
+                BigDecimal balance = account.getType().isLoan() ? account.getBalance().negate() : account.getBalance();
+                AuditorTable[i][2] = new DollarAmountFormatter().valueToString(balance);
+                boolean hasFraud = false;
+                for (Transaction transaction : account.getHistory()) {
+                    if (transaction.getFraudStatus() == Transaction.FraudStatus.FLAGGED) {
+                        hasFraud = true;
+                    }
+                }
+                AuditorTable[i][3] = hasFraud ? Transaction.FraudStatus.FLAGGED : Transaction.FraudStatus.NOT_FLAGGED;
+                AuditorTable[i][4] = user.getRole() == null ? "" : user.getRole();
+                i++;
             }
         }
         return AuditorTable;

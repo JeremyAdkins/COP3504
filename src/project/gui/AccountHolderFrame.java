@@ -29,7 +29,7 @@ public final class AccountHolderFrame extends AbstractUserWindow {
         SummaryTable.setModel(new javax.swing.table.DefaultTableModel(
                 controller.updateAccountHolderTableView(),
                 new String[]{
-            "Account Type", "Account Number", "Balance"
+            "Account type", "Account number", "Balance"
         }) {
             @Override
             public boolean isCellEditable(int rowIndex, int columnIndex) {
