@@ -247,9 +247,11 @@ public final class Controller {
                 formattedSsn.insert(3, "-").insert(6, "-");
                 accountManagerTable[i][1] = formattedSsn;
             for (Account account : user.getAccounts()) {
-                accountManagerTable[i][2] = account;
-                accountManagerTable[i][3] = String.format("$%.2f", account.getBalance());
-                i++;
+                if (!account.isClosed()) {
+                    accountManagerTable[i][2] = account;
+                    accountManagerTable[i][3] = String.format("$%.2f", account.getBalance());
+                    i++;
+                }
             }
         }
         return accountManagerTable;
