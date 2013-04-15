@@ -409,22 +409,19 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
         }
 
         private void initComponents() {
-            setLayout(new GridLayout(6, 1));
+            setLayout(new GridLayout(6, 2));
 
-            JPanel typePanel = new JPanel(new BorderLayout());
-            typePanel.add(new JLabel("Account type"), BorderLayout.WEST);
+            add(new JLabel("Account type"));
             JComboBox comboBox = new JComboBox(comboBoxModel);
-            typePanel.add(comboBox, BorderLayout.EAST);
+            add(comboBox);
             comboBox.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     updateForSelectedType();
                 }
             });
-            add(typePanel);
 
-            JPanel amountPanel = new JPanel(new BorderLayout());
-            amountPanel.add(new JLabel("Amount/credit limit"), BorderLayout.WEST);
+            add(new JLabel("Amount/credit limit"));
             amountTextField = new JFormattedTextField(new DollarAmountFormatter.Factory(), BigDecimal.ZERO);
             amountTextField.setInputVerifier(new FieldInputVerifier(AccountManagerFrame.this) {
                 @Override
@@ -432,17 +429,13 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
                     // empty because this is checked when the user hits OK
                 }
             });
-            amountPanel.add(amountTextField, BorderLayout.EAST);
-            add(amountPanel);
+            add(amountTextField);
 
-            JPanel cdTermPanel = new JPanel(new BorderLayout());
-            cdTermPanel.add(new JLabel("CD term"), BorderLayout.WEST);
+            add(new JLabel("CD term"));
             cdTermComboBox = new JComboBox(new DefaultComboBoxModel(CertificateOfDeposit.Term.values()));
-            cdTermPanel.add(cdTermComboBox, BorderLayout.EAST);
-            add(cdTermPanel);
+            add(cdTermComboBox);
 
-            JPanel loanTermPanel = new JPanel(new BorderLayout());
-            loanTermPanel.add(new JLabel("Loan term"), BorderLayout.WEST);
+            add(new JLabel("Loan term"));
             loanTermTextField = new JFormattedTextField(new IntegerFormatter.Factory(), 0);
             loanTermTextField.setInputVerifier(new InputVerifier() {
                 @Override
@@ -466,11 +459,9 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
                     return verify(input);
                 }
             });
-            loanTermPanel.add(loanTermTextField, BorderLayout.EAST);
-            add(loanTermPanel);
+            add(loanTermTextField);
 
-            JPanel interestPremiumPanel = new JPanel(new BorderLayout());
-            interestPremiumPanel.add(new JLabel("Interest premium"), BorderLayout.WEST);
+            add(new JLabel("Interest premium"));
             interestPremiumTextField = new JFormattedTextField(new PercentageFormatter.Factory(), BigDecimal.ZERO);
             interestPremiumTextField.setInputVerifier(new FieldInputVerifier(AccountManagerFrame.this) {
                 @Override
@@ -478,10 +469,8 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
                     // empty because this is checked when the user hits OK
                 }
             });
-            interestPremiumPanel.add(interestPremiumTextField, BorderLayout.EAST);
-            add(interestPremiumPanel);
+            add(interestPremiumTextField);
 
-            JPanel buttonPanel = new JPanel(new BorderLayout());
             JButton addButton = new JButton("Add");
             addButton.addActionListener(new ActionListener() {
                 @Override
@@ -522,7 +511,7 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
                     }
                 }
             });
-            buttonPanel.add(addButton, BorderLayout.WEST);
+            add(addButton);
             JButton cancelButton = new JButton("Cancel");
             cancelButton.addActionListener(new ActionListener() {
                 @Override
@@ -530,8 +519,7 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
                     AddAccountDialog.this.dispose();
                 }
             });
-            buttonPanel.add(cancelButton, BorderLayout.EAST);
-            add(buttonPanel, BorderLayout.SOUTH);
+            add(cancelButton);
         }
 
         private void updateForSelectedType() {
