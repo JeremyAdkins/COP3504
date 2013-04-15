@@ -4,14 +4,16 @@
  */
 package project.gui;
 
+import java.awt.event.KeyEvent;
 import javax.swing.ListSelectionModel;
 import project.Controller;
+import project.model.Account;
 
 /**
  *
  * @author Rich
  */
-public class AuditorFrame extends AbstractUserWindow {
+public final class AuditorFrame extends AbstractUserWindow {
 
     /**
      * Creates new form AuditorFrame
@@ -19,13 +21,14 @@ public class AuditorFrame extends AbstractUserWindow {
     public AuditorFrame(Controller controller) {
         super(controller);
         initComponents();
+        updateAuditorTable();
     }
     
     public void updateAuditorTable(){
         AuditorTable.setModel(new javax.swing.table.DefaultTableModel(
                 controller.updateAuditorTableView(),
                 new String[]{
-            "User", "Account Type", "Account Balance", "Fraudulent Status", "Employee Flag"
+            "User", "Account", "Account Balance", "Fraudulent Status", "Employee Flag"
         }) {
             @Override
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -45,12 +48,19 @@ public class AuditorFrame extends AbstractUserWindow {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTabbedPane1 = new javax.swing.JTabbedPane();
+        AuditorTabHolder = new javax.swing.JTabbedPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         AuditorTable = new javax.swing.JTable();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
+        AuditorTabHolder.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                AuditorTabHolderKeyPressed(evt);
+            }
+        });
+
+        AuditorTable.setToolTipText("");
         AuditorTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 AuditorTableMouseClicked(evt);
@@ -58,31 +68,50 @@ public class AuditorFrame extends AbstractUserWindow {
         });
         jScrollPane1.setViewportView(AuditorTable);
 
-        jTabbedPane1.addTab("ALL ACCOUNTS", jScrollPane1);
+        AuditorTabHolder.addTab("ALL ACCOUNTS", jScrollPane1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE)
+            .addComponent(AuditorTabHolder, javax.swing.GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE)
+            .addComponent(AuditorTabHolder, javax.swing.GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void AuditorTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AuditorTableMouseClicked
+        Account account =  (Account) AuditorTable.getValueAt(AuditorTable.getSelectedRow(), 1);
         if(evt.getClickCount()==2){
-            //TODO open new tab
+            //check if tab is already there (ignore first tab)
+            for(int tabIndex = 1; tabIndex<AuditorTabHolder.getTabCount(); tabIndex++){
+                AccountTab tab = (AccountTab) AuditorTabHolder.getComponentAt(tabIndex);
+                if(tab.getAccount().equals(account)){
+                    AuditorTabHolder.setSelectedIndex(tabIndex);
+                    return;
+                }
+            }
+            AccountTab newTab = controller.newAccountTab(account, this);
+            AuditorTabHolder.add(newTab);
         }
     }//GEN-LAST:event_AuditorTableMouseClicked
 
+    private void AuditorTabHolderKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_AuditorTabHolderKeyPressed
+        if(evt.getKeyChar() == KeyEvent.VK_DELETE){
+            int i = AuditorTabHolder.getSelectedIndex();
+            if(i>0){
+                AuditorTabHolder.remove(i);   
+            }
+        }
+    }//GEN-LAST:event_AuditorTabHolderKeyPressed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTabbedPane AuditorTabHolder;
     private javax.swing.JTable AuditorTable;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTabbedPane jTabbedPane1;
     // End of variables declaration//GEN-END:variables
 }

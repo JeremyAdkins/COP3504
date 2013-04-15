@@ -161,13 +161,12 @@ public final class Controller {
      * @param parent
      * @return 
      */
-    public AccountTab newAccountTab(Account account, AccountHolderFrame parent) {
+    public AccountTab newAccountTab(Account account, AbstractUserWindow parent) {
         AccountTab accTab = new AccountTab(account, parent, this);
-        accTab.setVisible(true);
+        accTab.setVisible(true); 
         return accTab;
     }
 
-    
     //Interact with model
     public void withdraw(Account account, String amount) throws InvalidInputException, InsufficientFundsException {
         account.withdraw(new BigDecimal(amount));
@@ -178,6 +177,7 @@ public final class Controller {
         account.deposit(new BigDecimal(amount));
         updateBankDisplay();
     }
+    
     public BigDecimal getInterestRate(Account account) {
         return account.getInterestRate().multiply(new BigDecimal("100"));
     }
@@ -254,11 +254,14 @@ public final class Controller {
         Object[][] accountManagerTable = new Object[accounts][4];
         int i = 0;
         for (User user : users) {
-            for (Account account : user.getAccounts()) {
+            if(!user.isActiveCustomer()){
+                continue;
+            }
                 accountManagerTable[i][0] = user;
                 StringBuilder formattedSsn = new StringBuilder(String.format("%09d", user.getSsn()));
                 formattedSsn.insert(3, "-").insert(6, "-");
                 accountManagerTable[i][1] = formattedSsn;
+            for (Account account : user.getAccounts()) {
                 accountManagerTable[i][2] = account;
                 accountManagerTable[i][3] = String.format("$%.2f", account.getBalance());
                 i++;
@@ -298,14 +301,13 @@ public final class Controller {
 
     public Object[][] updateAuditorTableView() {
         Collection<User> users = instance.getUsers();
-        int accountHolders = 0;
+        //finds the number of users
+        int accounts = 0;
         for (User user : users) {
-            if(!user.isActiveCustomer()){
-                continue;
-            }
-            accountHolders++;
+            accounts += user.getAccounts().size();
         }
-        Object[][] AuditorTable = new Object[accountHolders][3];
+        //lays out the Table contents
+        Object[][] AuditorTable = new Object[accounts][3];
         int i = 0;
         for (User user : users) {
             if(!user.isActiveCustomer()){

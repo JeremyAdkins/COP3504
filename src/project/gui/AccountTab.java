@@ -26,14 +26,14 @@ public final class AccountTab extends javax.swing.JPanel {
      * Creates new form CheckingAccountTab
      */
     private Account account;
-    private static AccountHolderFrame parentFrame;
+    private static AbstractUserWindow parentFrame;
 
-    public static AccountHolderFrame getParentFrame() {
+    public static AbstractUserWindow getParentFrame() {
         return parentFrame;
     }
     private static Controller controller;
 
-    public AccountTab(Account account, AccountHolderFrame parent, Controller controller) {
+    public AccountTab(Account account, AbstractUserWindow parent, Controller controller) {
         this.account = account;
         this.parentFrame = parent;
         this.controller = controller;
@@ -129,7 +129,7 @@ public final class AccountTab extends javax.swing.JPanel {
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel1.setText("Amount:   $");
 
-        WithdrawAmountField.setFormatterFactory(new DollarAmountFormatter.Factory());
+        WithdrawAmountField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#,##0.00"))));
 
         javax.swing.GroupLayout WithdrawDialogLayout = new javax.swing.GroupLayout(WithdrawDialog.getContentPane());
         WithdrawDialog.getContentPane().setLayout(WithdrawDialogLayout);
@@ -185,7 +185,7 @@ public final class AccountTab extends javax.swing.JPanel {
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel2.setText("Amount:   $");
 
-        DepositAmountField.setFormatterFactory(new DollarAmountFormatter.Factory());
+        DepositAmountField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#,##0.00"))));
 
         javax.swing.GroupLayout DepositDialogLayout = new javax.swing.GroupLayout(DepositDialog.getContentPane());
         DepositDialog.getContentPane().setLayout(DepositDialogLayout);
@@ -301,7 +301,7 @@ public final class AccountTab extends javax.swing.JPanel {
                         .addComponent(DepositButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(UseTeller)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 208, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(Separator2, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(historyLabel)
@@ -357,7 +357,6 @@ public final class AccountTab extends javax.swing.JPanel {
         if (selection==JOptionPane.YES_OPTION) {
             DepositDialog.dispose();
             try {
-        System.out.println("deposit "+amount+" to "+account);
                 controller.deposit(account, amount);
             } catch (InvalidInputException ex) {
                 controller.handleException(this, ex);

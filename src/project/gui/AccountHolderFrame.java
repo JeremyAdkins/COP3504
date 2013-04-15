@@ -50,7 +50,7 @@ public final class AccountHolderFrame extends AbstractUserWindow {
     @Override
     public void logout(){
         super.logout();
-        controller.getTabs(this);
+        controller.clearTabs();
     }
     /**
      * This method is called from within the constructor to initialize the form.
