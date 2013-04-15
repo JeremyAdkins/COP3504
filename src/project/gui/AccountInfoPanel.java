@@ -4,6 +4,8 @@ import project.Controller;
 import project.gui.util.DollarAmountFormatter;
 import project.gui.util.PercentageFormatter;
 import project.model.Account;
+import project.model.CertificateOfDeposit;
+import project.model.LineOfCredit;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,7 +35,8 @@ public final class AccountInfoPanel extends JPanel {
 
     private void initComponents() {
         final Font labelFont = new Font(Font.SANS_SERIF, Font.BOLD, 16);
-        setLayout(new GridLayout(3, 2));
+        int rows = (account.getType() == Account.Type.CD || account.getType() == Account.Type.LINE_OF_CREDIT) ? 4 : 3;
+        setLayout(new GridLayout(rows, 2));
 
         JLabel accountNumberCaption = new JLabel("Account number");
         accountNumberCaption.setFont(labelFont);
@@ -49,6 +52,28 @@ public final class AccountInfoPanel extends JPanel {
         balanceLabel.setFont(labelFont);
         balanceLabel.setHorizontalAlignment(JLabel.RIGHT);
         add(balanceLabel);
+
+        if (account.getType() == Account.Type.CD) {
+            CertificateOfDeposit cdAccount = (CertificateOfDeposit) account;
+            int monthsRemaining = cdAccount.getTerm().getLength() - cdAccount.getMonthsElapsed();
+
+            JLabel monthsRemainingCaption = new JLabel("Months remaining");
+            monthsRemainingCaption.setFont(labelFont);
+            add(monthsRemainingCaption);
+            JLabel monthsRemainingLabel = new JLabel(Integer.toString(monthsRemaining), JLabel.RIGHT);
+            monthsRemainingLabel.setFont(labelFont);
+            add(monthsRemainingLabel);
+        } else if (account.getType() == Account.Type.LINE_OF_CREDIT) {
+            LineOfCredit locAccount = (LineOfCredit) account;
+            BigDecimal creditLimit = locAccount.getCreditLimit();
+
+            JLabel creditLimitCaption = new JLabel("Credit limit");
+            creditLimitCaption.setFont(labelFont);
+            add(creditLimitCaption);
+            JLabel creditLimitLabel = new JLabel(new DollarAmountFormatter().valueToString(creditLimit), JLabel.RIGHT);
+            creditLimitLabel.setFont(labelFont);
+            add(creditLimitLabel);
+        }
 
         JLabel interestRateCaption = new JLabel("Interest rate");
         interestRateCaption.setFont(labelFont);
