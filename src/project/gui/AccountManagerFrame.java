@@ -59,17 +59,21 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
         accountManagerTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                if (accountManagerTable.getSelectedRow() >= 0) {
-                    addAccountButton.setEnabled(true);
-                    Account account = (Account) accountManagerTable.getValueAt(accountManagerTable.getSelectedRow(), 2);
-                    if (account.getBalance().setScale(2, RoundingMode.HALF_UP).compareTo(BigDecimal.ZERO) == 0) {
-                        closeAccountButton.setEnabled(true);
-                    } else {
-                        closeAccountButton.setEnabled(false);
+                addAccountButton.setEnabled(false);
+                closeAccountButton.setEnabled(false);
+
+                int selectedRow = accountManagerTable.getSelectedRow();
+                if (selectedRow >= 0) {
+                    User user = (User) accountManagerTable.getValueAt(selectedRow, 0);
+                    Account account = (Account) accountManagerTable.getValueAt(selectedRow, 2);
+                    if (user != null) {
+                        addAccountButton.setEnabled(true);
                     }
-                } else {
-                    addAccountButton.setEnabled(false);
-                    closeAccountButton.setEnabled(false);
+                    if (account != null) {
+                        if (account.getBalance().setScale(2, RoundingMode.HALF_UP).compareTo(BigDecimal.ZERO) == 0) {
+                            closeAccountButton.setEnabled(true);
+                        }
+                    }
                 }
             }
         });
@@ -405,6 +409,9 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
         private JFormattedTextField interestPremiumTextField;
 
         private AddAccountDialog(User user) {
+            if (user == null) {
+                throw new NullPointerException();
+            }
             this.user = user;
             setTitle("Add account");
             setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
