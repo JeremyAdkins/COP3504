@@ -62,6 +62,9 @@ public final class AccountInfoPanel extends JPanel {
         if (account.getType() == Account.Type.CD) {
             CertificateOfDeposit cdAccount = (CertificateOfDeposit) account;
             int monthsRemaining = cdAccount.getTerm().getLength() - cdAccount.getMonthsElapsed();
+            if (monthsRemaining < 0) {
+                monthsRemaining = 0;
+            }
 
             JLabel monthsRemainingCaption = new JLabel("Months remaining");
             monthsRemainingCaption.setFont(labelFont);
