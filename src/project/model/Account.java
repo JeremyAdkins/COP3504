@@ -220,19 +220,21 @@ public abstract class Account {
     public String generateStatement() {
         int statementMonth = Bank.getInstance().getCurrentMonth() - 1;
         List<Transaction> statementHistory = new ArrayList<Transaction>();
-        BigDecimal carriedForward = null;
-        BigDecimal endOfMonth = null;
+        boolean carriedForwardSet = false;
+        int carriedForwardIndex = -1;
+        int endOfMonthIndex = -1;
         for (Transaction transaction : history) {
             if (transaction.getTimestamp() == statementMonth) {
-                if (carriedForward == null && history.indexOf(transaction) > 0) {
-                    carriedForward = history.get(history.indexOf(transaction) - 1).getBalance();
+                if (!carriedForwardSet) {
+                    carriedForwardIndex = history.indexOf(transaction) - 1;
+                    carriedForwardSet = true;
                 }
                 statementHistory.add(transaction);
-                endOfMonth = transaction.getBalance();
+                endOfMonthIndex = history.indexOf(transaction);
             }
         }
 
-
+        BigDecimal carriedForward = carriedForwardIndex >= 0 ? history.get(carriedForwardIndex).getBalance() : null;
         BigDecimal displayCarriedForward;
         if (carriedForward == null) {
             displayCarriedForward = BigDecimal.ZERO;
@@ -241,6 +243,7 @@ public abstract class Account {
         } else {
             displayCarriedForward = carriedForward;
         }
+        BigDecimal endOfMonth = endOfMonthIndex >= 0 ? history.get(endOfMonthIndex).getBalance() : null;
         BigDecimal displayEndOfMonth;
         if (endOfMonth == null) {
             displayEndOfMonth = BigDecimal.ZERO;
