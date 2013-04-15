@@ -284,8 +284,8 @@ public final class Controller {
         return data;
     }
 
-    public void handleException(Component parent, InvalidInputException iix) {
-        JOptionPane.showMessageDialog(parent, iix.getMessage(), iix.getClass().getName(), JOptionPane.ERROR_MESSAGE);
+    public void handleException(Component parent, Exception x) {
+        JOptionPane.showMessageDialog(parent, x.getMessage(), x.getClass().getName(), JOptionPane.ERROR_MESSAGE);
     }
 
     public void shutDown() {

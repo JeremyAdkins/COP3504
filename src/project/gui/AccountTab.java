@@ -157,10 +157,12 @@ public final class AccountTab extends javax.swing.JPanel {
             BigDecimal amount = FORMATTER.stringToValue(amountStr);
             account.withdraw(amount);
             controller.updateBankDisplay();
-        } catch (ParseException px) { // TODO
+        } catch (ParseException px) {
+            controller.handleException(this, px);
         } catch (InvalidInputException iix) {
             controller.handleException(this, iix);
-        } catch (InsufficientFundsException ifx) { // TODO
+        } catch (InsufficientFundsException ifx) {
+            controller.handleException(this, ifx);
         }
     }
 
@@ -188,10 +190,12 @@ public final class AccountTab extends javax.swing.JPanel {
                 JOptionPane.showMessageDialog(this, "No accounts can accept that balance.", "Transfer failed", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            // TODO
         } catch (ParseException px) {
+            controller.handleException(this, px);
         } catch (InvalidInputException iix) {
+            controller.handleException(this, iix);
         } catch (InsufficientFundsException ifx) {
+            controller.handleException(this, ifx);
         }
     }
 }
