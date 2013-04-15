@@ -22,6 +22,8 @@ public final class CertificateOfDeposit extends Account {
         }
     }
 
+    private final BigDecimal interestRate;
+
     private final Term term;
 
     int monthsElapsed;
@@ -36,6 +38,15 @@ public final class CertificateOfDeposit extends Account {
         } else {
             super.applyTransaction(amount, Transaction.Type.DEPOSIT);
         }
+
+        BigDecimal interestRate = Bank.getInstance().getPaymentSchedule().getSavingsInterest();
+        for (Term lowerTerm : Term.values()) {
+            interestRate = interestRate.add(Bank.getInstance().getPaymentSchedule().getCdPremium(lowerTerm));
+            if (lowerTerm == term) {
+                break;
+            }
+        }
+        this.interestRate = interestRate;
     }
 
     @Override
@@ -93,7 +104,7 @@ public final class CertificateOfDeposit extends Account {
         if (isMature()) {
             return BigDecimal.ZERO;
         } else {
-            return Bank.getInstance().getPaymentSchedule().getCdInterest(term);
+            return interestRate;
         }
 	}
 

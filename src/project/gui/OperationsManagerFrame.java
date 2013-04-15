@@ -80,12 +80,12 @@ public class OperationsManagerFrame extends AbstractUserWindow {
         interestPanel.add(savingsInterestField);
 
         for (final CertificateOfDeposit.Term term : CertificateOfDeposit.Term.values()) {
-            interestPanel.add(new JLabel("CD " + term.toString()));
-            JFormattedTextField cdInterestField = new JFormattedTextField(new PercentageFormatter.Factory(), paymentSchedule.getCdInterest(term));
+            interestPanel.add(new JLabel("CD premium " + term.toString()));
+            JFormattedTextField cdInterestField = new JFormattedTextField(new PercentageFormatter.Factory(), paymentSchedule.getCdPremium(term));
             cdInterestField.setInputVerifier(new FieldInputVerifier(this) {
                 @Override
                 protected void setField(BigDecimal value) throws InvalidInputException {
-                    paymentSchedule.setCdInterest(term, value);
+                    paymentSchedule.setCdPremium(term, value);
                 }
             });
             interestPanel.add(cdInterestField);
