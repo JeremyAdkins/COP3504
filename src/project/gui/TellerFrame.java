@@ -4,6 +4,7 @@
  */
 package project.gui;
 
+import java.awt.event.KeyEvent;
 import project.Controller;
 import project.model.InvalidInputException;
 
@@ -26,12 +27,20 @@ public class TellerFrame extends AbstractUserWindow {
     public TellerFrame(Controller controller) {
         super(controller);
         initComponents();
+        usernameField.selectAll();
+        usernameField.requestFocusInWindow();
     }
 
     private void setUpTabs() {
         for (TellerAccountTab tab : tabs) {
             TellerTabHolder.add(tab);
             TellerTabHolder.revalidate();
+        }
+    }
+    
+    private void removeTabs() {
+        for (TellerAccountTab tab : tabs) {
+            TellerTabHolder.remove(tab);
         }
     }
 
@@ -49,7 +58,7 @@ public class TellerFrame extends AbstractUserWindow {
         usernameField = new javax.swing.JFormattedTextField();
         selectUserButton = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
         TellerTabHolder.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -57,10 +66,24 @@ public class TellerFrame extends AbstractUserWindow {
             }
         });
 
-        selectUserButton.setText("Select");
+        usernameField.setText("Username");
+        usernameField.setToolTipText("Enter a Customer's username");
+        usernameField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                usernameFieldKeyPressed(evt);
+            }
+        });
+        usernameField.requestFocusInWindow();
+
+        selectUserButton.setText("New Customer");
         selectUserButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 selectUserButtonActionPerformed(evt);
+            }
+        });
+        selectUserButton.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                selectUserButtonKeyPressed(evt);
             }
         });
 
@@ -73,7 +96,7 @@ public class TellerFrame extends AbstractUserWindow {
                 .addComponent(usernameField, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(selectUserButton)
-                .addContainerGap(206, Short.MAX_VALUE))
+                .addContainerGap(164, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -104,6 +127,7 @@ public class TellerFrame extends AbstractUserWindow {
     private void selectUserButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectUserButtonActionPerformed
         try {
             User user = controller.getInstance().getUser(usernameField.getText());
+            removeTabs();
             tabs = controller.getTellerTabs(user);
             setUpTabs();
         } catch (InvalidInputException ex) {
@@ -118,9 +142,25 @@ public class TellerFrame extends AbstractUserWindow {
                 if (JOptionPane.showConfirmDialog(this, ("Do you want to waive fees for transactions on this account?")) != JOptionPane.YES_OPTION) {
                     tab.incurFee();
                 }
+                tab.waiveFee();
             }
         }
     }//GEN-LAST:event_TellerTabHolderStateChanged
+
+    private void usernameFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_usernameFieldKeyPressed
+        char c = evt.getKeyChar();
+        if (c == KeyEvent.VK_ENTER) {
+            selectUserButton.doClick();
+        }
+    }//GEN-LAST:event_usernameFieldKeyPressed
+
+    private void selectUserButtonKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_selectUserButtonKeyPressed
+        char c = evt.getKeyChar();
+        if (c == KeyEvent.VK_ENTER) {
+            selectUserButton.doClick();
+        }
+    }//GEN-LAST:event_selectUserButtonKeyPressed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTabbedPane TellerTabHolder;
     private javax.swing.JPanel jPanel1;

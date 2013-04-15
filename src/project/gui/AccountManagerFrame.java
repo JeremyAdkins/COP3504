@@ -314,15 +314,15 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
                             .addComponent(addUserButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(setCreditLimitButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGap(18, 18, 18)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 452, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1)
+                    .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 338, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(addUserButton)
                         .addGap(10, 10, 10)
@@ -331,7 +331,7 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
                         .addComponent(closeAccountButton)
                         .addGap(10, 10, 10)
                         .addComponent(setCreditLimitButton)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -394,9 +394,7 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
         UserView.dispose();
         updateAccountManagerTable();
     }                                        
-
-    // TODO I modified this
-    // Variables declaration - do not modify                     
+                   
     private javax.swing.JTable accountManagerTable;
     private javax.swing.JButton CancelButton;
     private javax.swing.JFormattedTextField DOBField;

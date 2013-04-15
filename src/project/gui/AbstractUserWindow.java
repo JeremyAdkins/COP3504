@@ -18,9 +18,9 @@ public abstract class AbstractUserWindow extends JFrame {
 
     public final Controller controller;
     //GUI commonalities
-    private JMenuBar menuBar = new JMenuBar();
-    private JMenu FileMenu = new JMenu();
-    private JMenuItem LogoutMenuItem = new JMenuItem();
+    public JMenuBar menuBar = new JMenuBar();
+    public JMenu FileMenu = new JMenu();
+    public JMenuItem LogoutMenuItem = new JMenuItem();
 
     public AbstractUserWindow(Controller controller) {
         this.controller = controller;

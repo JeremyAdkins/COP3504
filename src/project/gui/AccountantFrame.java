@@ -50,7 +50,6 @@ public final class AccountantFrame extends AbstractUserWindow {
                 return false;
             }
         });
-        statisticTable.revalidate();
         pack();
     }
 }
