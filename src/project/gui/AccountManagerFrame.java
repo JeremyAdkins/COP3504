@@ -9,10 +9,7 @@ import project.gui.util.DollarAmountFormatter;
 import project.gui.util.FieldInputVerifier;
 import project.gui.util.IntegerFormatter;
 import project.gui.util.PercentageFormatter;
-import project.model.Account;
-import project.model.CertificateOfDeposit;
-import project.model.InvalidInputException;
-import project.model.User;
+import project.model.*;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -33,7 +30,7 @@ import java.util.Date;
  *
  * @author Rich
  */
-public final class AccountManagerFrame extends AbstractUserWindow implements DocumentListener, PropertyChangeListener, ActionListener {
+public final class AccountManagerFrame extends AbstractUserWindow implements DocumentListener, PropertyChangeListener {
 
     
     /**
@@ -43,7 +40,6 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
         super(controller);
         initComponents();
         setListeners();
-        initAccountComboBoxModel();
         updateAccountManagerTable();
     }
     
@@ -74,10 +70,6 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
         accountManagerTable.revalidate();
     }
     
-    private void initAccountComboBoxModel(){
-        accountTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel(Account.Type.values()));
-    }
-    
     private void action(){
         if(firstNameField.getText().equals("")){
             OKButton.setEnabled(false);
@@ -103,10 +95,6 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
             OKButton.setEnabled(false);
             return;
         }
-        if(accountTypeComboBox.getSelectedItem().equals("")){
-            OKButton.setEnabled(false);
-            return;
-        }
         OKButton.setEnabled(true);
     }
 
@@ -117,7 +105,6 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
         emailField.getDocument().addDocumentListener(this);
         DOBField.addPropertyChangeListener("value", this);
         SSNField.addPropertyChangeListener("value", this);
-        accountTypeComboBox.addActionListener(this);
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -146,8 +133,6 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
         emailField = new javax.swing.JTextField();
         usernameField = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
-        accountTypeComboBox = new JComboBox();
-        jLabel10 = new javax.swing.JLabel();
         addUserButton = new javax.swing.JButton();
         addAccountButton = new JButton();
         closeAccountButton = new JButton();
@@ -194,9 +179,6 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
         jLabel9.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel9.setText("Username:");
 
-        jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel10.setText("new Account:");
-
         javax.swing.GroupLayout UserViewLayout = new javax.swing.GroupLayout(UserView.getContentPane());
         UserView.getContentPane().setLayout(UserViewLayout);
         UserViewLayout.setHorizontalGroup(
@@ -216,8 +198,7 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
                             .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel10, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(5, 5, 5)
                         .addGroup(UserViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(SSNField, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
@@ -225,8 +206,7 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
                             .addComponent(firstNameField)
                             .addComponent(lastNameField)
                             .addComponent(emailField)
-                            .addComponent(usernameField)
-                            .addComponent(accountTypeComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(usernameField))))
                 .addContainerGap())
         );
         UserViewLayout.setVerticalGroup(
@@ -256,10 +236,6 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
                 .addGroup(UserViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
                     .addComponent(emailField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(UserViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel10)
-                    .addComponent(accountTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(UserViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(OKButton)
@@ -354,7 +330,8 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
         int ssn = Integer.parseInt(SSNField.getText().replace("-", "")); // note that the SSN field formats it correctly
         try {
             User user = controller.createNewUser(firstName, lastName, dateOfBirth, ssn, email, username);
-            controller.addAccountToUser((Account.Type) accountTypeComboBox.getSelectedItem(), user);
+            new AddAccountDialog(user).setVisible(true);
+            // TODO what if they hit cancel on this dialog?
         } catch (InvalidInputException e) {
             controller.handleException(this, e);
         }
@@ -364,7 +341,6 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
 
     // TODO I modified this
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox accountTypeComboBox;
     private javax.swing.JTable accountManagerTable;
     private javax.swing.JButton CancelButton;
     private javax.swing.JFormattedTextField DOBField;
@@ -376,7 +352,6 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
     private javax.swing.JButton closeAccountButton;
     private javax.swing.JTextField emailField;
     private javax.swing.JTextField firstNameField;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -410,12 +385,6 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
         action();
     }
 
-    //ActionListener
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        action();
-    }
-
     private final class AddAccountDialog extends JDialog {
         private final User user;
 
@@ -431,6 +400,7 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
 
         private AddAccountDialog(User user) {
             this.user = user;
+            setTitle("Add account");
             setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
             comboBoxModel = new DefaultComboBoxModel(Account.Type.values());
             comboBoxModel.setSelectedItem(Account.Type.SAVINGS);
@@ -517,9 +487,39 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     Account.Type type = (Account.Type) comboBoxModel.getSelectedItem();
-                    controller.addAccountToUser(type, user);
-                    updateAccountManagerTable();
-                    AddAccountDialog.this.dispose();
+                    try {
+                        Account account;
+                        switch (type) {
+                            case CHECKING:
+                                account = new CheckingAccount();
+                                break;
+                            case SAVINGS:
+                                account = new SavingsAccount();
+                                break;
+                            case CD:
+                                account = new CertificateOfDeposit((BigDecimal) amountTextField.getValue(),
+                                        (CertificateOfDeposit.Term) cdTermComboBox.getSelectedItem());
+                                break;
+                            case LOAN:
+                                account = new Loan((BigDecimal) amountTextField.getValue(),
+                                        (Integer) loanTermTextField.getValue(),
+                                        (BigDecimal) interestPremiumTextField.getValue());
+                                break;
+                            case LINE_OF_CREDIT:
+                                account = new LineOfCredit((BigDecimal) amountTextField.getValue(),
+                                        (BigDecimal) interestPremiumTextField.getValue());
+                                break;
+                            default:
+                                throw new UnsupportedOperationException("unknown account type");
+                        }
+                        controller.addAccountToUser(user, account);
+                        updateAccountManagerTable();
+                        AddAccountDialog.this.dispose();
+                    } catch (InvalidInputException iix) {
+                        controller.handleException(AccountManagerFrame.this, iix);
+                    } catch (LoanCapException lcx) {
+                        // TODO
+                    }
                 }
             });
             buttonPanel.add(addButton, BorderLayout.WEST);
@@ -543,7 +543,26 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
                     loanTermTextField.setEnabled(false);
                     interestPremiumTextField.setEnabled(false);
                     break;
-                // TODO handle the other types
+                case CD:
+                    amountTextField.setEnabled(true);
+                    cdTermComboBox.setEnabled(true);
+                    loanTermTextField.setEnabled(false);
+                    interestPremiumTextField.setEnabled(false);
+                    break;
+                case LOAN:
+                    amountTextField.setEnabled(true);
+                    cdTermComboBox.setEnabled(false);
+                    loanTermTextField.setEnabled(true);
+                    interestPremiumTextField.setEnabled(true);
+                    break;
+                case LINE_OF_CREDIT:
+                    amountTextField.setEnabled(true);
+                    cdTermComboBox.setEnabled(false);
+                    loanTermTextField.setEnabled(false);
+                    interestPremiumTextField.setEnabled(true);
+                    break;
+                default:
+                    throw new UnsupportedOperationException("unknown account type");
             }
             pack();
         }
