@@ -102,41 +102,47 @@ public final class Controller {
         });
     }
 
-    /**
-     * Opens the appropriate window based on 'user'.
-     *
-     * @param user sets currentUser
-     */
-    public void newAbstractUserWindow(User user) {
+    public void newCustomerUserWindow(User user) {
         currentUser = user;
         windows.clear();
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                clearTabs();
+                setTabs();
+                AbstractUserWindow userWindow = new AccountHolderFrame(Controller.this);
+                userWindow.setVisible(true);
+                windows.add(userWindow);
+            }
+        });
+    }
 
+    public void newEmployeeUserWindow(User user) {
+        currentUser = user;
+        windows.clear();
         //create Account Holder Frame
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                AbstractUserWindow userWindow = null;
-                if (currentUser.getRole() == null) {
-                    clearTabs();
-                    setTabs((AccountHolderFrame) userWindow);
-                    userWindow = new AccountHolderFrame(Controller.this);
-                } else {
-                    switch (currentUser.getRole()) {
-                        case TELLER:
-                            userWindow = new TellerFrame(Controller.this);
-                            break;
-                        case ACCOUNTANT:
-                            userWindow = new AccountantFrame(Controller.this);
-                            break;
-                        case OPERATIONS_MANAGER:
-                            userWindow = new OperationsManagerFrame(Controller.this);
-                            break;
-                        case AUDITOR:
-                            userWindow = new AuditorFrame(Controller.this);
-                            break;
-                        case ACCOUNT_MANAGER:
-                            userWindow = new AccountManagerFrame(Controller.this);
-                    }
+                AbstractUserWindow userWindow;
+                switch (currentUser.getRole()) {
+                    case TELLER:
+                        userWindow = new TellerFrame(Controller.this);
+                        break;
+                    case ACCOUNTANT:
+                        userWindow = new AccountantFrame(Controller.this);
+                        break;
+                    case OPERATIONS_MANAGER:
+                        userWindow = new OperationsManagerFrame(Controller.this);
+                        break;
+                    case AUDITOR:
+                        userWindow = new AuditorFrame(Controller.this);
+                        break;
+                    case ACCOUNT_MANAGER:
+                        userWindow = new AccountManagerFrame(Controller.this);
+                        break;
+                    default:
+                        throw new UnsupportedOperationException("unsupported user role");
                 }
                 userWindow.setVisible(true);
                 windows.add(userWindow);
@@ -144,7 +150,7 @@ public final class Controller {
         });
     }
     
-    private void setTabs(AccountHolderFrame parent) {
+    private void setTabs() {
         for (Account acc : currentUser.getAccounts()) {
             tabs.add(newAccountTab(currentUser, acc));
         }

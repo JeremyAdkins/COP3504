@@ -20,6 +20,7 @@ public final class PaymentSchedule {
 	private BigDecimal locFixedPayment = new BigDecimal("50.00");
 	private BigDecimal locPercentPayment = new BigDecimal("0.0200");
 	private BigDecimal locPenalty = new BigDecimal("20.00");
+    private BigDecimal tellerFee = new BigDecimal("3.00");
 
     PaymentSchedule() {
         cdPremium = new HashMap<CertificateOfDeposit.Term, BigDecimal>();
@@ -192,4 +193,15 @@ public final class PaymentSchedule {
         }
 		this.locPenalty = locPenalty.round(Bank.MATH_CONTEXT);
 	}
+
+    public BigDecimal getTellerFee() {
+        return tellerFee;
+    }
+
+    public void setTellerFee(BigDecimal tellerFee) throws InvalidInputException {
+        if (tellerFee.compareTo(BigDecimal.ZERO) < 0) {
+            throw new InvalidInputException(tellerFee, "payment schedule values must be non-negative");
+        }
+        this.tellerFee = tellerFee.round(Bank.MATH_CONTEXT);
+    }
 }

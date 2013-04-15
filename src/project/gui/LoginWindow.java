@@ -138,7 +138,11 @@ public final class LoginWindow extends javax.swing.JFrame {
 
         //Closes itself and opens the appropriate Frame through the Controller
         this.dispose();
-        controller.newAbstractUserWindow(user);
+        if (loginAsEmployee) {
+            controller.newEmployeeUserWindow(user);
+        } else {
+            controller.newCustomerUserWindow(user);
+        }
 
     }//GEN-LAST:event_LoginButtonActionPerformed
 

@@ -5,15 +5,8 @@
   </component>
   <component name="ProjectPlainTextFileTypeManager">
     <file url="file://$PROJECT_DIR$/src/project/gui/AccountHolderFrame.form" />
-    <file url="file://$PROJECT_DIR$/src/project/gui/AccountManagerFrame.form" />
-    <file url="file://$PROJECT_DIR$/src/project/gui/AccountTab.form" />
     <file url="file://$PROJECT_DIR$/src/project/gui/AuditorFrame.form" />
-    <file url="file://$PROJECT_DIR$/src/project/gui/CDAccountTab.form" />
-    <file url="file://$PROJECT_DIR$/src/project/gui/CheckingAccountTab.form" />
-    <file url="file://$PROJECT_DIR$/src/project/gui/LoanAccountTab.form" />
-    <file url="file://$PROJECT_DIR$/src/project/gui/LoCAccountTab.form" />
     <file url="file://$PROJECT_DIR$/src/project/gui/LoginWindow.form" />
-    <file url="file://$PROJECT_DIR$/src/project/gui/SavingsAccountTab.form" />
     <file url="file://$PROJECT_DIR$/src/project/gui/TellerFrame.form" />
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="1.7" project-jdk-type="JavaSDK">
