@@ -22,9 +22,6 @@ import java.util.logging.Logger;
  */
 public final class AccountTab extends javax.swing.JPanel {
 
-    /**
-     * Creates new form CheckingAccountTab
-     */
     private Account account;
     private static AccountHolderFrame parentFrame;
 
