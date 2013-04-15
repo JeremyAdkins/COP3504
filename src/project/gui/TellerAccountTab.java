@@ -45,6 +45,7 @@ public final class TellerAccountTab extends JPanel {
                 try {
                     BigDecimal amount = new DollarAmountFormatter().stringToValue(amountStr);
                     account.deposit(amount);
+                    infoPanel.update();
                 } catch (ParseException px) {
                     controller.handleException(TellerAccountTab.this, px);
                 } catch (InvalidInputException iix) {
@@ -64,6 +65,7 @@ public final class TellerAccountTab extends JPanel {
                 try {
                     BigDecimal amount = new DollarAmountFormatter().stringToValue(amountStr);
                     account.withdraw(amount);
+                    infoPanel.update();
                 } catch (ParseException px) {
                     controller.handleException(TellerAccountTab.this, px);
                 } catch (InvalidInputException iix) {
