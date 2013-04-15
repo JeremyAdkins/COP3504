@@ -28,7 +28,11 @@ public final class TellerAccountTab extends JPanel {
     
     public void incurFee() {
         feeIncurred = true;
-        controller.incurTellerFees(account);
+        try {
+            controller.incurTellerFees(account);
+        } catch (InvalidInputException ex) {
+            controller.handleException(this, ex);
+        }
     }
 
     private final AccountInfoPanel infoPanel;

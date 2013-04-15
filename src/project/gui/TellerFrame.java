@@ -112,10 +112,12 @@ public class TellerFrame extends AbstractUserWindow {
     }//GEN-LAST:event_selectUserButtonActionPerformed
 
     private void TellerTabHolderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_TellerTabHolderStateChanged
-        TellerAccountTab tab = (TellerAccountTab) TellerTabHolder.getSelectedComponent();
-        if (!tab.isFeeIncurred()) {
-            if (JOptionPane.showConfirmDialog(this, ("Do you want to waive fees for transactions on this account?")) != JOptionPane.YES_OPTION) {
-                tab.incurFee();
+        if (TellerTabHolder.getSelectedIndex() > 0) {
+            TellerAccountTab tab = (TellerAccountTab) TellerTabHolder.getSelectedComponent();
+            if (!tab.isFeeIncurred()) {
+                if (JOptionPane.showConfirmDialog(this, ("Do you want to waive fees for transactions on this account?")) != JOptionPane.YES_OPTION) {
+                    tab.incurFee();
+                }
             }
         }
     }//GEN-LAST:event_TellerTabHolderStateChanged

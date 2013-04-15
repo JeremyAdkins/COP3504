@@ -349,7 +349,7 @@ public final class Controller {
         }
     }
     
-    public void incurTellerFees(Account account){
+    public void incurTellerFees(Account account) throws InvalidInputException{
         account.applyFee(Bank.getInstance().getPaymentSchedule().getTellerFee());
     }
 }
