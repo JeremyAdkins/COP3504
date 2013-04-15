@@ -47,12 +47,18 @@ public final class DollarAmountFormatter extends JFormattedTextField.AbstractFor
 
     @Override
     public String valueToString(Object value) throws ParseException {
-        if (acceptsNull && value == null) {
-            return "";
-        } else if (value instanceof BigDecimal) {
-            return String.format("%.2f", value);
+        if (value == null || value instanceof BigDecimal) {
+            return valueToString((BigDecimal) value);
         } else {
             throw new ParseException("value is not a BigDecimal", 0);
+        }
+    }
+
+    public String valueToString(BigDecimal value) {
+        if (acceptsNull && value == null) {
+            return "";
+        } else {
+            return String.format("%.2f", value);
         }
     }
 }

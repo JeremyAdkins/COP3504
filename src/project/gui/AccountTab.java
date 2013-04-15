@@ -1,15 +1,20 @@
 package project.gui;
 
 import project.Controller;
+import project.gui.util.DollarAmountFormatter;
+import project.gui.util.PercentageFormatter;
 import project.model.Account;
 import project.model.Transaction;
 
 import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 public final class AccountTab extends javax.swing.JPanel {
+    private static final DollarAmountFormatter FORMATTER = new DollarAmountFormatter();
+
+    private static final PercentageFormatter PERCENTAGE_FORMATTER = new PercentageFormatter();
+
     private final Controller controller;
 
     private final Account account;
@@ -34,20 +39,36 @@ public final class AccountTab extends javax.swing.JPanel {
     private void initComponents() {
         setLayout(new BorderLayout());
 
+        JPanel sidePanel = new JPanel(new BorderLayout());
+
+        final Font labelFont = new Font(Font.SANS_SERIF, Font.BOLD, 16);
         JPanel labelPanel = new JPanel(new GridLayout(3, 2));
-        labelPanel.add(new JLabel("Account number"));
-        JLabel accountNumberLabel = new JLabel(Integer.toString(account.getAccountNumber()));
-        accountNumberLabel.setHorizontalAlignment(JLabel.RIGHT);
+
+        JLabel accountNumberCaption = new JLabel("Account number");
+        accountNumberCaption.setFont(labelFont);
+        labelPanel.add(accountNumberCaption);
+        JLabel accountNumberLabel = new JLabel(Integer.toString(account.getAccountNumber()), JLabel.RIGHT);
+        accountNumberLabel.setFont(labelFont);
         labelPanel.add(accountNumberLabel);
-        labelPanel.add(new JLabel("Balance"));
+
+        JLabel balanceCaption = new JLabel("Balance");
+        balanceCaption.setFont(labelFont);
+        labelPanel.add(balanceCaption);
         balanceLabel = new JLabel();
+        balanceLabel.setFont(labelFont);
         balanceLabel.setHorizontalAlignment(JLabel.RIGHT);
         labelPanel.add(balanceLabel);
-        labelPanel.add(new JLabel("Interest rate"));
-        JLabel interestRateLabel = new JLabel(String.format("%.2f%%", account.getInterestRate().multiply(new BigDecimal("100"))));
-        interestRateLabel.setHorizontalAlignment(JLabel.RIGHT);
+
+        JLabel interestRateCaption = new JLabel("Interest rate");
+        interestRateCaption.setFont(labelFont);
+        labelPanel.add(interestRateCaption);
+        JLabel interestRateLabel = new JLabel(PERCENTAGE_FORMATTER.valueToString(account.getInterestRate()), JLabel.RIGHT);
+        interestRateLabel.setFont(labelFont);
         labelPanel.add(interestRateLabel);
-        add(labelPanel, BorderLayout.WEST);
+
+        sidePanel.add(labelPanel, BorderLayout.NORTH);
+
+        add(sidePanel, BorderLayout.WEST);
 
         historyTable = new JTable();
         JScrollPane tablePane = new JScrollPane(historyTable);
@@ -55,8 +76,11 @@ public final class AccountTab extends javax.swing.JPanel {
     }
 
     private void updateLabels() {
-        // TODO maybe formatting should be in one place
-        balanceLabel.setText("$" + String.valueOf(account.getBalance().setScale(2, RoundingMode.HALF_UP)));
+        BigDecimal balance = account.getBalance();
+        if (account.getType().isLoan()) {
+            balance = balance.negate();
+        }
+        balanceLabel.setText(FORMATTER.valueToString(balance));
     }
 
     private void updateHistoryTableModel() {
@@ -73,8 +97,8 @@ public final class AccountTab extends javax.swing.JPanel {
                 amount = (t.getType().isPositive() ? t.getAmount() : t.getAmount().negate());
                 balance = t.getBalance();
             }
-            history[i][1] = "$" + amount;
-            history[i][2] = "$" + balance;
+            history[i][1] = FORMATTER.valueToString(amount);
+            history[i][2] = FORMATTER.valueToString(balance);
             history[i][3] = t.getTimestamp();
             history[i][4] = t.getFraudStatus();
             i++;
