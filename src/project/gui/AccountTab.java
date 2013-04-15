@@ -5,6 +5,7 @@
 package project.gui;
 
 import project.Controller;
+import project.gui.util.DollarAmountFormatter;
 import project.model.Account;
 import project.model.InsufficientFundsException;
 import project.model.InvalidInputException;
@@ -126,7 +127,7 @@ public final class AccountTab extends javax.swing.JPanel {
 
         jLabel1.setText("Amount:   $");
 
-        WithdrawAmountField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#,##0.00"))));
+        WithdrawAmountField.setFormatterFactory(new DollarAmountFormatter.Factory());
 
         javax.swing.GroupLayout WithdrawDialogLayout = new javax.swing.GroupLayout(WithdrawDialog.getContentPane());
         WithdrawDialog.getContentPane().setLayout(WithdrawDialogLayout);
@@ -181,7 +182,7 @@ public final class AccountTab extends javax.swing.JPanel {
 
         jLabel2.setText("Amount:   $");
 
-        DepositAmountField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#,##0.00"))));
+        DepositAmountField.setFormatterFactory(new DollarAmountFormatter.Factory());
 
         javax.swing.GroupLayout DepositDialogLayout = new javax.swing.GroupLayout(DepositDialog.getContentPane());
         DepositDialog.getContentPane().setLayout(DepositDialogLayout);

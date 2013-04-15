@@ -235,7 +235,7 @@ public abstract class Account {
         str.append(toString() + "\n");
         str.append(String.format("Balance carried forward: $%.2f\n", carriedForward == null ? BigDecimal.ZERO : carriedForward.abs()));
         str.append(String.format("End of month balance: $%.2f\n", endOfMonth == null ? BigDecimal.ZERO : endOfMonth.abs()));
-        str.append(String.format("Type             Amount    Balance   Month Fraud\n"));
+        str.append(String.format("Type             Amount          Balance         Month Fraud\n"));
         for (Transaction transaction : statementHistory) {
             str.append(transaction.toString() + "\n");
         }
