@@ -252,7 +252,7 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
             }
         });
 
-        addAccountButton.setText("Add account");
+        addAccountButton.setText("Add account for selected user");
         addAccountButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
@@ -261,7 +261,7 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
         });
         addAccountButton.setEnabled(false);
 
-        closeAccountButton.setText("Close account");
+        closeAccountButton.setText("Close selected account");
         closeAccountButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
