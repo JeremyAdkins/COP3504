@@ -162,7 +162,7 @@ public final class Controller {
      * @return 
      */
     public AccountTab newAccountTab(Account account, AccountHolderFrame parent) {
-        AccountTab accTab = new AccountTab(account, parent, this);
+        AccountTab accTab = new AccountTab(this, account);
         accTab.setVisible(true);
         return accTab;
     }
@@ -321,7 +321,7 @@ public final class Controller {
         return AuditorTable;
     }
     
-    private void updateBankDisplay(){
+    private void updateBankDisplay() {
         for (AbstractUserWindow w : windows) {
             if (w.getClass().getSimpleName().equals("AccountHolderFrame")) {
                 AccountHolderFrame accountHolderFrame = (AccountHolderFrame) w;
@@ -329,8 +329,7 @@ public final class Controller {
             }
         }
         for (AccountTab accTab : tabs) {
-            accTab.updateBalanceLabel();
-            accTab.updateHistoryTableModel();
+            accTab.update();
         }
     }
 }
