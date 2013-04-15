@@ -12,6 +12,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class TellerAccountTab extends JPanel {
     private final Controller controller;
@@ -72,6 +74,68 @@ public final class TellerAccountTab extends JPanel {
             }
         });
         buttonPanel.add(withdrawButton);
+
+        JButton repeatingDepositButton = new JButton("Add repeating deposit");
+        repeatingDepositButton.setEnabled(account.getType() != Account.Type.CD);
+        repeatingDepositButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String amountStr = JOptionPane.showInputDialog(TellerAccountTab.this, "Repeating deposit amount:",
+                        "Repeating deposit", JOptionPane.QUESTION_MESSAGE);
+                String description = JOptionPane.showInputDialog(TellerAccountTab.this, "Description:", "Repeating deposit",
+                        JOptionPane.QUESTION_MESSAGE);
+                try {
+                    BigDecimal amount = new DollarAmountFormatter().stringToValue(amountStr);
+                    account.addRepeatingDeposit(description, amount);
+                    String infoMessage = String.format("Added repeating deposit of amount %s with description \"%s\".",
+                            new DollarAmountFormatter().valueToString(amount), description);
+                    JOptionPane.showMessageDialog(TellerAccountTab.this, infoMessage, "Repeating deposit", JOptionPane.INFORMATION_MESSAGE);
+                } catch (ParseException px) {
+                    controller.handleException(TellerAccountTab.this, px);
+                } catch (InvalidInputException iix) {
+                    controller.handleException(TellerAccountTab.this, iix);
+                }
+            }
+        });
+        buttonPanel.add(repeatingDepositButton);
+
+        JButton repeatingWithdrawalButton = new JButton("Add repeating withdrawal");
+        repeatingWithdrawalButton.setEnabled(account.getType() != Account.Type.CD && account.getType() != Account.Type.LOAN);
+        repeatingWithdrawalButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String amountStr = JOptionPane.showInputDialog(TellerAccountTab.this, "Repeating withdrawal amount:",
+                        "Repeating withdrawal", JOptionPane.QUESTION_MESSAGE);
+                String description = JOptionPane.showInputDialog(TellerAccountTab.this, "Description:", "Repeating withdrawal",
+                        JOptionPane.QUESTION_MESSAGE);
+                try {
+                    BigDecimal amount = new DollarAmountFormatter().stringToValue(amountStr);
+                    account.addRepeatingWithdrawal(description, amount);
+                    String infoMessage = String.format("Added repeating withdrawal of amount %s with description \"%s\".",
+                            new DollarAmountFormatter().valueToString(amount), description);
+                    JOptionPane.showMessageDialog(TellerAccountTab.this, infoMessage, "Repeating withdrawal", JOptionPane.INFORMATION_MESSAGE);
+                } catch (ParseException px) {
+                    controller.handleException(TellerAccountTab.this, px);
+                } catch (InvalidInputException iix) {
+                    controller.handleException(TellerAccountTab.this, iix);
+                }
+            }
+        });
+        buttonPanel.add(repeatingWithdrawalButton);
+
+        JButton endRepeatingButton = new JButton("End repeating payment");
+        endRepeatingButton.setEnabled(account.getType() != Account.Type.CD);
+        endRepeatingButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Map<String, BigDecimal> repeatingPayments = new HashMap<String, BigDecimal>(account.getRepeatingPayments());
+                String description = (String) JOptionPane.showInputDialog(TellerAccountTab.this, "Which one?",
+                        "End automatic deposit", JOptionPane.QUESTION_MESSAGE, null, repeatingPayments.keySet().toArray(),
+                        repeatingPayments.keySet().iterator().next());
+                account.removeRepeatingPayment(description);
+            }
+        });
+        buttonPanel.add(endRepeatingButton);
 
         add(buttonPanel, BorderLayout.SOUTH);
     }
