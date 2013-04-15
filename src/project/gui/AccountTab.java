@@ -357,7 +357,6 @@ public final class AccountTab extends javax.swing.JPanel {
         if (selection==JOptionPane.YES_OPTION) {
             DepositDialog.dispose();
             try {
-        System.out.println("deposit "+amount+" to "+account);
                 controller.deposit(account, amount);
             } catch (InvalidInputException ex) {
                 controller.handleException(this, ex);
