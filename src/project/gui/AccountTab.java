@@ -2,6 +2,7 @@ package project.gui;
 
 import project.Controller;
 import project.gui.util.DollarAmountFormatter;
+import project.gui.util.IntegerFormatter;
 import project.model.*;
 
 import javax.swing.*;
@@ -147,9 +148,31 @@ public final class AccountTab extends javax.swing.JPanel {
 
     private void spend() {
         String amountStr = JOptionPane.showInputDialog(this, "Input an amount to spend:", "Spend", JOptionPane.QUESTION_MESSAGE);
+        String accountNumberStr = JOptionPane.showInputDialog(this, "To what account number? (blank is allowed)", "Spend", JOptionPane.QUESTION_MESSAGE);
         try {
             BigDecimal amount = FORMATTER.stringToValue(amountStr);
+            Account target;
+            if (accountNumberStr == null || accountNumberStr.isEmpty()) {
+                target = null;
+            } else {
+                int accountNumber = new IntegerFormatter().stringToValue(accountNumberStr);
+                target = null;
+                for (User user : Bank.getInstance().getUsers()) {
+                    for (Account account : user.getAccounts()) {
+                        if (account.getAccountNumber() == accountNumber) {
+                            target = account;
+                        }
+                    }
+                }
+            }
+            if (target != null && (target.getType() == Account.Type.CD ||
+                    (target.getType().isLoan() && target.getBalance().negate().compareTo(amount) < 0))) {
+                throw new InvalidInputException(accountNumberStr, "account does not exist or cannot accept this deposit");
+            }
             account.withdraw(amount);
+            if (target != null) {
+                target.deposit(amount);
+            }
             controller.updateBankDisplay();
         } catch (ParseException px) {
             controller.handleException(this, px);
