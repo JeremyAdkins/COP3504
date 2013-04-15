@@ -29,6 +29,7 @@ public class TellerFrame extends AbstractUserWindow {
     private void setUpTabs(){
         for(TellerAccountTab tab : tabs){
             TellerTabHolder.add(tab);
+            TellerTabHolder.revalidate();
         }
     }
 

@@ -29,6 +29,7 @@ public final class TellerAccountTab extends JPanel {
     }
 
     private void initComponents() {
+        setName(account.toString());
         setLayout(new BorderLayout());
         add(infoPanel, BorderLayout.NORTH);
         add(new JSeparator(), BorderLayout.CENTER);
