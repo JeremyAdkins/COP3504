@@ -118,7 +118,7 @@ public final class LoginWindow extends javax.swing.JFrame {
 
     private void LoginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LoginButtonActionPerformed
         User user;
-        //Make sure the User exsists
+        //Make sure the User exists
         try {
             user = Bank.getInstance().getUser(username.getText());
         } catch (InvalidInputException ex) {

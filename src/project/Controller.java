@@ -25,6 +25,7 @@ import java.util.List;
 public final class Controller {
 
     private Bank instance = Bank.getInstance();
+    
     private User currentUser; //the User currently using the platform based on the window that is open. When a user interacts with a Teller, the teller window is the only window open and this would return the Teller.
     private List<AbstractUserWindow> windows = new ArrayList<AbstractUserWindow>(); //the Windows open and (therefore) those which this Controller is responsible for
 
@@ -340,5 +341,9 @@ public final class Controller {
         for (AccountTab accTab : tabs) {
             accTab.update();
         }
+    }
+    
+    public void incurTellerFees(Account account){
+        account.applyFee(Bank.getInstance().getPaymentSchedule().getTellerFee());
     }
 }

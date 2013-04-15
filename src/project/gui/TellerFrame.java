@@ -9,6 +9,8 @@ import project.model.InvalidInputException;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
+import project.model.User;
 
 /**
  *
@@ -16,9 +18,8 @@ import java.util.List;
  */
 public class TellerFrame extends AbstractUserWindow {
 
-    
     List<TellerAccountTab> tabs = new ArrayList<TellerAccountTab>();
-    
+
     /**
      * Creates new form TellerFrame
      */
@@ -26,9 +27,9 @@ public class TellerFrame extends AbstractUserWindow {
         super(controller);
         initComponents();
     }
-    
-    private void setUpTabs(){
-        for(TellerAccountTab tab : tabs){
+
+    private void setUpTabs() {
+        for (TellerAccountTab tab : tabs) {
             TellerTabHolder.add(tab);
             TellerTabHolder.revalidate();
         }
@@ -49,6 +50,12 @@ public class TellerFrame extends AbstractUserWindow {
         selectUserButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        TellerTabHolder.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                TellerTabHolderStateChanged(evt);
+            }
+        });
 
         selectUserButton.setText("Select");
         selectUserButton.addActionListener(new java.awt.event.ActionListener() {
@@ -96,13 +103,22 @@ public class TellerFrame extends AbstractUserWindow {
 
     private void selectUserButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectUserButtonActionPerformed
         try {
-            tabs = controller.getTellerTabs(controller.getInstance().getUser(usernameField.getText()));
+            User user = controller.getInstance().getUser(usernameField.getText());
+            tabs = controller.getTellerTabs(user);
             setUpTabs();
         } catch (InvalidInputException ex) {
             controller.handleException(this, ex);
         }
     }//GEN-LAST:event_selectUserButtonActionPerformed
 
+    private void TellerTabHolderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_TellerTabHolderStateChanged
+        TellerAccountTab tab = (TellerAccountTab) TellerTabHolder.getSelectedComponent();
+        if (!tab.isFeeIncurred()) {
+            if (JOptionPane.showConfirmDialog(this, ("Do you want to waive fees for transactions on this account?")) != JOptionPane.YES_OPTION) {
+                tab.incurFee();
+            }
+        }
+    }//GEN-LAST:event_TellerTabHolderStateChanged
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTabbedPane TellerTabHolder;
     private javax.swing.JPanel jPanel1;

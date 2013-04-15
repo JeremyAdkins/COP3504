@@ -19,6 +19,17 @@ public final class TellerAccountTab extends JPanel {
     private final Controller controller;
 
     private final Account account;
+    
+    private boolean feeIncurred = false; //becomes true even if fee was waived
+
+    public boolean isFeeIncurred() {
+        return feeIncurred;
+    }
+    
+    public void incurFee() {
+        feeIncurred = true;
+        controller.incurTellerFees(account);
+    }
 
     private final AccountInfoPanel infoPanel;
 
