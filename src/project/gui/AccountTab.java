@@ -94,15 +94,12 @@ public final class AccountTab extends javax.swing.JPanel {
         historyTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                if (historyTable.getSelectedRow() >= 0) {
+                flagButton.setEnabled(false);
+                if (!account.isClosed() && historyTable.getSelectedRow() >= 0) {
                     Transaction transaction = account.getHistory().get(historyTable.getSelectedRow());
                     if (Bank.getInstance().getCurrentMonth() - transaction.getTimestamp() < 2) {
                         flagButton.setEnabled(true);
-                    } else {
-                        flagButton.setEnabled(false);
                     }
-                } else {
-                    flagButton.setEnabled(false);
                 }
             }
         });

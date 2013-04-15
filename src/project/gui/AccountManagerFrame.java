@@ -69,7 +69,7 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
                     if (user != null) {
                         addAccountButton.setEnabled(true);
                     }
-                    if (account != null) {
+                    if (account != null && !account.isClosed()) {
                         if (account.getBalance().setScale(2, RoundingMode.HALF_UP).compareTo(BigDecimal.ZERO) == 0) {
                             closeAccountButton.setEnabled(true);
                         }
