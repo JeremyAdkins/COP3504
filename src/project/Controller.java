@@ -144,7 +144,7 @@ public final class Controller {
     }
     
     private void setTabs(AccountHolderFrame parent) {
-        for(Account acc : currentUser.getAccounts()){
+        for (Account acc : currentUser.getAccounts()) {
             tabs.add(newAccountTab(currentUser, acc));
         }
     }
@@ -201,8 +201,7 @@ public final class Controller {
     }
 
     public void closeAccount(Account account) {
-        // TODO
-        throw new UnsupportedOperationException();
+        account.close();
     }
     
     public Bank getInstance() {
@@ -249,9 +248,11 @@ public final class Controller {
                 formattedSsn.insert(3, "-").insert(6, "-");
                 accountManagerTable[i][1] = formattedSsn;
             for (Account account : user.getAccounts()) {
-                accountManagerTable[i][2] = account;
-                accountManagerTable[i][3] = String.format("$%.2f", account.getBalance());
-                i++;
+                if (!account.isClosed()) {
+                    accountManagerTable[i][2] = account;
+                    accountManagerTable[i][3] = String.format("$%.2f", account.getBalance());
+                    i++;
+                }
             }
             if(!user.isActiveCustomer()){
                 i++;
@@ -320,9 +321,11 @@ public final class Controller {
     }
     
     public List<TellerAccountTab> getTellerTabs(User user){
-        List<TellerAccountTab> accTabs = new ArrayList<>();
-        for(Account acc : user.getAccounts()){
-            accTabs.add(new TellerAccountTab(this, acc));
+        List<TellerAccountTab> accTabs = new ArrayList<TellerAccountTab>();
+        for (Account acc : user.getAccounts()) {
+            if (!acc.isClosed()) {
+                accTabs.add(new TellerAccountTab(this, acc));
+            }
         }
         return accTabs;
     }

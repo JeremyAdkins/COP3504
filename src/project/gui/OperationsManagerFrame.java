@@ -36,14 +36,20 @@ public class OperationsManagerFrame extends AbstractUserWindow {
         bankStatementButton.addActionListener(new StatementGenerator(true));
         buttonLayoutPanel.add(bankStatementButton);
 
-        // TODO display the number of errors
         JButton advanceTimeButton = new JButton("Advance time");
         advanceTimeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Bank.getInstance().advanceCurrentMonth();
+                int exceptions = Bank.getInstance().advanceCurrentMonth();
                 int currentMonth = Bank.getInstance().getCurrentMonth();
-                JOptionPane.showMessageDialog(OperationsManagerFrame.this, "Advanced time by one month; the simulation month is now " + currentMonth, "Advanced time", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(OperationsManagerFrame.this,
+                        "Advanced time by one month; the simulation month is now " + currentMonth, "Advanced time",
+                        JOptionPane.INFORMATION_MESSAGE);
+                if (exceptions > 0) {
+                    JOptionPane.showMessageDialog(OperationsManagerFrame.this,
+                            exceptions + " exceptions occurred processing repeating payments", "Advanced time",
+                            JOptionPane.INFORMATION_MESSAGE);
+                }
             }
         });
         buttonLayoutPanel.add(advanceTimeButton);
@@ -74,12 +80,12 @@ public class OperationsManagerFrame extends AbstractUserWindow {
         interestPanel.add(savingsInterestField);
 
         for (final CertificateOfDeposit.Term term : CertificateOfDeposit.Term.values()) {
-            interestPanel.add(new JLabel("CD " + term.toString()));
-            JFormattedTextField cdInterestField = new JFormattedTextField(new PercentageFormatter.Factory(), paymentSchedule.getCdInterest(term));
+            interestPanel.add(new JLabel("CD premium " + term.toString()));
+            JFormattedTextField cdInterestField = new JFormattedTextField(new PercentageFormatter.Factory(), paymentSchedule.getCdPremium(term));
             cdInterestField.setInputVerifier(new FieldInputVerifier(this) {
                 @Override
                 protected void setField(BigDecimal value) throws InvalidInputException {
-                    paymentSchedule.setCdInterest(term, value);
+                    paymentSchedule.setCdPremium(term, value);
                 }
             });
             interestPanel.add(cdInterestField);
@@ -95,12 +101,12 @@ public class OperationsManagerFrame extends AbstractUserWindow {
         });
         interestPanel.add(loanInterestField);
 
-        interestPanel.add(new JLabel("Line of credit"));
-        JFormattedTextField locInterestField = new JFormattedTextField(new PercentageFormatter.Factory(), paymentSchedule.getLocInterest());
+        interestPanel.add(new JLabel("LoC premium"));
+        JFormattedTextField locInterestField = new JFormattedTextField(new PercentageFormatter.Factory(), paymentSchedule.getLocPremium());
         locInterestField.setInputVerifier(new FieldInputVerifier(this) {
             @Override
             protected void setField(BigDecimal value) throws InvalidInputException {
-                paymentSchedule.setLocInterest(value);
+                paymentSchedule.setLocPremium(value);
             }
         });
         interestPanel.add(locInterestField);
@@ -249,6 +255,9 @@ public class OperationsManagerFrame extends AbstractUserWindow {
         public void actionPerformed(ActionEvent e) {
             String username = JOptionPane.showInputDialog(OperationsManagerFrame.this, "Username of customer:",
                     "Customer", JOptionPane.QUESTION_MESSAGE);
+            if (username == null) {
+                return;
+            }
             try {
                 User user = Bank.getInstance().getUser(username);
                 if (user.getAccounts().isEmpty()) {
@@ -261,7 +270,13 @@ public class OperationsManagerFrame extends AbstractUserWindow {
                     Account account = (Account) JOptionPane.showInputDialog(OperationsManagerFrame.this, "Which account?",
                             "Account", JOptionPane.QUESTION_MESSAGE, null, user.getAccounts().toArray(),
                             user.getAccounts().iterator().next());
+                    if (account == null) {
+                        return;
+                    }
                     statementAccounts = Collections.singleton(account);
+                }
+                if (statementAccounts.isEmpty()) {
+                    return;
                 }
                 String statement = "";
                 for (Account account : statementAccounts) {

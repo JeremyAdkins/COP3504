@@ -1,6 +1,7 @@
 package project.model;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 public abstract class Account {
@@ -79,7 +80,7 @@ public abstract class Account {
      * @see #isClosed()
      */
 	public void close() {
-        if (getBalance().round(Bank.MATH_CONTEXT).compareTo(BigDecimal.ZERO) != 0) {
+        if (getBalance().setScale(2, RoundingMode.HALF_UP).compareTo(BigDecimal.ZERO) != 0) {
             throw new IllegalStateException("cannot close account with nonzero balance");
         }
 		closed = true;

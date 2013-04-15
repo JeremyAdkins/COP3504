@@ -8,27 +8,24 @@ public final class PaymentSchedule {
 	private BigDecimal savingsInterest = new BigDecimal("0.0200");
 	private BigDecimal savingsCharge = new BigDecimal("5.00");
 	private BigDecimal savingsThreshold = new BigDecimal("1000.00");
-	private final Map<CertificateOfDeposit.Term, BigDecimal> cdInterest;
+	private final Map<CertificateOfDeposit.Term, BigDecimal> cdPremium;
 	private BigDecimal cdMinimum = new BigDecimal("500.00");
 	private BigDecimal checkingCharge = new BigDecimal("8.00");
 	private BigDecimal checkingThreshold = new BigDecimal("2000.00");
 	private BigDecimal overdraftLimit = new BigDecimal("50.00");
 	private BigDecimal overdraftFee = new BigDecimal("40.00");
-	private BigDecimal loanInterest = new BigDecimal("0.0500");
+	private BigDecimal loanInterest = new BigDecimal("0.0400");
 	private BigDecimal loanPenalty = new BigDecimal("20.00");
-	private BigDecimal locInterest = new BigDecimal("0.0500");
+	private BigDecimal locPremium = new BigDecimal("0.0100");
 	private BigDecimal locFixedPayment = new BigDecimal("50.00");
 	private BigDecimal locPercentPayment = new BigDecimal("0.0200");
 	private BigDecimal locPenalty = new BigDecimal("20.00");
 
     PaymentSchedule() {
-        cdInterest = new HashMap<CertificateOfDeposit.Term, BigDecimal>();
-        cdInterest.put(CertificateOfDeposit.Term.SIX_MONTHS, new BigDecimal("0.0250"));
-        cdInterest.put(CertificateOfDeposit.Term.ONE_YEAR, new BigDecimal("0.0275"));
-        cdInterest.put(CertificateOfDeposit.Term.TWO_YEARS, new BigDecimal("0.0300"));
-        cdInterest.put(CertificateOfDeposit.Term.THREE_YEARS, new BigDecimal("0.0325"));
-        cdInterest.put(CertificateOfDeposit.Term.FOUR_YEARS, new BigDecimal("0.0350"));
-        cdInterest.put(CertificateOfDeposit.Term.FIVE_YEARS, new BigDecimal("0.0375"));
+        cdPremium = new HashMap<CertificateOfDeposit.Term, BigDecimal>();
+        for (CertificateOfDeposit.Term term : CertificateOfDeposit.Term.values()) {
+            cdPremium.put(term, new BigDecimal("0.0025"));
+        }
     }
 	
 	public BigDecimal getSavingsInterest() {
@@ -64,15 +61,15 @@ public final class PaymentSchedule {
 		this.savingsThreshold = savingsThreshold.round(Bank.MATH_CONTEXT);
 	}
 
-	public BigDecimal getCdInterest(CertificateOfDeposit.Term term) {
-		return cdInterest.get(term);
+	public BigDecimal getCdPremium(CertificateOfDeposit.Term term) {
+		return cdPremium.get(term);
 	}
 
-	public void setCdInterest(CertificateOfDeposit.Term term, BigDecimal cdInterest) throws InvalidInputException {
-        if (cdInterest.compareTo(BigDecimal.ZERO) < 0) {
-            throw new InvalidInputException(cdInterest, "payment schedule values must be non-negative");
+	public void setCdPremium(CertificateOfDeposit.Term term, BigDecimal cdPremium) throws InvalidInputException {
+        if (cdPremium.compareTo(BigDecimal.ZERO) < 0) {
+            throw new InvalidInputException(cdPremium, "payment schedule values must be non-negative");
         }
-		this.cdInterest.put(term, cdInterest.round(Bank.MATH_CONTEXT));
+		this.cdPremium.put(term, cdPremium.round(Bank.MATH_CONTEXT));
 	}
 
 	public BigDecimal getCdMinimum() {
@@ -152,15 +149,15 @@ public final class PaymentSchedule {
 		this.loanPenalty = loanPenalty.round(Bank.MATH_CONTEXT);
 	}
 
-	public BigDecimal getLocInterest() {
-		return locInterest;
+	public BigDecimal getLocPremium() {
+		return locPremium;
 	}
 
-	public void setLocInterest(BigDecimal locInterest) throws InvalidInputException {
-        if (locInterest.compareTo(BigDecimal.ZERO) < 0) {
-            throw new InvalidInputException(locInterest, "payment schedule values must be non-negative");
+	public void setLocPremium(BigDecimal locPremium) throws InvalidInputException {
+        if (locPremium.compareTo(BigDecimal.ZERO) < 0) {
+            throw new InvalidInputException(locPremium, "payment schedule values must be non-negative");
         }
-		this.locInterest = locInterest.round(Bank.MATH_CONTEXT);
+		this.locPremium = locPremium.round(Bank.MATH_CONTEXT);
 	}
 
 	public BigDecimal getLocFixedPayment() {

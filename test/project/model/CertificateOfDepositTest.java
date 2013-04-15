@@ -34,7 +34,7 @@ public final class CertificateOfDepositTest {
     @Test
     public void testWithdrawNotMature() throws InvalidInputException, InsufficientFundsException {
         account.withdraw(new BigDecimal("55.55"));
-        TestUtil.assertEquals(536.20, account.getBalance());
+        TestUtil.assertEquals(536.95, account.getBalance());
     }
 
     @Test(expected = InsufficientFundsException.class)

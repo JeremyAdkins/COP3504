@@ -35,7 +35,13 @@ public final class AccountInfoPanel extends JPanel {
 
     private void initComponents() {
         final Font labelFont = new Font(Font.SANS_SERIF, Font.BOLD, 16);
-        int rows = (account.getType() == Account.Type.CD || account.getType() == Account.Type.LINE_OF_CREDIT) ? 4 : 3;
+        int rows = 3;
+        if (account.getType() == Account.Type.CD || account.getType() == Account.Type.LINE_OF_CREDIT) {
+            rows += 1;
+        }
+        if (account.isClosed()) {
+            rows += 1;
+        }
         setLayout(new GridLayout(rows, 2));
 
         JLabel accountNumberCaption = new JLabel("Account number");
@@ -81,5 +87,11 @@ public final class AccountInfoPanel extends JPanel {
         JLabel interestRateLabel = new JLabel(new PercentageFormatter().valueToString(account.getInterestRate()), JLabel.RIGHT);
         interestRateLabel.setFont(labelFont);
         add(interestRateLabel);
+
+        if (account.isClosed()) {
+            JLabel closedLabel = new JLabel("Closed");
+            closedLabel.setFont(labelFont);
+            add(closedLabel);
+        }
     }
 }
