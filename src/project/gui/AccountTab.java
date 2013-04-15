@@ -98,7 +98,7 @@ public final class AccountTab extends javax.swing.JPanel {
                 flagButton.setEnabled(false);
                 if (!account.isClosed() && historyTable.getSelectedRow() >= 0) {
                     Transaction transaction = account.getHistory().get(historyTable.getSelectedRow());
-                    if (Bank.getInstance().getCurrentMonth() - transaction.getTimestamp() < 2) {
+                    if (Bank.getInstance().getCurrentMonth() - transaction.getTimestamp() < 2 && transaction.getFraudStatus()!=Transaction.FraudStatus.REVERSED) {
                         flagButton.setEnabled(true);
                     }
                 }
