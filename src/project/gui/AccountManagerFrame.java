@@ -507,7 +507,7 @@ public final class AccountManagerFrame extends AbstractUserWindow implements Doc
                     } catch (InvalidInputException iix) {
                         controller.handleException(AccountManagerFrame.this, iix);
                     } catch (LoanCapException lcx) {
-                        // TODO
+                        controller.handleException(AccountManagerFrame.this, lcx);
                     }
                 }
             });

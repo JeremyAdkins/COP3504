@@ -1,394 +1,165 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package project.gui;
 
 import project.Controller;
 import project.gui.util.DollarAmountFormatter;
+import project.gui.util.PercentageFormatter;
 import project.model.Account;
 import project.model.InsufficientFundsException;
 import project.model.InvalidInputException;
 import project.model.Transaction;
 
 import javax.swing.*;
-import java.math.RoundingMode;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
-/**
- *
- * @author rich
- */
 public final class AccountTab extends javax.swing.JPanel {
+    private static final DollarAmountFormatter FORMATTER = new DollarAmountFormatter();
 
-    /**
-     * Creates new form CheckingAccountTab
-     */
-    private Account account;
-    private static AbstractUserWindow parentFrame;
+    private static final PercentageFormatter PERCENTAGE_FORMATTER = new PercentageFormatter();
 
-    public static AbstractUserWindow getParentFrame() {
-        return parentFrame;
-    }
-    private static Controller controller;
+    private final Controller controller;
 
-    public AccountTab(Account account, AbstractUserWindow parent, Controller controller) {
-        this.account = account;
-        this.parentFrame = parent;
+    private final Account account;
+
+    private final AccountInfoPanel infoPanel;
+
+    private JTable historyTable;
+
+    public AccountTab(Controller controller, Account account) {
         this.controller = controller;
+        this.account = account;
+        infoPanel = new AccountInfoPanel(controller, account);
+        setName(account.toString());
         initComponents();
-        updateBalanceLabel();
-        updateHistoryTableModel();
-        this.setName(account.toString());
+        update();
     }
 
-    public Account getAccount() {
-        return account;
+    private void initComponents() {
+        setLayout(new BorderLayout());
+
+        JPanel sidePanel = new JPanel(new BorderLayout());
+        sidePanel.add(infoPanel, BorderLayout.NORTH);
+        sidePanel.add(new JSeparator(), BorderLayout.CENTER);
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
+
+        JButton spendButton = new JButton("Spend");
+        spendButton.setEnabled(account.getType() == Account.Type.CHECKING || account.getType() == Account.Type.LINE_OF_CREDIT);
+        spendButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                spend();
+            }
+        });
+        buttonPanel.add(spendButton);
+
+        JButton transferButton = new JButton("Transfer");
+        transferButton.setEnabled(!account.getType().isLoan());
+        transferButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                transfer();
+            }
+        });
+        buttonPanel.add(transferButton);
+
+        sidePanel.add(buttonPanel, BorderLayout.SOUTH);
+
+        add(sidePanel, BorderLayout.WEST);
+
+        historyTable = new JTable();
+        JScrollPane tablePane = new JScrollPane(historyTable);
+        add(tablePane, BorderLayout.CENTER);
     }
 
-    public void updateBalanceLabel() {
-        BalanceLabel.setText("Balance: $" + String.valueOf(account.getBalance().setScale(2, RoundingMode.FLOOR)));
-    }
+    public void update() {
+        infoPanel.update();
 
-    public void updateHistoryTableModel() {
-        Object[][] history = new Object[account.getHistory().size()][4];
+        Object[][] history = new Object[account.getHistory().size()][5];
         int i = 0;
         for (Transaction t : account.getHistory()) {
             history[i][0] = t.getType();
-            history[i][1] = "$" + t.getAmount();
-            history[i][2] = t.getTimestamp();
-            history[i][3] = t.getFraudStatus();
+            BigDecimal amount;
+            BigDecimal balance;
+            if (account.getType().isLoan()) {
+                amount = (t.getType().isPositive() ? t.getAmount().negate() : t.getAmount());
+                balance = t.getBalance().negate();
+            } else {
+                amount = (t.getType().isPositive() ? t.getAmount() : t.getAmount().negate());
+                balance = t.getBalance();
+            }
+            history[i][1] = FORMATTER.valueToString(amount);
+            history[i][2] = FORMATTER.valueToString(balance);
+            history[i][3] = t.getTimestamp();
+            history[i][4] = t.getFraudStatus();
             i++;
         }
-        HistoryTable.setModel(new javax.swing.table.DefaultTableModel(
+        historyTable.setModel(new javax.swing.table.DefaultTableModel(
                 history,
                 new String[]{
-            "Type", "Transaction Amount", "Time Stamp", "Flag"
-        }) {
+                        "Type", "Amount", "Balance", "Month", "Flag"
+                }) {
             @Override
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return false;
             }
         });
-        HistoryTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        HistoryTable.revalidate();
+        historyTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        historyTable.revalidate();
     }
-    
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
 
-        WithdrawDialog = new javax.swing.JDialog();
-        WithdrawDialogButton = new javax.swing.JButton();
-        CancelWithdraw = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
-        WithdrawAmountField = new javax.swing.JFormattedTextField();
-        DepositDialog = new javax.swing.JDialog();
-        DepositDialogButton = new javax.swing.JButton();
-        CancelDeposit = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
-        DepositAmountField = new javax.swing.JFormattedTextField();
-        AccountNumberLabel = new javax.swing.JLabel();
-        historyLabel = new javax.swing.JLabel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        HistoryTable = new javax.swing.JTable();
-        Separator2 = new javax.swing.JSeparator();
-        InterestRateLabel = new javax.swing.JLabel();
-        BalanceLabel = new javax.swing.JLabel();
-        WithdrawButton = new javax.swing.JButton();
-        UseTeller = new javax.swing.JButton();
-        DepositButton = new javax.swing.JButton();
-        Separator1 = new javax.swing.JSeparator();
-
-        WithdrawDialog.setTitle("Withdraw");
-        WithdrawDialog.setLocationByPlatform(true);
-        WithdrawDialog.setMinimumSize(null);
-        WithdrawDialog.setModal(true);
-        WithdrawDialog.setResizable(false);
-
-        WithdrawDialogButton.setText("Withdraw");
-        WithdrawDialogButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                WithdrawDialogButtonActionPerformed(evt);
-            }
-        });
-
-        CancelWithdraw.setText("Cancel");
-        CancelWithdraw.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                CancelWithdrawActionPerformed(evt);
-            }
-        });
-
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel1.setText("Amount:   $");
-
-        WithdrawAmountField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#,##0.00"))));
-
-        javax.swing.GroupLayout WithdrawDialogLayout = new javax.swing.GroupLayout(WithdrawDialog.getContentPane());
-        WithdrawDialog.getContentPane().setLayout(WithdrawDialogLayout);
-        WithdrawDialogLayout.setHorizontalGroup(
-            WithdrawDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(WithdrawDialogLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(WithdrawDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(WithdrawDialogLayout.createSequentialGroup()
-                        .addComponent(WithdrawDialogButton, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(CancelWithdraw, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(WithdrawDialogLayout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(WithdrawAmountField)))
-                .addContainerGap())
-        );
-        WithdrawDialogLayout.setVerticalGroup(
-            WithdrawDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(WithdrawDialogLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(WithdrawDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(WithdrawAmountField))
-                .addGap(18, 18, Short.MAX_VALUE)
-                .addGroup(WithdrawDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(WithdrawDialogButton)
-                    .addComponent(CancelWithdraw))
-                .addContainerGap())
-        );
-
-        DepositDialog.setTitle("Deposit");
-        DepositDialog.setLocationByPlatform(true);
-        DepositDialog.setMinimumSize(null);
-        DepositDialog.setModal(true);
-        DepositDialog.setResizable(false);
-
-        DepositDialogButton.setText("Deposit");
-        DepositDialogButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                DepositDialogButtonActionPerformed(evt);
-            }
-        });
-
-        CancelDeposit.setText("Cancel");
-        CancelDeposit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                CancelDepositActionPerformed(evt);
-            }
-        });
-
-        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel2.setText("Amount:   $");
-
-        DepositAmountField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#,##0.00"))));
-
-        javax.swing.GroupLayout DepositDialogLayout = new javax.swing.GroupLayout(DepositDialog.getContentPane());
-        DepositDialog.getContentPane().setLayout(DepositDialogLayout);
-        DepositDialogLayout.setHorizontalGroup(
-            DepositDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(DepositDialogLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(DepositDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(DepositDialogLayout.createSequentialGroup()
-                        .addComponent(DepositDialogButton, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(CancelDeposit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(DepositDialogLayout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(DepositAmountField)))
-                .addContainerGap())
-        );
-        DepositDialogLayout.setVerticalGroup(
-            DepositDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(DepositDialogLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(DepositDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(DepositAmountField))
-                .addGap(18, 18, Short.MAX_VALUE)
-                .addGroup(DepositDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(DepositDialogButton)
-                    .addComponent(CancelDeposit))
-                .addContainerGap())
-        );
-
-        AccountNumberLabel.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        AccountNumberLabel.setText("Acc. #: " + String.valueOf(account.getAccountNumber()));
-
-        historyLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        historyLabel.setText("Transaction History");
-
-        HistoryTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                HistoryTableMouseClicked(evt);
-            }
-        });
-        jScrollPane2.setViewportView(HistoryTable);
-
-        Separator2.setOrientation(javax.swing.SwingConstants.VERTICAL);
-
-        InterestRateLabel.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        InterestRateLabel.setText("Interest: " + String.valueOf(controller.getInterestRate(account) + "%"));
-
-        BalanceLabel.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-
-        WithdrawButton.setText("Withdraw");
-        WithdrawButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                WithdrawButtonActionPerformed(evt);
-            }
-        });
-
-        UseTeller.setText("Use Teller");
-        UseTeller.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                UseTellerActionPerformed(evt);
-            }
-        });
-
-        DepositButton.setText("Deposit");
-        DepositButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                DepositButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(AccountNumberLabel)
-                        .addComponent(BalanceLabel)
-                        .addComponent(InterestRateLabel)
-                        .addComponent(WithdrawButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(DepositButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(UseTeller))
-                    .addComponent(Separator1, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Separator2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(historyLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(AccountNumberLabel)
-                        .addGap(18, 18, 18)
-                        .addComponent(BalanceLabel)
-                        .addGap(18, 18, 18)
-                        .addComponent(InterestRateLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(Separator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(WithdrawButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(DepositButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(UseTeller)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(Separator2, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(historyLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 403, Short.MAX_VALUE)))
-                .addContainerGap())
-        );
-    }// </editor-fold>//GEN-END:initComponents
-
-    private void HistoryTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_HistoryTableMouseClicked
-    }//GEN-LAST:event_HistoryTableMouseClicked
-
-    private void WithdrawButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_WithdrawButtonActionPerformed
-        WithdrawDialog.pack();
-        WithdrawDialog.setVisible(true);
-    }//GEN-LAST:event_WithdrawButtonActionPerformed
-
-    private void WithdrawDialogButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_WithdrawDialogButtonActionPerformed
-        String amount = WithdrawAmountField.getText();
-        int selection = JOptionPane.showConfirmDialog(this, "Are you sure you want to withdraw " + amount + "?");
-        if (selection==JOptionPane.YES_OPTION) {
-            WithdrawDialog.dispose();
-            try {
-                controller.withdraw(account, amount);
-            } catch (InvalidInputException ex) {
-                controller.handleException(this, ex);
-            } catch (InsufficientFundsException ex) {
-                // TODO handle in Controller
-                Logger.getLogger(AccountTab.class.getName()).log(Level.SEVERE, null, ex);
-                JOptionPane.showMessageDialog(parentFrame, "You have withdrawn more than your balance!", "Warning", JOptionPane.WARNING_MESSAGE);
-            }
+    private void spend() {
+        String amountStr = JOptionPane.showInputDialog(this, "Input an amount to spend:", "Spend", JOptionPane.QUESTION_MESSAGE);
+        try {
+            BigDecimal amount = FORMATTER.stringToValue(amountStr);
+            account.withdraw(amount);
+            controller.updateBankDisplay();
+        } catch (ParseException px) {
+            controller.handleException(this, px);
+        } catch (InvalidInputException iix) {
+            controller.handleException(this, iix);
+        } catch (InsufficientFundsException ifx) {
+            controller.handleException(this, ifx);
         }
-    }//GEN-LAST:event_WithdrawDialogButtonActionPerformed
+    }
 
-    private void CancelWithdrawActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CancelWithdrawActionPerformed
-        WithdrawDialog.dispose();
-    }//GEN-LAST:event_CancelWithdrawActionPerformed
-
-    private void DepositButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DepositButtonActionPerformed
-        DepositDialog.pack();
-        DepositDialog.setVisible(true);
-    }//GEN-LAST:event_DepositButtonActionPerformed
-
-    private void UseTellerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UseTellerActionPerformed
-        project.gui.LoginWindow temp = new project.gui.LoginWindow("Teller Login", controller);
-        temp.confirmTellerLogin();
-        temp.setVisible(true);
-    }//GEN-LAST:event_UseTellerActionPerformed
-
-    private void DepositDialogButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DepositDialogButtonActionPerformed
-        String amount = DepositAmountField.getText();
-        int selection = JOptionPane.showConfirmDialog(this, "Are you sure you want to deposit " + amount + "?");
-        if (selection==JOptionPane.YES_OPTION) {
-            DepositDialog.dispose();
-            try {
-                controller.deposit(account, amount);
-            } catch (InvalidInputException ex) {
-                controller.handleException(this, ex);
+    private void transfer() {
+        String amountStr = JOptionPane.showInputDialog(this, "Input an amount to transfer:", "Transfer", JOptionPane.QUESTION_MESSAGE);
+        try {
+            BigDecimal amount = FORMATTER.stringToValue(amountStr);
+            Set<Account> accounts = new HashSet<Account>(controller.getCurrentUser().getAccounts());
+            Iterator<Account> iterator = accounts.iterator();
+            while (iterator.hasNext()) {
+                Account account = iterator.next();
+                if (account.getType() == Account.Type.CD) {
+                    iterator.remove();
+                } else if (account.getType().isLoan() && account.getBalance().negate().compareTo(amount) < 0) {
+                    iterator.remove();
+                }
             }
+            if (!accounts.isEmpty()) {
+                Account account = (Account) JOptionPane.showInputDialog(this, "Choose an account:", "Transfer",
+                        JOptionPane.QUESTION_MESSAGE, null, accounts.toArray(), accounts.iterator().next());
+                this.account.withdraw(amount);
+                account.deposit(amount);
+                controller.updateBankDisplay();
+            } else {
+                JOptionPane.showMessageDialog(this, "No accounts can accept that balance.", "Transfer failed", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        } catch (ParseException px) {
+            controller.handleException(this, px);
+        } catch (InvalidInputException iix) {
+            controller.handleException(this, iix);
+        } catch (InsufficientFundsException ifx) {
+            controller.handleException(this, ifx);
         }
-    }//GEN-LAST:event_DepositDialogButtonActionPerformed
-
-    private void CancelDepositActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CancelDepositActionPerformed
-        DepositDialog.dispose();
-    }//GEN-LAST:event_CancelDepositActionPerformed
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel AccountNumberLabel;
-    private javax.swing.JLabel BalanceLabel;
-    private javax.swing.JButton CancelDeposit;
-    private javax.swing.JButton CancelWithdraw;
-    private javax.swing.JFormattedTextField DepositAmountField;
-    private javax.swing.JButton DepositButton;
-    private javax.swing.JDialog DepositDialog;
-    private javax.swing.JButton DepositDialogButton;
-    private javax.swing.JTable HistoryTable;
-    private javax.swing.JLabel InterestRateLabel;
-    private javax.swing.JSeparator Separator1;
-    private javax.swing.JSeparator Separator2;
-    private javax.swing.JButton UseTeller;
-    private javax.swing.JFormattedTextField WithdrawAmountField;
-    private javax.swing.JButton WithdrawButton;
-    private javax.swing.JDialog WithdrawDialog;
-    private javax.swing.JButton WithdrawDialogButton;
-    private javax.swing.JLabel historyLabel;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JScrollPane jScrollPane2;
-    // End of variables declaration//GEN-END:variables
+    }
 }

@@ -18,7 +18,7 @@ public final class PercentageFormatter extends JFormattedTextField.AbstractForma
     }
 
     @Override
-    public Object stringToValue(String text) throws ParseException {
+    public BigDecimal stringToValue(String text) throws ParseException {
         try {
             return new BigDecimal(text).divide(new BigDecimal(100), Bank.MATH_CONTEXT);
         } catch (NumberFormatException nfx) {
@@ -29,9 +29,13 @@ public final class PercentageFormatter extends JFormattedTextField.AbstractForma
     @Override
     public String valueToString(Object value) throws ParseException {
         if (value instanceof BigDecimal) {
-            return String.format("%.2f", ((BigDecimal) value).multiply(new BigDecimal("100")));
+            return valueToString((BigDecimal) value);
         } else {
             throw new ParseException("value is not a BigDecimal", 0);
         }
+    }
+
+    public String valueToString(BigDecimal value) {
+        return String.format("%.2f", value.multiply(new BigDecimal("100")));
     }
 }

@@ -47,6 +47,10 @@ public final class CertificateOfDeposit extends Account {
 		return term;
 	}
 
+    public int getMonthsElapsed() {
+        return monthsElapsed;
+    }
+
     public boolean isMature() {
         return (monthsElapsed >= term.getLength());
     }

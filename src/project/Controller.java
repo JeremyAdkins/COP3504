@@ -287,8 +287,8 @@ public final class Controller {
         return data;
     }
 
-    public void handleException(Component parent, InvalidInputException iix) {
-        JOptionPane.showMessageDialog(parent, iix.getMessage(), iix.getClass().getName(), JOptionPane.ERROR_MESSAGE);
+    public void handleException(Component parent, Exception x) {
+        JOptionPane.showMessageDialog(parent, x.getMessage(), x.getClass().getName(), JOptionPane.ERROR_MESSAGE);
     }
 
     public void shutDown() {
@@ -323,7 +323,7 @@ public final class Controller {
         return AuditorTable;
     }
     
-    private void updateBankDisplay(){
+    public void updateBankDisplay() {
         for (AbstractUserWindow w : windows) {
             if (w.getClass().getSimpleName().equals("AccountHolderFrame")) {
                 AccountHolderFrame accountHolderFrame = (AccountHolderFrame) w;
@@ -331,8 +331,7 @@ public final class Controller {
             }
         }
         for (AccountTab accTab : tabs) {
-            accTab.updateBalanceLabel();
-            accTab.updateHistoryTableModel();
+            accTab.update();
         }
     }
 }
